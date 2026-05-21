@@ -1,0 +1,1769 @@
+@import "tailwindcss";
+
+/* ============================================================
+   DUKY STORE — Design System
+   Aesthetic: Luxury Minimal · Monochromatic · Fashion Editorial
+   Updated to match UI mockup (8-page PDF)
+   ============================================================ */
+
+/* Map existing design tokens to Tailwind v4 utilities */
+@theme inline {
+  --font-sans: var(--font-main);
+  --font-serif: var(--font-accent);
+  --font-playfair: var(--font-playfair); /* font có chân */
+  --font-montserrat: var(--font-montserrat); /* font không chân */
+
+  --color-bg-primary: var(--bg-primary);
+  --color-bg-secondary: var(--bg-secondary);
+  --color-bg-card: var(--bg-card);
+  --color-text-main: var(--text-main);
+  --color-text-muted: var(--text-muted);
+  --color-text-label: var(--text-label);
+  --color-border-subtle: var(--border-subtle);
+  --color-border-card: var(--border-card);
+  --color-accent-black: var(--accent-black);
+  --color-accent-gold: var(--accent-gold);
+
+  --shadow-card: var(--card-shadow);
+  --shadow-card-hover: var(--card-shadow-hover);
+  --shadow-section: var(--section-shadow);
+  --shadow-premium-black:
+    0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
+  --shadow-premium-glass: 0 0 20px 2px rgba(255, 255, 255, 0.3);
+
+  --animate-slide-in: slide-in 0.3s ease-out;
+}
+
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ============================================================
+   DESIGN TOKENS — :root
+   ============================================================ */
+:root {
+  /* --- Fonts --- */
+  --font-main: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
+  --font-accent: var(--font-playfair), ui-serif, Georgia, serif;
+
+  /* --- Core Background Colors (70%) ---
+       Sourced from the PDF mockup: cool off-white page, pure white cards */
+  --bg-primary: #ededef; /* page / section background — cool light gray */
+  --bg-secondary: #f5f5f7; /* alternate section background */
+  --bg-card: #ffffff; /* product cards, category cards, feature strips */
+  --bg-dark: #0a0a0a; /* FAQ section, footer bottom bar */
+
+  /* --- Text Colors --- */
+  --text-main: #0d0d0d; /* primary body / heading text */
+  --text-muted: #86868b; /* secondary / descriptive text */
+  --text-label: #aaaaaa; /* overline labels, metadata */
+  --text-on-dark: #ffffff; /* text on dark backgrounds */
+
+  /* --- Border --- */
+  --border-subtle: rgba(0, 0, 0, 0.07); /* very light card borders */
+  --border-card: rgba(0, 0, 0, 0.06); /* product / category card border */
+  --border-input: rgba(0, 0, 0, 0.15); /* form inputs */
+  --border-dark: rgba(255, 255, 255, 0.12); /* borders on dark bg */
+
+  /* --- Accent Colors --- */
+  --accent-black: #000000; /* primary CTA, badges, icon buttons */
+  --accent-gold: #c5a059; /* subtle luxury accent (use sparingly) */
+
+  /* --- Card & Section Shadows --- */
+  --card-shadow: 0 2px 12px rgba(0, 0, 0, 0.07), 0 1px 3px rgba(0, 0, 0, 0.05);
+  --card-shadow-hover:
+    0 8px 30px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+  --section-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+
+  /* --- Border Radius --- */
+  --radius-sm: 12px; /* small elements (badges, inputs) */
+  --radius-card: 16px; /* product cards */
+  --radius-section: 24px; /* section containers, category cards */
+  --radius-btn: 9999px; /* pill buttons */
+
+  /* --- Glassmorphism Tokens (used sparingly) --- */
+  --glass-bg-top: rgba(255, 255, 255, 0.55);
+  --glass-bg-bottom: rgba(255, 255, 255, 0.18);
+  --glass-border: rgba(255, 255, 255, 0.45);
+  --glass-blur: 24px;
+  --glass-drop-shadow: 0 18px 50px rgba(0, 0, 0, 0.12);
+  --glass-muted-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+  --glass-inset-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    inset 0 -10px 30px rgba(0, 0, 0, 0.06);
+  --glass-radius: 1.75rem;
+
+  /* --- Neumorphism Tokens (minimal use) --- */
+  --neu-bg: #f5f5f7;
+  --neu-light: #ffffff;
+  --neu-shadow-color: rgba(209, 209, 214, 0.6);
+  --neu-outer-shadow: 8px 8px 16px rgba(209, 209, 214, 0.6);
+  --neu-inner-shadow: -8px -8px 16px rgba(255, 255, 255, 0.9);
+  --neu-pressed-inset: inset 6px 6px 14px rgba(0, 0, 0, 0.1);
+  --neu-radius: 20px;
+
+  /* --- Transition --- */
+  --transition-fast: all 200ms cubic-bezier(0.2, 0.9, 0.2, 1);
+  --transition-smooth: all 400ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ============================================================
+   BASE ELEMENT STYLES
+   ============================================================ */
+body {
+  font-family: var(--font-main);
+  color: var(--text-main);
+  background-color: var(--bg-primary);
+  background-image: url("/assets/background.png");
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+body::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-accent);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+/* Specific overrides for Section Titles and Product Names as requested */
+.sub-title {
+  font-family: var(--font-playfair);
+}
+
+.badge-title,
+.content {
+  font-family: var(--font-montserrat);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+/* ============================================================
+   1. LAYOUT UTILITIES
+   ============================================================ */
+.container-custom {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.max-w-7xl {
+  max-width: 80rem;
+  margin: 0 auto;
+}
+
+.flex {
+  display: flex;
+}
+.flex-col {
+  flex-direction: column;
+}
+.flex-wrap {
+  flex-wrap: wrap;
+}
+.items-center {
+  align-items: center;
+}
+.items-start {
+  align-items: flex-start;
+}
+.items-end {
+  align-items: flex-end;
+}
+.justify-between {
+  justify-content: space-between;
+}
+.justify-center {
+  justify-content: center;
+}
+.justify-start {
+  justify-content: flex-start;
+}
+.justify-end {
+  justify-content: flex-end;
+}
+.flex-1 {
+  flex: 1 1 0%;
+}
+.flex-1-5 {
+  flex: 1.5 1 0%;
+}
+.shrink-0 {
+  flex-shrink: 0;
+}
+
+/* .grid          { display: grid; }
+.grid-cols-1   { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+.grid-cols-2   { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid-cols-3   { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.grid-cols-4   { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.grid-cols-5   { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+
+@media (min-width: 768px) {
+  .md-flex            { display: flex; }
+  .md-hidden          { display: none; }
+  .md-grid-cols-2     { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .md-grid-cols-3     { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .md-grid-cols-4     { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+@media (min-width: 1024px) {
+  .lg-flex            { display: flex; }
+  .lg-hidden          { display: none; }
+  .lg-grid-cols-2     { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lg-flex-row        { flex-direction: row; }
+  .lg-sticky          { position: sticky; }
+  .lg-top-32          { top: 8rem; }
+} */
+
+/* Gap */
+.gap-2 {
+  gap: 0.5rem;
+}
+.gap-4 {
+  gap: 1rem;
+}
+.gap-6 {
+  gap: 1.5rem;
+}
+.gap-8 {
+  gap: 2rem;
+}
+.gap-10 {
+  gap: 2.5rem;
+}
+.gap-12 {
+  gap: 3rem;
+}
+.gap-16 {
+  gap: 4rem;
+}
+.gap-20 {
+  gap: 5rem;
+}
+
+/* ============================================================
+   2. SPACING UTILITIES
+   ============================================================ */
+.p-2 {
+  padding: 0.5rem;
+}
+.p-4 {
+  padding: 1rem;
+}
+.p-5 {
+  padding: 1.25rem;
+}
+.p-6 {
+  padding: 1.5rem;
+}
+.p-8 {
+  padding: 2rem;
+}
+
+.px-2 {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+.px-6 {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+.px-8 {
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+.px-10 {
+  padding-left: 2.5rem;
+  padding-right: 2.5rem;
+}
+.px-12 {
+  padding-left: 3rem;
+  padding-right: 3rem;
+}
+
+.py-1 {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+.py-2 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+.py-4 {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+.py-5 {
+  padding-top: 1.25rem;
+  padding-bottom: 1.25rem;
+}
+.py-6 {
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+.py-24 {
+  padding-top: 6rem;
+  padding-bottom: 6rem;
+}
+
+.pt-2 {
+  padding-top: 0.5rem;
+}
+.pt-4 {
+  padding-top: 1rem;
+}
+.pt-6 {
+  padding-top: 1.5rem;
+}
+.pt-8 {
+  padding-top: 2rem;
+}
+.pt-10 {
+  padding-top: 2.5rem;
+}
+.pt-32 {
+  padding-top: 8rem;
+}
+.pb-24 {
+  padding-bottom: 6rem;
+}
+
+.pb-1 {
+  padding-bottom: 0.25rem;
+}
+.pb-2 {
+  padding-bottom: 0.5rem;
+}
+
+
+.mt-8 {
+  margin-top: 2rem;
+}
+.mt-12 {
+  margin-top: 3rem;
+}
+.mt-16 {
+  margin-top: 4rem;
+}
+.mt-20 {
+  margin-top: 5rem;
+}
+.mt-24 {
+  margin-top: 6rem;
+}
+
+.mr-2 {
+  margin-right: 0.5rem;
+}
+.mr-4 {
+  margin-right: 1rem;
+}
+
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+.mb-4 {
+  margin-bottom: 1rem;
+}
+.mb-6 {
+  margin-bottom: 1.5rem;
+}
+.mb-8 {
+  margin-bottom: 2rem;
+}
+.mb-10 {
+  margin-bottom: 2.5rem;
+}
+
+.mx-2 {
+  margin-right: 0.5rem;
+  margin-left: 0.5rem;
+}
+.mx-4 {
+  margin-right: 1rem;
+  margin-left: 1rem;
+}
+
+.my-2 {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.my-4 {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.space-y-2 > * + * {
+  margin-top: 0.5rem;
+}
+.space-y-3 > * + * {
+  margin-top: 0.75rem;
+}
+.space-y-4 > * + * {
+  margin-top: 1rem;
+}
+.space-y-5 > * + * {
+  margin-top: 1.25rem;
+}
+.space-y-6 > * + * {
+  margin-top: 1.5rem;
+}
+.space-y-8 > * + * {
+  margin-top: 2rem;
+}
+.space-y-10 > * + * {
+  margin-top: 2.5rem;
+}
+
+/* ============================================================
+   3. TYPOGRAPHY & COLOR UTILITIES
+   ============================================================ */
+
+/* Size */
+.text-xs {
+  font-size: 0.75rem;
+}
+.text-sm {
+  font-size: 0.875rem;
+}
+.text-base {
+  font-size: 1rem;
+}
+.text-lg {
+  font-size: 1.125rem;
+}
+.text-xl {
+  font-size: 1.25rem;
+}
+.text-2xl {
+  font-size: 1.5rem;
+}
+.text-3xl {
+  font-size: 1.875rem;
+}
+.text-4xl {
+  font-size: 2.25rem;
+}
+.text-5xl {
+  font-size: 3rem;
+}
+.text-6xl {
+  font-size: 3.75rem;
+}
+
+/* Weight */
+.font-light {
+  font-weight: 300;
+}
+.font-normal {
+  font-weight: 400;
+}
+.font-medium {
+  font-weight: 500;
+}
+.font-semibold {
+  font-weight: 600;
+}
+.font-bold {
+  font-weight: 700;
+}
+.font-black {
+  font-weight: 900;
+}
+
+/* Style & Transform */
+.uppercase {
+  text-transform: uppercase;
+}
+.italic {
+  font-style: italic;
+}
+.tracking-widest {
+  letter-spacing: 0.1em;
+}
+.tracking-wide-2 {
+  letter-spacing: 0.2em;
+}
+.tracking-wide-3 {
+  letter-spacing: 0.3em;
+}
+.tracking-wide-4 {
+  letter-spacing: 0.4em;
+}
+.tracking-wide-5 {
+  letter-spacing: 0.5em;
+}
+
+/* Text Colors */
+.text-white {
+  color: #ffffff;
+}
+.text-text-main {
+  color: var(--text-main);
+}
+.text-text-muted {
+  color: var(--text-muted);
+}
+.text-text-label {
+  color: var(--text-label);
+}
+.text-accent-gold {
+  color: var(--accent-gold);
+}
+.text-black {
+  color: #000000;
+}
+
+/* Background Colors */
+.bg-primary {
+  background-color: var(--bg-primary);
+}
+.bg-secondary {
+  background-color: var(--bg-secondary);
+}
+.bg-card {
+  background-color: var(--bg-card);
+}
+.bg-dark {
+  background-color: var(--bg-dark);
+}
+.bg-white {
+  background-color: #ffffff;
+}
+.bg-black {
+  background-color: #000000;
+}
+.bg-gold-5 {
+  background-color: rgba(197, 160, 89, 0.05);
+}
+.bg-slate-30 {
+  background-color: rgba(226, 232, 240, 0.3);
+}
+.bg-white-40 {
+  background-color: rgba(255, 255, 255, 0.4);
+}
+
+/* ============================================================
+   4. DUKY STORE COMPONENT LIBRARY
+   ============================================================ */
+
+/* ------ 4A. SECTION CONTAINER ------ */
+/* White rounded container (used throughout: category, products, FAQ, etc.) */
+.section-container {
+  background: var(--bg-card);
+  border-radius: var(--radius-section);
+  padding: 2.5rem;
+  box-shadow: var(--section-shadow);
+}
+
+.section-padding {
+  padding: 80px 0;
+}
+
+/* ------ 4B. SECTION LABELS / OVERLINES ------ */
+/* Small uppercase gray label above section titles */
+.section-label {
+  font-family: var(--font-main);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-label);
+}
+
+/* ------ 4C. HERO TYPOGRAPHY ------ */
+.hero-title {
+  font-family: var(--font-accent);
+  font-size: clamp(3.5rem, 10vw, 6rem);
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+/* Muted / ghost portion of display title (e.g. "2026" in light gray) */
+.hero-title-ghost {
+  color: var(--text-label);
+  font-weight: 300;
+}
+
+/* ------ 4D. BUTTONS ------ */
+
+/* Base shared button styles */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: var(--font-main);
+  font-weight: 700;
+  font-size: 0.875rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border-radius: var(--radius-btn);
+  padding: 0.875rem 1.75rem;
+  cursor: pointer;
+  border: none;
+  transition: var(--transition-fast);
+  white-space: nowrap;
+}
+
+/* Primary — solid black pill (KHÁM PHÁ NGAY, XEM BST, Mua ngay) */
+.btn-primary {
+  background: var(--accent-black);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+}
+.btn-primary:hover {
+  background: #1a1a1a;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+}
+
+/* Secondary — outline pill (XEM LOOKBOOK, Xem tất cả) */
+.btn-outline {
+  background: transparent;
+  color: var(--text-main);
+  border: 1.5px solid var(--text-main);
+}
+.btn-outline:hover {
+  background: var(--accent-black);
+  color: #ffffff;
+  border-color: var(--accent-black);
+  transform: translateY(-2px);
+}
+
+/* Ghost — text link with arrow (Xem ngay →, Xem tất cả →) */
+.btn-ghost {
+  background: none;
+  color: var(--text-main);
+  border: none;
+  padding: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  border-radius: 0;
+  gap: 0.35rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(0, 0, 0, 0.25);
+  transition: var(--transition-fast);
+}
+.btn-ghost:hover {
+  text-decoration-color: var(--accent-black);
+  gap: 0.6rem;
+}
+
+/* Icon button — black circle with white icon (cart, nav arrows) */
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: var(--accent-black);
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  flex-shrink: 0;
+}
+.btn-icon:hover {
+  background: #333333;
+  transform: scale(1.06);
+}
+.btn-icon:active {
+  transform: scale(0.97);
+}
+
+/* Icon button — light variant (outline nav arrow on carousel) */
+.btn-icon-light {
+  background: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--card-shadow);
+}
+.btn-icon-light:hover {
+  background: var(--accent-black);
+  color: #ffffff;
+  border-color: var(--accent-black);
+}
+
+/* ------ 4E. PRODUCT CARD ------ */
+.product-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-card);
+  border: 1px solid var(--border-card);
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+  position: relative;
+  transition: var(--transition-smooth);
+  cursor: pointer;
+}
+.product-card:hover {
+  box-shadow: var(--card-shadow-hover);
+  transform: translateY(-4px);
+}
+
+/* Image area */
+.product-card__image {
+  aspect-ratio: 1 / 1.1;
+  overflow: hidden;
+  background: var(--bg-secondary);
+}
+.product-card__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  transition: transform 500ms ease;
+}
+.product-card:hover .product-card__image img {
+  transform: scale(1.04);
+}
+
+/* Body */
+.product-card__body {
+  padding: 1rem 1rem 1.25rem;
+}
+
+/* Name */
+.product-card__name {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-main);
+  margin-bottom: 0.35rem;
+  line-height: 1.4;
+}
+
+/* Price */
+.product-card__price {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+/* Cart button (bottom-right) */
+.product-card__cart {
+  position: absolute;
+  bottom: 1.25rem;
+  right: 1rem;
+}
+
+/* Rating */
+.product-card__rating {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
+
+/* ------ 4F. BADGE (NEW / BEST) ------ */
+.badge {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+  font-family: var(--font-main);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: var(--bg-secondary);
+  color: var(--text-muted);
+  border: 1px solid var(--border-subtle);
+}
+.badge-new {
+  background: #f0f0f2;
+  color: #444;
+}
+.badge-best {
+  background: var(--accent-black);
+  color: #fff;
+  border-color: var(--accent-black);
+}
+
+/* ------ 4G. CATEGORY CARD ------ */
+/* White card with image right-aligned, label + link left */
+.category-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-section);
+  border: 1px solid var(--border-card);
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+  position: relative;
+  transition: var(--transition-smooth);
+  cursor: pointer;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  min-height: 200px;
+  padding: 1.5rem;
+}
+.category-card:hover {
+  box-shadow: var(--card-shadow-hover);
+  transform: translateY(-3px);
+}
+.category-card__name {
+  font-family: var(--font-accent);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-main);
+  letter-spacing: -0.02em;
+}
+.category-card__image {
+  width: 50%;
+  max-height: 170px;
+  object-fit: contain;
+  object-position: center bottom;
+  mix-blend-mode: multiply;
+  filter: contrast(1.04) saturate(1.02);
+}
+
+/* ------ 4H. FEATURE STRIP ------ */
+/* Horizontal row of 4 icon+text items at bottom of sections */
+.feature-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: var(--bg-card);
+  border-radius: var(--radius-section);
+  padding: 1.25rem 2rem;
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--card-shadow);
+}
+.feature-strip__item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+}
+.feature-strip__icon {
+  width: 2.25rem;
+  height: 2.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-main);
+  flex-shrink: 0;
+}
+.feature-strip__title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+.feature-strip__desc {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 0.1rem;
+}
+.feature-strip__divider {
+  width: 1px;
+  height: 40px;
+  background: var(--border-subtle);
+  flex-shrink: 0;
+}
+
+/* ------ 4I. STAT CARD ------ */
+/* Small metric card: "50+ / Mẫu boot nam" */
+.stat-card {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-sm);
+  padding: 0.9rem 1.1rem;
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.stat-card__icon {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+}
+.stat-card__value {
+  font-family: var(--font-accent);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-main);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.stat-card__label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.15rem;
+}
+
+/* ------ 4J. FEATURED STYLE PANEL ------ */
+/* Right-side carousel card in Men's/Women's collection sections */
+.featured-panel {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-section);
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-height: 320px;
+  padding: 2rem;
+}
+.featured-panel__content {
+  position: absolute;
+  left: 2rem;
+  top: 2rem;
+  max-width: 220px;
+  z-index: 2;
+}
+.featured-panel__label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-label);
+  margin-bottom: 0.5rem;
+}
+.featured-panel__title {
+  font-family: var(--font-accent);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-main);
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  margin-bottom: 0.75rem;
+}
+.featured-panel__image {
+  width: 55%;
+  object-fit: contain;
+  object-position: center bottom;
+  filter: contrast(1.05) saturate(1.02);
+  z-index: 1;
+}
+
+/* ------ 4K. REVIEW CARD ------ */
+.review-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  flex: 1;
+}
+.review-card__avatar {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: var(--bg-secondary);
+}
+.review-card__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.review-card__name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+.review-card__location {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+.review-card__stars {
+  display: flex;
+  gap: 0.15rem;
+  color: #f4b400;
+  font-size: 0.85rem;
+  margin: 0.25rem 0;
+}
+.review-card__text {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+.review-card__product-img {
+  width: 3.5rem;
+  height: 3.5rem;
+  object-fit: contain;
+  flex-shrink: 0;
+  filter: grayscale(0.15);
+}
+
+/* ------ 4L. BLOG / LOOKBOOK CARD ------ */
+.blog-card {
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  position: relative;
+  aspect-ratio: 3/4;
+  cursor: pointer;
+}
+.blog-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 600ms ease;
+}
+.blog-card:hover .blog-card__image {
+  transform: scale(1.04);
+}
+.blog-card__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.65) 0%,
+    rgba(0, 0, 0, 0) 55%
+  );
+}
+.blog-card__content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1.5rem;
+  color: #fff;
+}
+.blog-card__date {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  border-radius: 8px;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  color: #fff;
+}
+.blog-card__category {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 0.35rem;
+}
+.blog-card__title {
+  font-family: var(--font-accent);
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+.blog-card__cta {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: 0.6rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ------ 4M. SIZE GUIDE STEP ------ */
+.size-step {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: var(--bg-card);
+  border-radius: var(--radius-card);
+  padding: 1.25rem 1.5rem;
+  flex: 1;
+  border: 1px solid var(--border-subtle);
+}
+.size-step__number {
+  font-family: var(--font-accent);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1;
+}
+.size-step__label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+.size-step__icon {
+  width: 3.5rem;
+  height: 3.5rem;
+  object-fit: contain;
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+/* ------ 4N. FAQ (DARK SECTION) ------ */
+.faq-section {
+  background: var(--bg-dark);
+  border-radius: var(--radius-section);
+  padding: 3rem;
+  color: var(--text-on-dark);
+}
+.faq-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.1rem 1.5rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-dark);
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+.faq-item:hover {
+  border-color: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.04);
+}
+.faq-item__text {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+.faq-item__icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid var(--border-dark);
+  color: rgba(255, 255, 255, 0.6);
+  flex-shrink: 0;
+  font-size: 1rem;
+}
+
+/* ------ 4O. NEWSLETTER INPUT ------ */
+.newsletter-form {
+  display: flex;
+  gap: 0;
+  border-radius: var(--radius-btn);
+  overflow: hidden;
+  border: 1px solid var(--border-input);
+  background: var(--bg-card);
+}
+.newsletter-form input {
+  flex: 1;
+  padding: 0.875rem 1.25rem;
+  border: none;
+  outline: none;
+  font-family: var(--font-main);
+  font-size: 0.875rem;
+  color: var(--text-main);
+  background: transparent;
+}
+.newsletter-form input::placeholder {
+  color: var(--text-label);
+}
+.newsletter-form .btn-primary {
+  border-radius: 0;
+  border-top-right-radius: var(--radius-btn);
+  border-bottom-right-radius: var(--radius-btn);
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+/* ------ 4P. MINIMAL CARD (legacy) ------ */
+.minimal-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-section);
+  padding: 2rem;
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--card-shadow);
+  transition: var(--transition-smooth);
+}
+.minimal-card:hover {
+  box-shadow: var(--card-shadow-hover);
+}
+
+/* ============================================================
+   5. GLASSMORPHISM (SUBTLE — used sparingly)
+   ============================================================ */
+.glass-effect {
+  background: linear-gradient(
+    180deg,
+    var(--glass-bg-top),
+    var(--glass-bg-bottom)
+  );
+  backdrop-filter: blur(var(--glass-blur)) saturate(115%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(115%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-muted-shadow);
+  border-radius: var(--glass-radius);
+  position: relative;
+  overflow: hidden;
+}
+.glass-effect::before {
+  content: "";
+  position: absolute;
+  left: -10%;
+  right: 10%;
+  top: -5%;
+  height: 40%;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.16),
+    rgba(255, 255, 255, 0)
+  );
+  transform: rotate(-2deg);
+}
+.glass-effect::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: var(--glass-radius);
+  box-shadow: var(--glass-inset-shadow);
+}
+.rounded-glass {
+  border-radius: var(--glass-radius) !important;
+}
+.glass-card {
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 24px;
+  padding: 1.5rem;
+}
+
+/* Category card glass variant (legacy) */
+.category-card-glass {
+  border-radius: 20px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.72),
+    rgba(255, 255, 255, 0.22)
+  );
+  backdrop-filter: blur(26px) saturate(120%);
+  -webkit-backdrop-filter: blur(26px) saturate(120%);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  box-shadow:
+    0 18px 50px rgba(0, 0, 0, 0.1),
+    0 6px 18px rgba(0, 0, 0, 0.05);
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.category-card-glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: 20px;
+  background:
+    radial-gradient(
+      900px 380px at 12% 14%,
+      rgba(255, 255, 255, 0.5),
+      rgba(255, 255, 255, 0) 58%
+    ),
+    repeating-radial-gradient(
+      circle at 18% 22%,
+      rgba(255, 255, 255, 0.05) 0 2px,
+      rgba(255, 255, 255, 0) 2px 9px
+    );
+  mix-blend-mode: overlay;
+  opacity: 0.6;
+  z-index: 0;
+}
+.category-card-glass::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: 20px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -16px 40px rgba(0, 0, 0, 0.06);
+  z-index: 0;
+}
+.category-card-image {
+  background: transparent;
+  mix-blend-mode: multiply;
+  filter: contrast(1.06) saturate(1.04);
+}
+
+/* ============================================================
+   6. NEUMORPHISM (MINIMAL — 10%)
+   ============================================================ */
+.neumorphic-button,
+.neumorphic-button-dark,
+.neu-button,
+.neu-button-dark {
+  transition: all 220ms cubic-bezier(0.2, 0.9, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.neumorphic-button,
+.neu-button {
+  background: var(--neu-bg);
+  color: var(--text-main);
+  border-radius: var(--neu-radius);
+  box-shadow: var(--neu-outer-shadow), var(--neu-inner-shadow);
+  border: 0;
+  cursor: pointer;
+  padding: 12px 22px;
+  font-weight: 600;
+}
+.neumorphic-button:hover,
+.neu-button:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 22px 60px rgba(0, 0, 0, 0.1),
+    0 8px 24px rgba(0, 0, 0, 0.05),
+    var(--neu-inner-shadow);
+}
+.neumorphic-button:active,
+.neu-button:active {
+  transform: translateY(0);
+  box-shadow: var(--neu-pressed-inset);
+}
+
+.neumorphic-button-dark,
+.neu-button-dark {
+  background: linear-gradient(180deg, #111111, #000000);
+  color: #fff;
+  border-radius: var(--neu-radius);
+  box-shadow:
+    10px 10px 30px rgba(0, 0, 0, 0.35),
+    -6px -6px 18px rgba(255, 255, 255, 0.04);
+  border: none;
+  padding: 12px 22px;
+}
+.neumorphic-button-dark:hover,
+.neu-button-dark:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    14px 14px 40px rgba(0, 0, 0, 0.45),
+    -6px -6px 18px rgba(255, 255, 255, 0.05);
+}
+.neumorphic-button-dark:active,
+.neu-button-dark:active {
+  box-shadow:
+    var(--neu-pressed-inset),
+    inset 0 6px 12px rgba(255, 255, 255, 0.03);
+}
+
+/* ============================================================
+   7. POSITION, SIZE & OVERFLOW UTILITIES
+   ============================================================ */
+.relative {
+  position: relative;
+}
+.absolute {
+  position: absolute;
+}
+.fixed {
+  position: fixed;
+}
+.sticky {
+  position: sticky;
+}
+.inset-0 {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+.z-0 {
+  z-index: 0;
+}
+.z-10 {
+  z-index: 10;
+}
+.z-20 {
+  z-index: 20;
+}
+.z-30 {
+  z-index: 30;
+}
+.z-50 {
+  z-index: 50;
+}
+.top-0 {
+  top: 0;
+}
+.right-0 {
+  right: 0;
+}
+.bottom-0 {
+  bottom: 0;
+}
+.left-0 {
+  left: 0;
+}
+.left-half {
+  left: 50%;
+}
+.minus-translate-x-half {
+  transform: translateX(-50%);
+}
+.top-10p {
+  top: 10%;
+}
+.bottom-10 {
+  bottom: 2.5rem;
+}
+.left-10 {
+  left: 2.5rem;
+}
+.right-10 {
+  right: 2.5rem;
+}
+.overflow-hidden {
+  overflow: hidden;
+}
+.overflow-x-auto {
+  overflow-x: auto;
+}
+.pointer-events-none {
+  pointer-events: none;
+}
+
+.w-8 {
+  width: 2rem;
+}
+.w-10 {
+  width: 2.5rem;
+}
+.w-12 {
+  width: 3rem;
+}
+.w-24 {
+  width: 6rem;
+}
+.w-64 {
+  width: 16rem;
+}
+.w-72 {
+  width: 18rem;
+}
+.w-80 {
+  width: 20rem;
+}
+.w-full {
+  width: 100%;
+}
+.h-8 {
+  height: 2rem;
+}
+.h-10 {
+  height: 2.5rem;
+}
+.h-12 {
+  height: 3rem;
+}
+.h-28 {
+  height: 7rem;
+}
+.h-full {
+  height: 100%;
+}
+.h-screen {
+  height: 100vh;
+}
+.min-h-screen {
+  min-height: 100vh;
+}
+
+.aspect-1-1 {
+  aspect-ratio: 1 / 1;
+}
+.aspect-4-5 {
+  aspect-ratio: 4 / 5;
+}
+.aspect-3-4 {
+  aspect-ratio: 3 / 4;
+}
+.object-cover {
+  object-fit: cover;
+}
+.object-contain {
+  object-fit: contain;
+}
+.object-right {
+  object-position: right;
+}
+.object-center {
+  object-position: center;
+}
+
+.opacity-0 {
+  opacity: 0;
+}
+.opacity-60 {
+  opacity: 0.6;
+}
+.opacity-80 {
+  opacity: 0.8;
+}
+.opacity-90 {
+  opacity: 0.9;
+}
+.opacity-95 {
+  opacity: 0.95;
+}
+
+/* ============================================================
+   8. IMAGE & FILTER EFFECTS
+   ============================================================ */
+.grayscale {
+  filter: grayscale(1);
+}
+.grayscale-50 {
+  filter: grayscale(0.5);
+}
+.brightness-110 {
+  filter: brightness(1.1);
+}
+.grayscale-bright {
+  filter: grayscale(1) brightness(1.1);
+}
+.blur-120 {
+  filter: blur(120px);
+}
+.blur-100 {
+  filter: blur(100px);
+}
+
+/* ============================================================
+   9. STATE & HOVER UTILITIES
+   ============================================================ */
+.group:hover .group-hover-grayscale-0 {
+  filter: grayscale(0) brightness(1) !important;
+}
+.group:hover .group-hover-scale-105 {
+  transform: scale(1.05) !important;
+}
+.group:hover .group-hover-text-accent-gold {
+  color: var(--accent-gold) !important;
+}
+
+.hover-bg-black:hover {
+  background-color: #000000;
+}
+.hover-text-white:hover {
+  color: #ffffff;
+}
+.hover-border-gold:hover {
+  border-color: var(--accent-gold);
+}
+.hover-shadow:hover {
+  box-shadow: var(--card-shadow-hover);
+}
+
+/* ============================================================
+   10. ANIMATIONS
+   ============================================================ */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.animate-fade-in {
+  animation: fadeIn 0.6s ease forwards;
+}
+.animate-slide-in {
+  animation: slideInLeft 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Stagger helpers */
+.delay-100 {
+  animation-delay: 100ms;
+}
+.delay-200 {
+  animation-delay: 200ms;
+}
+.delay-300 {
+  animation-delay: 300ms;
+}
+.delay-400 {
+  animation-delay: 400ms;
+}
+.delay-500 {
+  animation-delay: 500ms;
+}
+
+/* ============================================================
+   11. DECORATIVE UTILITIES
+   ============================================================ */
+.text-gradient {
+  background: linear-gradient(135deg, #0d0d0d 0%, #434343 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Divider line with diamond icon (used in "WOMEN'S COLLECTION ——◇") */
+.section-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--text-label);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.section-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--border-subtle);
+}
+
+/* Transition utilities */
+.transition-all {
+  transition: var(--transition-smooth);
+}
+.transition-fast {
+  transition: var(--transition-fast);
+}
+.duration-500 {
+  transition-duration: 500ms;
+}
+.duration-700 {
+  transition-duration: 700ms;
+}
+
+/* Scrollbar */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ============================================================
+   12. NAVBAR
+   ============================================================ */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(20px) saturate(120%);
+  -webkit-backdrop-filter: blur(20px) saturate(120%);
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  height: 4rem;
+}
+.navbar__logo {
+  font-family: var(--font-main);
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.navbar__nav {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  list-style: none;
+}
+.navbar__nav a {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-main);
+  transition: color 200ms;
+}
+.navbar__nav a:hover {
+  color: var(--text-muted);
+}
+.navbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* ============================================================
+   TOAST ANIMATION
+   ============================================================ */
+@keyframes slide-in {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
