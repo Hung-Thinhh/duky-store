@@ -34,7 +34,7 @@ export const COLLECTIONS: Record<string, CollectionConfig> = {
       title: "GIÀY BOOT\nNAM CAO CẤP",
       description:
         "Thiết kế tinh tế - Da thật cao cấp - Bền bỉ theo thời gian\nKhẳng định phong cách quý ông hiện đại.",
-      image: "/assets/banner_boot_nam.png",
+      image: "/assets/banner_boot_nam.jpg",
       ctaPrimary: "Mua ngay",
       ctaSecondary: "Xem bộ sưu tập",
     },
@@ -249,7 +249,7 @@ export const COLLECTIONS: Record<string, CollectionConfig> = {
       title: "GIÀY BOOT\nNỮ CAO CẤP",
       description:
         "Thanh lịch - Quyến rũ - Tôn dáng hoàn hảo\nĐẳng cấp phái đẹp trong từng bước chân.",
-      image: "/assets/banner_boot_nu.png",
+      image: "/assets/banner_boot_nu.jpg",
       ctaPrimary: "Mua ngay",
       ctaSecondary: "Xem bộ sưu tập",
     },
@@ -423,7 +423,7 @@ export const COLLECTIONS: Record<string, CollectionConfig> = {
       title: "PHỤ KIỆN\nTHỜI TRANG",
       description:
         "Hoàn thiện phong cách với phụ kiện cao cấp\nThắt lưng da, ví, tất và xi đánh giày chính hãng.",
-      image: "/assets/banner_phukien.png",
+      image: "/assets/banner_phukien.jpg",
       ctaPrimary: "Mua ngay",
       ctaSecondary: "Xem tất cả",
     },
@@ -548,19 +548,19 @@ export const COLLECTIONS: Record<string, CollectionConfig> = {
       },
     ],
   },
-  "outfit": {
-    slug: "outfit",
+  "unisex": {
+    slug: "unisex",
     meta: {
-      title: "Outfit & Mix Match | Duky Store",
+      title: "Unisex & Mix Match | Duky Store",
       description:
-        "Gợi ý phối đồ cùng boot - Áo khoác da, quần jeans, váy và set outfit hoàn chỉnh.",
+        "Gợi ý phối đồ cùng boot - Áo khoác da, quần jeans, váy và set unisex hoàn chỉnh.",
       gender: "unisex",
     },
     hero: {
-      label: "OUTFIT & MIX MATCH",
-      title: "OUTFIT\nPHỐI ĐỒ",
+      label: "UNISEX & MIX MATCH",
+      title: "UNISEX\nPHỐI ĐỒ",
       description:
-        "Gợi ý phối đồ hoàn hảo cùng boot\nÁo khoác da, quần jeans, váy và set outfit trendy.",
+        "Gợi ý phối đồ hoàn hảo cùng boot\nÁo khoác da, quần jeans, váy và set unisex trendy.",
       image: "/assets/banner_outfit.png",
       ctaPrimary: "Mua ngay",
       ctaSecondary: "Xem lookbook",
@@ -643,12 +643,12 @@ export const COLLECTIONS: Record<string, CollectionConfig> = {
       },
       {
         id: "of-6",
-        name: "Set Outfit Nam - Biker Style",
+        name: "Set Unisex Nam - Biker Style",
         desc: "Combo áo khoác da + quần jeans đen + boot Chelsea. Tiết kiệm 15%.",
         price: 3990000,
         formattedPrice: "3.990.000đ",
         img: "/assets/mau_nam_5.png",
-        category: "Set outfit",
+        category: "Set unisex",
         badge: "-15%",
         originalPrice: 4690000,
         rating: 4.8,
@@ -659,12 +659,12 @@ export const COLLECTIONS: Record<string, CollectionConfig> = {
       },
       {
         id: "of-7",
-        name: "Set Outfit Nữ - Street Style",
+        name: "Set Unisex Nữ - Street Style",
         desc: "Combo áo khoác bomber + váy da + boot cổ cao. Tiết kiệm 20%.",
         price: 3490000,
         formattedPrice: "3.490.000đ",
         img: "/assets/mau_nu_5.png",
-        category: "Set outfit",
+        category: "Set unisex",
         badge: "-20%",
         originalPrice: 4360000,
         rating: 4.6,

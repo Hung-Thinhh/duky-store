@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import { ProductCard } from "@/components/shop/ProductCard";
 import { Product } from "@/types/product";
 import { LiquidGlassCard } from "@/components/ui/liquid-glass";
@@ -10,6 +11,26 @@ import Filter, { FilterState } from "@/components/shop/Fillter";
 import { useProducts } from "@/hooks/useProducts";
 import { Header, Footer } from "@/components/layout";
 import { useCart } from "@/context/CartContext";
+
+interface BannerContent {
+  image: string;
+  alt: string;
+  badge: string;
+  titleLine1: string;
+  titleLine2: string;
+  description: string;
+}
+
+// TODO: Replace with API call when backend is ready
+// Example: fetch("/api/banners/products").then(res => res.json())
+const MOCK_PRODUCTS_BANNER: BannerContent = {
+  image: "/assets/banner_products.jpg",
+  alt: "Tất cả sản phẩm - Duky Store",
+  badge: "ALL PRODUCTS",
+  titleLine1: "BỘ SƯU TẬP",
+  titleLine2: "DUKY STORE",
+  description: "Khám phá bộ sưu tập giày boot nam nữ cao cấp tại Duky Store.",
+};
 
 const PRODUCTS_PER_PAGE = 12;
 
@@ -53,6 +74,39 @@ export default function ProductsPage() {
     <>
       <Header cartCount={cartCount} />
 
+      {/* Hero Banner */}
+      <section className="relative w-full" style={{ width: '100vw', marginLeft: 'calc(-50vw + 50%)' }}>
+        <Image
+          src={MOCK_PRODUCTS_BANNER.image}
+          alt={MOCK_PRODUCTS_BANNER.alt}
+          width={1920}
+          height={1080}
+          sizes="100vw"
+          className="w-full h-auto"
+          priority
+        />
+        {/* Text overlay */}
+        <div className="absolute inset-0 flex items-center">
+          <div className="px-12 md:px-16 lg:px-[100px] space-y-3">
+            <span className="inline-block text-xs font-medium tracking-widest text-gray-500 uppercase">
+              {MOCK_PRODUCTS_BANNER.badge}
+            </span>
+            <h1 className="leading-[1.1] tracking-tighter text-gray-900">
+              <span className="block text-[36px] md:text-[52px] lg:text-[64px] font-semibold">{MOCK_PRODUCTS_BANNER.titleLine1}</span>
+              <span className="block text-[30px] md:text-[44px] lg:text-[56px] font-medium italic -mt-1 md:-mt-2">
+                <span className="font-montserrat not-italic font-semibold tracking-wide bg-gradient-to-br from-zinc-500 via-zinc-300 to-zinc-700 bg-clip-text text-transparent inline-block ml-1 md:ml-2">{MOCK_PRODUCTS_BANNER.titleLine2}</span>
+              </span>
+            </h1>
+            <div className="flex items-start gap-3 max-w-sm">
+              <div className="w-8 h-px bg-gray-900 mt-2.5 shrink-0" />
+              <p className="text-sm text-gray-500 leading-relaxed font-light">
+                {MOCK_PRODUCTS_BANNER.description}
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="products-page">
         {/* Breadcrumb */}
         <Navpages
@@ -61,14 +115,6 @@ export default function ProductsPage() {
             { label: "Tất cả sản phẩm" },
           ]}
         />
-
-        {/* Title */}
-        <div className="products-header">
-          <h1 className="products-title">Tất cả sản phẩm</h1>
-          <p className="products-subtitle">
-            Khám phá bộ sưu tập giày boot nam nữ cao cấp tại Duky Store
-          </p>
-        </div>
 
         <div className="products-layout">
           {/* Filter Sidebar */}
@@ -162,7 +208,6 @@ export default function ProductsPage() {
           max-width: 1440px;
           margin: 0 auto;
           padding: 40px 2rem 80px;
-          margin-top: 80px;
         }
 
         .products-header {

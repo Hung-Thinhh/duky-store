@@ -141,7 +141,7 @@ export const GuideSection = () => {
             transition={{ duration: 0.6 }}
             className="w-full lg:w-[40%] flex flex-col items-start space-y-4 lg:pl-12"
           >
-            <h2 className="content text-3xl md:text-3xl lg:text-[40px] font-semibold text-text-main leading-tight tracking-tight">
+            <h2 className="text-4xl md:text-5xl lg:text-[40px] font-semibold text-text-main leading-tight tracking-tight">
               Chọn đúng size giày
               chỉ trong 30 giây
             </h2>
@@ -224,7 +224,7 @@ export const GuideSection = () => {
         {/* Lookbook Section */}
         <div className="glass-effect p-4 mt-8 md:p-8 lg:p-12 overflow-hidden shadow-2xl">
           <div className="flex justify-between items-center mb-6 px-2">
-            <h2 className="content text-2xl md:text-2xl lg:text-[40px] font-semibold text-text-main leading-tight tracking-tight">
+            <h2 className="text-4xl md:text-5xl lg:text-[40px] font-semibold text-text-main leading-tight tracking-tight">
               Phối đồ cùng Duky
             </h2>
             <Link 
@@ -269,7 +269,7 @@ export const GuideSection = () => {
         {/* Feedback Section */}
         <div className="glass-effect p-4 mt-8 md:p-8 lg:p-12 overflow-hidden shadow-2xl relative">
           <div className="flex justify-between items-center mb-10 px-2">
-            <h2 className="content text-2xl md:text-2xl lg:text-[40px] font-semibold text-text-main leading-tight tracking-tight">
+            <h2 className="text-4xl md:text-5xl lg:text-[40px] font-semibold text-text-main leading-tight tracking-tight">
               Khách hàng nói gì về Duky Store
             </h2>
             {/* <Link 

@@ -1,150 +1,103 @@
-'use client';
+import { notFound } from 'next/navigation';
+import type { Metadata } from 'next';
+import { fetchProductBySlug, fetchProductVariants } from '@/lib/api';
+import { buildMetadata } from '@/lib/metadata';
+import { buildProductJsonLd, buildBreadcrumbJsonLd } from '@/lib/structured-data';
+import { JsonLd } from '@/components/seo/JsonLd';
+import { getDisplayPrice, getAllProductImageUrls, hasDiscount } from '@/types/product';
+import { formatCurrency } from '@/lib/utils';
+import ProductDetailClient from './ProductDetailClient';
 
-import { useEffect, useState, use } from 'react';
-import { useRouter } from 'next/navigation';
-import { Header, Footer } from '@/components/layout';
-import InfoSection, { ProductDetail, VariantData } from '@/components/shop/product/InfoSection';
-import DetailSection from '@/components/shop/product/DetailSection';
-import RecommendSection from '@/components/shop/product/RecommendSection';
-import { useCart } from '@/context/CartContext';
-import { fetchProductBySlug, fetchProductVariants, ProductVariant } from '@/lib/api';
-import { Product, getProductImageUrl, getDisplayPrice, getAllProductImageUrls } from '@/types/product';
+export const revalidate = 60;
 
-function formatCurrency(value: number): string {
-  return value.toLocaleString('vi-VN') + ' ₫';
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+
+  try {
+    const product = await fetchProductBySlug(slug);
+    const price = getDisplayPrice(product);
+    const imageUrl = product.thumbnailMedia?.secureUrl || product.thumbnailMedia?.url || undefined;
+
+    return buildMetadata({
+      title: product.name,
+      description: `${product.name} - ${formatCurrency(price)}${product.desc ? `. ${product.desc}` : ''}`,
+      path: `/products/${slug}`,
+      image: imageUrl,
+      type: 'product',
+    });
+  } catch {
+    return buildMetadata({
+      title: 'Sản phẩm',
+      description: 'Chi tiết sản phẩm tại Duky Store',
+      path: `/products/${slug}`,
+    });
+  }
 }
 
-export default function ProductDetailPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = use(params);
-  const router = useRouter();
-  const { cartCount, addToCart } = useCart();
-  const [product, setProduct] = useState<Product | null>(null);
-  const [variants, setVariants] = useState<ProductVariant[]>([]);
-  const [loading, setLoading] = useState(true);
+export default async function ProductDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
 
-  useEffect(() => {
-    async function loadProduct() {
-      try {
-        const [productData, variantsData] = await Promise.all([
-          fetchProductBySlug(slug),
-          fetchProductVariants(slug),
-        ]);
-        setProduct(productData);
-        setVariants(variantsData.data);
-      } catch (err) {
-        console.error('Failed to load product:', err);
-      } finally {
-        setLoading(false);
-      }
+  let product;
+  let variants;
+
+  try {
+    [product, variants] = await Promise.all([
+      fetchProductBySlug(slug),
+      fetchProductVariants(slug),
+    ]);
+  } catch (err: unknown) {
+    // If the API returns a 404, show the not found page
+    if (err instanceof Error && err.message.includes('404')) {
+      notFound();
     }
-    loadProduct();
-  }, [slug]);
-
-  if (loading) {
-    return (
-      <>
-        <Header cartCount={cartCount} />
-        <main style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 80 }}>
-          <p style={{ color: '#888', fontSize: 16 }}>Đang tải sản phẩm...</p>
-        </main>
-        <Footer />
-      </>
-    );
+    throw err;
   }
 
   if (!product) {
-    return (
-      <>
-        <Header cartCount={cartCount} />
-        <main style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 80 }}>
-          <p style={{ color: '#888', fontSize: 16 }}>Không tìm thấy sản phẩm.</p>
-        </main>
-        <Footer />
-      </>
-    );
+    notFound();
   }
 
-  // Map API data to ProductDetail interface
+  // Build structured data
+  const productJsonLd = buildProductJsonLd(product);
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+    { name: 'Trang chủ', url: '/' },
+    { name: 'Sản phẩm', url: '/products' },
+    { name: product.name, url: `/products/${slug}` },
+  ]);
+
+  // Server-rendered SEO content
   const displayPrice = getDisplayPrice(product);
   const originalPrice = product.originalPrice ?? product.price ?? 0;
-  const hasDiscount = product.salePrice !== null && product.salePrice !== undefined && product.salePrice < originalPrice;
-  const discountPercent = hasDiscount ? Math.round((1 - displayPrice / originalPrice) * 100) : 0;
-
-  // Get all images from product
-  const images = getAllProductImageUrls(product);
-
-  // Extract sizes from variants
-  const sizes = variants
-    .filter((v) => v.sizeLabel)
-    .map((v) => Number(v.sizeLabel))
-    .filter((s) => !isNaN(s))
-    .filter((s, i, arr) => arr.indexOf(s) === i)
-    .sort((a, b) => a - b);
-
-  // Extract colors from variants
-  const colors = variants
-    .filter((v) => v.colorName)
-    .map((v) => v.colorName!)
-    .filter((c, i, arr) => arr.indexOf(c) === i);
-
-  const productDetail: ProductDetail = {
-    id: product.id,
-    name: product.name,
-    category: '',
-    collection: '',
-    breadcrumb: ['Trang chủ', product.name],
-    rating: 4.9,
-    reviewsCount: 0,
-    soldCount: 0,
-    price: displayPrice,
-    originalPrice: originalPrice,
-    discountPercent,
-    formattedPrice: formatCurrency(displayPrice),
-    formattedOriginalPrice: formatCurrency(originalPrice),
-    images,
-    specs: [],
-    sizes,
-    colors,
-  };
-
-  const handleAddToCart = async (variantId: string, quantity: number) => {
-    await addToCart(product!.id, variantId, quantity);
-  };
-
-  const handleQuickBuy = (variantId: string, quantity: number) => {
-    // Find the selected variant to get price and label
-    const selectedVariant = variants.find((v) => v.id === variantId);
-    const variantPrice = selectedVariant?.salePrice ?? selectedVariant?.price ?? displayPrice;
-    const variantLabel = [
-      selectedVariant?.sizeLabel ? `Size: ${selectedVariant.sizeLabel}` : '',
-      selectedVariant?.colorName ? `Màu: ${selectedVariant.colorName}` : '',
-    ].filter(Boolean).join(' / ');
-
-    const thumbnailUrl = product!.thumbnailMedia?.secureUrl || product!.thumbnailMedia?.url || images[0] || '';
-
-    const params = new URLSearchParams({
-      quickBuy: 'true',
-      slug,
-      productId: product!.id,
-      variantId,
-      quantity: String(quantity),
-      name: product!.name,
-      price: String(variantPrice),
-      image: thumbnailUrl,
-      variantLabel,
-    });
-    router.push(`/checkout?${params.toString()}`);
-  };
+  const productImages = getAllProductImageUrls(product);
+  const productHasDiscount = hasDiscount(product);
 
   return (
     <>
-      <Header cartCount={cartCount} />
-      <main>
-        <InfoSection product={productDetail} variants={variants as VariantData[]} onAddToCart={handleAddToCart} onQuickBuy={handleQuickBuy} />
-        <DetailSection />
-        <RecommendSection />
-      </main>
-      <Footer />
+      <JsonLd data={productJsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
+
+      {/* SEO-critical server-rendered content (visible to crawlers) */}
+      <article itemScope itemType="https://schema.org/Product" className="sr-only" aria-hidden="true">
+        <h1 itemProp="name">{product.name}</h1>
+        {product.desc && <p itemProp="description">{product.desc}</p>}
+        <div itemProp="offers" itemScope itemType="https://schema.org/Offer">
+          <meta itemProp="priceCurrency" content="VND" />
+          <span itemProp="price" content={String(displayPrice)}>
+            {formatCurrency(displayPrice)}
+          </span>
+          {productHasDiscount && (
+            <span>Giá gốc: {formatCurrency(originalPrice)}</span>
+          )}
+          <link itemProp="availability" href="https://schema.org/InStock" />
+        </div>
+        {productImages.map((imgUrl, idx) => (
+          <meta key={idx} itemProp="image" content={imgUrl} />
+        ))}
+        {product.sku && <meta itemProp="sku" content={product.sku} />}
+      </article>
+
+      {/* Interactive client component */}
+      <ProductDetailClient product={product} variants={variants.data} />
     </>
   );
 }

@@ -158,7 +158,6 @@ export function BlogPageClient() {
           max-width: 1440px;
           margin: 0 auto;
           padding: 40px 2rem 80px;
-          margin-top: 80px;
         }
 
         .blog-header {

@@ -65,7 +65,7 @@ export const BootFemaleSection: React.FC = () => {
           {/* Left Content */}
           <div className="lg:col-span-5 space-y-8">
             <div className="space-y-4">
-              <h2 className="text-4xl md:text-5xl lg:text-[40px] font-semibold text-text-main leading-tight tracking-widest">
+              <h2 className="text-4xl md:text-5xl lg:text-[40px] font-semibold text-text-main leading-tight tracking-tight">
                 BST Boot Nữ
               </h2>
               <div className="w-16 h-[1.5px] bg-gray-300" />

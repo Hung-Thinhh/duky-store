@@ -1,27 +1,85 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import Image from "next/image";
+import { buildMetadata } from "@/lib/metadata";
 import { BlogPageClient } from "./BlogPageClient";
 
-export const metadata: Metadata = {
-  title: "Blog | Duky Store",
-  description:
-    "Kinh nghiệm phối đồ, bảo quản giày boot, áo khoác da và xu hướng thời trang từ Duky Store.",
-  alternates: {
-    canonical: "/blog",
-  },
-  openGraph: {
-    title: "Blog | Duky Store",
+export const revalidate = 300;
+
+export function generateMetadata(): Metadata {
+  return buildMetadata({
+    title: "Kinh nghiệm",
     description:
       "Kinh nghiệm phối đồ, bảo quản giày boot, áo khoác da và xu hướng thời trang từ Duky Store.",
-    url: "/blog",
+    path: "/blog",
     type: "website",
-  },
+  });
+}
+
+interface BannerContent {
+  image: string;
+  alt: string;
+  badge: string;
+  titleLine1: string;
+  titleLine2: string;
+  description: string;
+}
+
+// TODO: Replace with API call when backend is ready
+// Example: const bannerData = await fetch(`${API_URL}/api/banners/blog`).then(res => res.json());
+const MOCK_BLOG_BANNER: BannerContent = {
+  image: "/assets/banner_blog.jpg",
+  alt: "Kinh nghiệm - Duky Store Blog",
+  badge: "BLOG",
+  titleLine1: "KINH NGHIỆM",
+  titleLine2: "THỜI TRANG",
+  description: "Chia sẻ bí quyết phối đồ, bảo quản boot và cập nhật xu hướng mới nhất.",
 };
 
 export default function BlogPage() {
+  const banner = MOCK_BLOG_BANNER;
+
   return (
-    <Suspense fallback={<div style={{ minHeight: "100vh" }} />}>
-      <BlogPageClient />
-    </Suspense>
+    <>
+      {/* Hero Banner */}
+      <section
+        className="relative w-full"
+        style={{ width: "100vw", marginLeft: "calc(-50vw + 50%)" }}
+      >
+        <Image
+          src={banner.image}
+          alt={banner.alt}
+          width={1920}
+          height={1080}
+          sizes="100vw"
+          className="w-full h-auto"
+          priority
+        />
+        {/* Text overlay */}
+        <div className="absolute inset-0 flex items-center">
+          <div className="px-12 md:px-16 lg:px-[100px] space-y-3">
+            <span className="inline-block text-xs font-medium tracking-widest text-gray-500 uppercase">
+              {banner.badge}
+            </span>
+            <h1 className="leading-[1.1] tracking-tighter text-gray-900">
+              <span className="block text-[36px] md:text-[52px] lg:text-[64px] font-semibold">{banner.titleLine1}</span>
+              <span className="block text-[30px] md:text-[44px] lg:text-[56px] font-medium italic -mt-1 md:-mt-2">
+                <span className="font-montserrat not-italic font-semibold tracking-wide bg-gradient-to-br from-zinc-500 via-zinc-300 to-zinc-700 bg-clip-text text-transparent inline-block ml-1 md:ml-2">{banner.titleLine2}</span>
+              </span>
+            </h1>
+            <div className="flex items-start gap-3 max-w-sm">
+              <div className="w-8 h-px bg-gray-900 mt-2.5 shrink-0" />
+              <p className="text-sm text-gray-500 leading-relaxed font-light">
+                {banner.description}
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <Suspense fallback={<div style={{ minHeight: "100vh" }} />}>
+        <BlogPageClient />
+      </Suspense>
+    </>
   );
 }

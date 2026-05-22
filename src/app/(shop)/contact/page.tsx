@@ -65,6 +65,7 @@ export default function ContactPage() {
                 alt="Canty Phạm - Co-Founder"
                 width={400}
                 height={500}
+                sizes="(max-width: 768px) 50vw, 400px"
                 className="founder-img"
               />
             </div>
@@ -81,6 +82,7 @@ export default function ContactPage() {
                 alt="Ngân Duckky - Co-Founder"
                 width={400}
                 height={500}
+                sizes="(max-width: 768px) 50vw, 400px"
                 className="founder-img"
               />
             </div>

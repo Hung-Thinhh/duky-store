@@ -22,7 +22,7 @@ export const NewsSection = () => {
                 <span className="badge-title text-[10px] font-bold tracking-[0.3em] text-gray-400 uppercase">
                     Tin tức
                 </span>
-                <h2 className="content text-3xl md:text-3xl lg:text-[40px] font-semibold text-text-main leading-tight tracking-tight">
+                <h2 className="text-4xl md:text-5xl lg:text-[40px] font-semibold text-text-main leading-tight tracking-tight">
                     Cập nhật xu hướng <br /> mới nhất
                 </h2>
                 <p className="content text-gray-500 text-sm md:text-base max-w-xs">
@@ -113,7 +113,7 @@ export const NewsSection = () => {
                         <span className="badge-title text-[10px] font-bold tracking-[0.3em] text-gray-400 uppercase">
                             Duky Store
                         </span>
-                        <h2 className="content text-3xl md:text-3xl lg:text-[40px] font-semibold text-text-main leading-tight tracking-tight">
+                        <h2 className="text-4xl md:text-5xl lg:text-[40px] font-semibold text-text-main leading-tight tracking-tight">
                             Ưu đãi dành riêng <br /> cho bạn
                         </h2>
                         <p className="content text-gray-500 text-sm md:text-base max-w-sm">
@@ -156,7 +156,7 @@ export const NewsSection = () => {
                                 {feature.icon}
                             </div>
                             <div className="space-y-3 text-center w-full">
-                                <h4 className="text-[11px] md:text-[12px] font-bold tracking-wider text-white uppercase leading-tight">
+                                <h4 className="content text-[11px] md:text-[12px] font-bold tracking-wider text-white uppercase leading-tight">
                                     {feature.title}
                                 </h4>
                                 <p className="content text-[10px] md:text-[11px] text-white/60 leading-relaxed px-1">

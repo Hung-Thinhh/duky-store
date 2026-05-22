@@ -237,6 +237,7 @@ const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, varia
                 alt={product.name}
                 width={600}
                 height={600}
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
                 className="gallery-image"
                 priority
               />

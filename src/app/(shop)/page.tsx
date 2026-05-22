@@ -1,84 +1,108 @@
-"use client";
+import { Suspense } from "react";
+import dynamic from "next/dynamic";
+import type { Metadata } from "next";
 
-import React from "react";
-import { motion, AnimatePresence } from "motion/react";
-import {
-  Truck,
-  RotateCcw,
-  Headphones,
-  ShieldCheck,
-  CheckCircle2,
-} from "lucide-react";
+import { Footer } from "@/components/layout";
+import { CategorySection } from "@/components/shop";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { buildMetadata } from "@/lib/metadata";
+import { buildWebsiteJsonLd } from "@/lib/structured-data";
+import { SectionSkeleton } from "@/components/shop/home/SectionSkeleton";
+import { HomeHeader } from "./HomeHeader";
+import { HomeHeroBanner } from "./HomeHeroBanner";
+import { HomeCartToast } from "./HomeCartToast";
 
-import { Header, Footer } from "@/components/layout";
-import {
-  HeroBanner,
-  CategorySection,
-  BootMaleSection,
-  BootFemaleSection,
-  GuideSection,
-  PreFooter,
-  NewsSection,
-  FAQSection,
-} from "@/components/shop";
-import { useCart } from "@/context/CartContext";
+// Lazy-load below-fold sections to reduce initial bundle size.
+// These components use motion/gsap and are "use client" — dynamic import
+// keeps them out of the server-rendered shell.
+const LazyBootMaleSection = dynamic(
+  () =>
+    import("@/components/shop/home/BootMaleSection").then((m) => ({
+      default: m.BootMaleSection,
+    })),
+  { loading: () => <SectionSkeleton /> }
+);
+
+const LazyBootFemaleSection = dynamic(
+  () =>
+    import("@/components/shop/home/BootFemaleSection").then((m) => ({
+      default: m.BootFemaleSection,
+    })),
+  { loading: () => <SectionSkeleton /> }
+);
+
+const LazyGuideSection = dynamic(
+  () =>
+    import("@/components/shop/home/GuideSection").then((m) => ({
+      default: m.GuideSection,
+    })),
+  { loading: () => <SectionSkeleton /> }
+);
+
+const LazyNewsSection = dynamic(
+  () =>
+    import("@/components/shop/home/NewsSection").then((m) => ({
+      default: m.NewsSection,
+    })),
+  { loading: () => <SectionSkeleton /> }
+);
+
+const LazyFAQSection = dynamic(
+  () =>
+    import("@/components/shop/home/FAQSection").then((m) => ({
+      default: m.FAQSection,
+    })),
+  { loading: () => <SectionSkeleton /> }
+);
+
+const LazyPreFooter = dynamic(
+  () =>
+    import("@/components/shop/home/PreFooter").then((m) => ({
+      default: m.PreFooter,
+    })),
+  { loading: () => <SectionSkeleton /> }
+);
+
+export const revalidate = 120;
+
+export async function generateMetadata(): Promise<Metadata> {
+  return buildMetadata({
+    title: "Trang chủ",
+    description:
+      "Duky Store - Chuyên cung cấp các dòng boot nam nữ cao cấp, phụ kiện thời trang và unisex phong cách. Giao hàng toàn quốc, bảo hành chính hãng.",
+    path: "/",
+  });
+}
 
 export default function ShopPage() {
-  const { cart, cartCount, toast, updateQuantity, removeFromCart } = useCart();
-
-  const trustItems = [
-    {
-      icon: <Truck size={22} />,
-      title: "Giao hàng toàn quốc",
-      desc: "Nhanh chóng – An toàn",
-    },
-    {
-      icon: <RotateCcw size={22} />,
-      title: "Đổi size dễ dàng",
-      desc: "Trong vòng 7 ngày",
-    },
-    {
-      icon: <ShieldCheck size={22} />,
-      title: "Bảo hành chính hãng",
-      desc: "Hỗ trợ đến 12 tháng",
-    },
-    {
-      icon: <Headphones size={22} />,
-      title: "Tư vấn nhanh 24/7",
-      desc: "Qua Zalo / Hotline",
-    },
-  ];
-
   return (
     <>
-      <Header cartCount={cartCount} />
-      <HeroBanner trustItems={trustItems} />
+      <JsonLd data={buildWebsiteJsonLd()} />
+      {/* Above-fold: rendered synchronously for fast LCP */}
+      <HomeHeader />
+      <HomeHeroBanner />
       <CategorySection />
-      <BootMaleSection />
-      <BootFemaleSection />
-      <GuideSection />
-      <NewsSection />
-      <FAQSection />
-      <PreFooter />
+      {/* Below-fold: lazy-loaded with Suspense boundaries */}
+      <Suspense fallback={<SectionSkeleton />}>
+        <LazyBootMaleSection />
+      </Suspense>
+      <Suspense fallback={<SectionSkeleton />}>
+        <LazyBootFemaleSection />
+      </Suspense>
+      <Suspense fallback={<SectionSkeleton />}>
+        <LazyGuideSection />
+      </Suspense>
+      <Suspense fallback={<SectionSkeleton />}>
+        <LazyNewsSection />
+      </Suspense>
+      <Suspense fallback={<SectionSkeleton />}>
+        <LazyFAQSection />
+      </Suspense>
+      <Suspense fallback={<SectionSkeleton />}>
+        <LazyPreFooter />
+      </Suspense>
       <Footer />
-
-      <AnimatePresence>
-        {toast && (
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            className="fixed bottom-10 left-half minus-translate-x-half glass-effect px-8 py-4 rounded-full z-[100] flex items-center gap-4 shadow-2xl"
-          >
-            <div className="bg-accent-gold rounded-full p-1.5 text-white shadow-lg">
-              <CheckCircle2 size={16} />
-            </div>
-            <span className="text-xs font-bold tracking-widest text-text-main uppercase">
-              {toast.message}
-            </span>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <HomeCartToast />
     </>
   );
 }

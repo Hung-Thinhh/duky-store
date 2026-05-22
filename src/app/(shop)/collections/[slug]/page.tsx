@@ -1,238 +1,274 @@
-"use client";
-
-import React, { useState, useEffect, use } from "react";
+import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import { ProductCard } from "@/components/shop/ProductCard";
+import { fetchProducts } from "@/lib/api";
+import { buildMetadata } from "@/lib/metadata";
+import { buildBreadcrumbJsonLd } from "@/lib/structured-data";
+import { JsonLd } from "@/components/seo/JsonLd";
 import { Product } from "@/types/product";
-import { LiquidGlassCard } from "@/components/ui/liquid-glass";
-import { PackageOpen } from "lucide-react";
-import { Navpages } from "@/components/shop/Navpages";
-import Filter, { FilterState } from "@/components/shop/Fillter";
-import { useProducts } from "@/hooks/useProducts";
-import { useProductsByCategories } from "@/hooks/useProductsByCategories";
+import CollectionClient from "./CollectionClient";
 
-// Parent categories that need to include children products
-const PARENT_CATEGORIES = ["boot-nam", "boot-nu", "phu-kien", "outfit"];
+export const revalidate = 60;
+
+// ─── Known parent categories that include children products ──────────────────
+const PARENT_CATEGORIES = ["boot-nam", "boot-nu", "phu-kien", "unisex"];
 
 // ─── Collection metadata (hero banners, titles) ─────────────────────────────
-const COLLECTION_META: Record<string, { title: string; description: string; heroImage: string; heroTitle: string; heroDescription: string }> = {
+// TODO: Replace with API call when backend is ready
+// Example: const bannerData = await fetch(`${API_URL}/banners/collection/${slug}`).then(res => res.json());
+const COLLECTION_META: Record<
+  string,
+  {
+    title: string;
+    description: string;
+    heroImage: string;
+    heroTitle: string;
+    heroDescription: string;
+    banner: {
+      badge: string;
+      titleLine1: string;
+      titleLine2: string;
+      description: string;
+    };
+  }
+> = {
   "boot-nam": {
     title: "Giày Boot Nam Cao Cấp",
-    description: "Bộ sưu tập giày boot nam cao cấp - Da thật, thiết kế tinh tế.",
-    heroImage: "/assets/banner_boot_nam.png",
+    description:
+      "Bộ sưu tập giày boot nam cao cấp - Da thật, thiết kế tinh tế.",
+    heroImage: "/assets/banner_boot_nam.jpg",
     heroTitle: "GIÀY BOOT\nNAM CAO CẤP",
-    heroDescription: "Thiết kế tinh tế - Da thật cao cấp - Bền bỉ theo thời gian",
+    heroDescription:
+      "Thiết kế tinh tế - Da thật cao cấp - Bền bỉ theo thời gian",
+    banner: {
+      badge: "MEN'S COLLECTION",
+      titleLine1: "BOOT NAM",
+      titleLine2: "CAO CẤP",
+      description: "Thiết kế tinh tế – Da thật cao cấp – Bền bỉ theo thời gian.",
+    },
   },
   "boot-nu": {
     title: "Giày Boot Nữ Cao Cấp",
     description: "Bộ sưu tập giày boot nữ - Thanh lịch, quyến rũ.",
-    heroImage: "/assets/banner_boot_nu.png",
+    heroImage: "/assets/banner_boot_nu.jpg",
     heroTitle: "GIÀY BOOT\nNỮ CAO CẤP",
-    heroDescription: "Tôn dáng trong từng bước đi - Phong cách nữ tính hiện đại",
+    heroDescription:
+      "Tôn dáng trong từng bước đi - Phong cách nữ tính hiện đại",
+    banner: {
+      badge: "WOMEN'S COLLECTION",
+      titleLine1: "BOOT NỮ",
+      titleLine2: "CAO CẤP",
+      description: "Tôn dáng trong từng bước đi – Phong cách nữ tính hiện đại.",
+    },
   },
   "phu-kien": {
     title: "Phụ Kiện",
     description: "Phụ kiện thời trang cao cấp.",
-    heroImage: "/assets/phu_kien.png",
+    heroImage: "/assets/banner_phukien.jpg",
     heroTitle: "PHỤ KIỆN\nCAO CẤP",
     heroDescription: "Hoàn thiện phong cách với phụ kiện đẳng cấp",
+    banner: {
+      badge: "ACCESSORIES",
+      titleLine1: "PHỤ KIỆN",
+      titleLine2: "ĐẲNG CẤP",
+      description: "Hoàn thiện phong cách với những phụ kiện được chọn lọc kỹ lưỡng.",
+    },
   },
-  "outfit": {
-    title: "Outfit",
+  unisex: {
+    title: "Unisex",
     description: "Gợi ý phối đồ cùng boot.",
-    heroImage: "/assets/out_fit.png",
-    heroTitle: "OUTFIT\nPHỐI ĐỒ",
+    heroImage: "/assets/banner_outfit.jpg",
+    heroTitle: "UNISEX\nPHỐI ĐỒ",
     heroDescription: "Gợi ý phong cách phối đồ cùng boot Duky",
+    banner: {
+      badge: "UNISEX",
+      titleLine1: "THỜI TRANG",
+      titleLine2: "DUKY",
+      description: "Cùng Duky nâng tầm phong cách phối đồ cùng boot – Tự tin mỗi ngày.",
+    },
   },
 };
 
+// ─── Static params for ISR pre-generation ────────────────────────────────────
+export function generateStaticParams() {
+  return [
+    { slug: "boot-nam" },
+    { slug: "boot-nu" },
+    { slug: "phu-kien" },
+    { slug: "unisex" },
+  ];
+}
+
+// ─── Metadata generation ─────────────────────────────────────────────────────
 interface CollectionPageProps {
   params: Promise<{ slug: string }>;
 }
 
-const PRODUCTS_PER_PAGE = 8;
+export async function generateMetadata({
+  params,
+}: CollectionPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const meta = COLLECTION_META[slug];
 
-export default function CollectionPage({ params }: CollectionPageProps) {
-  const { slug } = use(params);
+  if (!meta) {
+    return buildMetadata({
+      title: "Bộ sưu tập",
+      description: "Khám phá bộ sưu tập sản phẩm tại Duky Store",
+      path: `/collections/${slug}`,
+    });
+  }
+
+  return buildMetadata({
+    title: meta.title,
+    description: meta.description,
+    path: `/collections/${slug}`,
+    image: meta.heroImage,
+  });
+}
+
+// ─── Helper: fetch categories from API ───────────────────────────────────────
+interface CategoryItem {
+  id: string;
+  slug: string;
+  parentId: string | null;
+}
+
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api/v1";
+
+async function fetchCategories(): Promise<CategoryItem[]> {
+  try {
+    const res = await fetch(`${API_URL}/categories`, {
+      next: { revalidate: 60 },
+    });
+    if (!res.ok) return [];
+    const json = await res.json();
+    return json?.DT?.data || [];
+  } catch {
+    return [];
+  }
+}
+
+// ─── Helper: fetch all products for a parent category (parent + children) ────
+async function fetchParentCategoryProducts(
+  slug: string
+): Promise<Product[]> {
+  const categories = await fetchCategories();
+
+  // Find the parent category
+  const parentCat = categories.find((c) => c.slug === slug);
+
+  // Collect all slugs to fetch: parent + children
+  const slugsToFetch = new Set<string>([slug]);
+  if (parentCat) {
+    for (const child of categories.filter(
+      (c) => c.parentId === parentCat.id
+    )) {
+      slugsToFetch.add(child.slug);
+    }
+  }
+
+  // Fetch products from all slugs in parallel
+  const results = await Promise.all(
+    Array.from(slugsToFetch).map((s) =>
+      fetchProducts({ categorySlug: s, limit: 100, sort: "newest" }).catch(
+        () => ({ data: [] as Product[], pagination: null })
+      )
+    )
+  );
+
+  // Deduplicate products by id
+  const seen = new Set<string>();
+  const merged: Product[] = [];
+  for (const result of results) {
+    for (const product of result.data) {
+      if (!seen.has(product.id)) {
+        seen.add(product.id);
+        merged.push(product);
+      }
+    }
+  }
+
+  return merged;
+}
+
+// ─── Page Component (Server) ─────────────────────────────────────────────────
+export default async function CollectionPage({ params }: CollectionPageProps) {
+  const { slug } = await params;
   const meta = COLLECTION_META[slug];
 
   if (!meta) {
     notFound();
   }
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
-  const [filterState, setFilterState] = useState<FilterState>({
-    category: "Tất cả",
-    sizes: [],
-    colors: [],
-    priceMin: 0,
-    priceMax: 5_000_000,
-  });
-
-  // Build API params from filter state
+  // Fetch products: for parent categories, include children
   const isParentCategory = PARENT_CATEGORIES.includes(slug);
+  let products: Product[];
 
-  // For parent categories, fetch from parent + all children automatically
-  const { products: parentProducts, loading: parentLoading } = useProductsByCategories(
-    isParentCategory ? slug : "",
-    100
-  );
-
-  // For regular categories, use normal hook
-  const { products: directProducts, loading: directLoading, pagination } = useProducts(
-    !isParentCategory ? {
+  if (isParentCategory) {
+    products = await fetchParentCategoryProducts(slug);
+  } else {
+    const result = await fetchProducts({
       categorySlug: slug,
-      page: currentPage,
-      limit: PRODUCTS_PER_PAGE,
-      minPrice: filterState.priceMin > 0 ? filterState.priceMin : undefined,
-      maxPrice: filterState.priceMax < 5_000_000 ? filterState.priceMax : undefined,
-    } : undefined
-  );
-
-  // Merge results
-  const loading = isParentCategory ? parentLoading : directLoading;
-  const allProducts = isParentCategory ? parentProducts : directProducts;
-
-  // Client-side pagination for parent categories
-  const totalPages = isParentCategory
-    ? Math.ceil(allProducts.length / PRODUCTS_PER_PAGE)
-    : (pagination?.totalPages ?? 1);
-  const products = isParentCategory
-    ? allProducts.slice((currentPage - 1) * PRODUCTS_PER_PAGE, currentPage * PRODUCTS_PER_PAGE)
-    : allProducts;
-
-  const handleFilterChange = (state: FilterState) => {
-    setFilterState(state);
-    setCurrentPage(1); // Reset to page 1 when filters change
-  };
-
-  const toggleFavorite = (product: Product) => {
-    setFavoriteIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(product.id)) next.delete(product.id);
-      else next.add(product.id);
-      return next;
+      limit: 100,
+      sort: "newest",
     });
-  };
+    products = result.data;
+  }
+
+  // Build breadcrumb JSON-LD
+  const breadcrumbData = buildBreadcrumbJsonLd([
+    { name: "Trang chủ", url: "/" },
+    { name: meta.title, url: `/collections/${slug}` },
+  ]);
 
   return (
     <>
+      {/* JSON-LD Structured Data */}
+      <JsonLd data={breadcrumbData} />
+
       {/* ═══ SECTION 1: Hero Banner ═══ */}
-      <section className="relative w-full h-screen overflow-hidden">
+      <section
+        className="relative w-full"
+        style={{ width: "100vw", marginLeft: "calc(-50vw + 50%)" }}
+      >
         <Image
           src={meta.heroImage}
           alt={meta.heroTitle}
-          fill
-          className="object-cover"
+          width={1920}
+          height={1080}
+          sizes="100vw"
+          className="w-full h-auto"
           priority
         />
-      </section>
-
-      {/* ═══ SECTION 2: Product Showcase ═══ */}
-      <section className="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 py-16 mt-8 mb-8">
-        {/* Breadcrumb */}
-        <Navpages
-          items={[
-            { label: "Trang chủ", href: "/" },
-            { label: meta.title, href: `/collections/${slug}` },
-            { label: `Trang ${currentPage}` },
-          ]}
-        />
-
-        <div className="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-8">
-          {/* Filter Sidebar */}
-          <aside className="md:sticky md:top-28 md:self-start">
-            <LiquidGlassCard
-              draggable={false}
-              blurIntensity="xl"
-              glowIntensity="lg"
-              shadowIntensity="lg"
-              borderRadius="20px"
-            >
-              <Filter
-                onChange={handleFilterChange}
-                className="relative z-30"
-              />
-            </LiquidGlassCard>
-          </aside>
-
-          {/* Product Grid */}
-          <div className="min-w-0 min-h-[70vh] flex flex-col">
-            <div className="flex-1">
-              {loading ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                  {Array.from({ length: PRODUCTS_PER_PAGE }).map((_, i) => (
-                    <div key={i} className="animate-pulse bg-gray-100 rounded-2xl p-3">
-                      <div className="aspect-square rounded-xl bg-gray-200 mb-3" />
-                      <div className="h-4 bg-gray-200 rounded w-3/4 mb-2" />
-                      <div className="h-4 bg-gray-200 rounded w-1/2" />
-                    </div>
-                  ))}
-                </div>
-              ) : products.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                  {products.map((product, index) => (
-                    <ProductCard
-                      key={product.id}
-                      product={product}
-                      isFavorite={favoriteIds.has(product.id)}
-                      onToggleFavorite={toggleFavorite}
-                      priority={index < 4}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center py-20 text-center">
-                  <PackageOpen className="w-16 h-16 text-gray-300 mb-4" />
-                  <h3 className="text-lg font-semibold text-gray-700 mb-2">
-                    Không tìm thấy sản phẩm phù hợp
-                  </h3>
-                  <p className="text-sm text-gray-500 max-w-sm">
-                    Hãy thử điều chỉnh bộ lọc để xem thêm sản phẩm khác.
-                  </p>
-                </div>
-              )}
+        {/* Text overlay */}
+        <div className="absolute inset-0 flex items-center">
+          <div className="px-12 md:px-16 lg:px-[100px] space-y-3">
+            <span className="inline-block text-xs font-medium tracking-widest text-gray-500 uppercase">
+              {meta.banner.badge}
+            </span>
+            <h1 className="leading-[1.1] tracking-tighter text-gray-900">
+              <span className="block text-[36px] md:text-[52px] lg:text-[64px] font-semibold">{meta.banner.titleLine1}</span>
+              <span className="block text-[30px] md:text-[44px] lg:text-[56px] font-medium italic -mt-1 md:-mt-2">
+                <span className="font-montserrat not-italic font-semibold tracking-wide bg-gradient-to-br from-zinc-500 via-zinc-300 to-zinc-700 bg-clip-text text-transparent inline-block ml-1 md:ml-2">{meta.banner.titleLine2}</span>
+              </span>
+            </h1>
+            <div className="flex items-start gap-3 max-w-sm">
+              <div className="w-8 h-px bg-gray-900 mt-2.5 shrink-0" />
+              <p className="text-sm text-gray-500 leading-relaxed font-light">
+                {meta.banner.description}
+              </p>
             </div>
-
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="flex items-center justify-center gap-2 pt-10">
-                {currentPage > 1 && (
-                  <button
-                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                    className="w-9 h-9 flex items-center justify-center rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors cursor-pointer"
-                  >
-                    &lt;
-                  </button>
-                )}
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                  <button
-                    key={page}
-                    onClick={() => setCurrentPage(page)}
-                    className={`w-9 h-9 flex items-center justify-center rounded-md text-sm font-medium transition-colors cursor-pointer ${
-                      currentPage === page
-                        ? "bg-black text-white"
-                        : "border border-gray-200 text-gray-600 hover:bg-gray-50"
-                    }`}
-                  >
-                    {page}
-                  </button>
-                ))}
-                {currentPage < totalPages && (
-                  <button
-                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                    className="w-9 h-9 flex items-center justify-center rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors cursor-pointer"
-                  >
-                    &gt;
-                  </button>
-                )}
-              </div>
-            )}
           </div>
         </div>
       </section>
+
+      {/* ═══ SECTION 2: Product Showcase (Client Component) ═══ */}
+      <CollectionClient
+        initialProducts={products}
+        slug={slug}
+        collectionTitle={meta.title}
+      />
     </>
   );
 }
