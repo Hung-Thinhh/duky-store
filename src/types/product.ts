@@ -46,6 +46,19 @@ export interface Product {
   publishedAt?: string | null;
   createdAt?: string;
   updatedAt?: string;
+  metaTitle?: string | null;
+  metaDescription?: string | null;
+  canonicalUrl?: string | null;
+  seo?: {
+    metaTitle?: string | null;
+    metaDescription?: string | null;
+    canonicalUrl?: string | null;
+    ogTitle?: string | null;
+    ogDescription?: string | null;
+    noIndex?: boolean | null;
+    noFollow?: boolean | null;
+    schemaJson?: Record<string, unknown> | null;
+  } | null;
 
   // ─── Legacy mock data properties (used by static data files) ─────────────
   desc?: string;

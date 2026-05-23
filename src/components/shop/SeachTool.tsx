@@ -264,7 +264,7 @@ export function SearchTool({
   };
 
   const handleProductClick = (product: Product) => {
-    router.push(`/products/${product.slug}`);
+    router.push(`/san-pham/${product.slug}`);
     onClose();
   };
 

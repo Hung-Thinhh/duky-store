@@ -54,7 +54,7 @@ const RecommendSection: React.FC<RecommendSectionProps> = ({
               <div key={product.id} className="recommend-card-slot">
                 <ProductCard
                   product={product}
-                  href={`/products/${product.slug}`}
+                  href={`/san-pham/${product.slug}`}
                 />
               </div>
             ))}

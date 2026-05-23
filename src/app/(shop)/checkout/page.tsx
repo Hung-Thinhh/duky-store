@@ -557,7 +557,7 @@ function CheckoutContent() {
                   <AlertCircle size={16} />
                   <span>
                     {quickBuyError}{" "}
-                    <Link href={quickBuySlug ? `/products/${quickBuySlug}` : "/collections"} className="order-summary__link">
+                    <Link href={quickBuySlug ? `/san-pham/${quickBuySlug}` : "/collections"} className="order-summary__link">
                       Quay lại sản phẩm
                     </Link>
                   </span>

@@ -1,9 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "standalone",
-  /* Allow builds in restricted environments */
-  typescript: {
-    ignoreBuildErrors: true,
+  async redirects() {
+    return [
+      {
+        source: '/products/:slug',
+        destination: '/san-pham/:slug',
+        permanent: true,
+      },
+    ];
   },
   images: {
     remotePatterns: [
