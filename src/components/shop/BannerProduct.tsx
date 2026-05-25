@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { gsap } from 'gsap';
 import { cn } from '@/lib/utils';
 
@@ -12,6 +13,7 @@ export interface Slide {
   description: string;
   image: string;
   ctaText: string;
+  ctaHref?: string;
 }
 
 interface BannerProductProps {
@@ -20,9 +22,8 @@ interface BannerProductProps {
 
 export const BannerProduct: React.FC<BannerProductProps> = ({ slides }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [hoverDirection, setHoverDirection] = useState<"up" | "down">("down");
   const containerRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-  const imageRef = useRef<HTMLDivElement>(null);
   const isAnimating = useRef(false);
 
   useEffect(() => {
@@ -94,6 +95,35 @@ export const BannerProduct: React.FC<BannerProductProps> = ({ slides }) => {
     }, containerRef);
   };
 
+  const handlePrevSlide = () => {
+    const prevIndex = (currentIndex - 1 + slides.length) % slides.length;
+    changeSlide(prevIndex);
+  };
+
+  const handleNextSlide = () => {
+    const nextIndex = (currentIndex + 1) % slides.length;
+    changeSlide(nextIndex);
+  };
+
+  const resolveDirection = (event: React.MouseEvent<HTMLDivElement>): "up" | "down" => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    const midpointY = rect.top + rect.height / 2;
+    return event.clientY < midpointY ? "up" : "down";
+  };
+
+  const handleControlMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
+    setHoverDirection(resolveDirection(event));
+  };
+
+  const handleControlClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    const direction = resolveDirection(event);
+    if (direction === "up") {
+      handlePrevSlide();
+      return;
+    }
+    handleNextSlide();
+  };
+
   const currentSlide = slides[currentIndex];
 
   if (!slides || slides.length === 0) return null;
@@ -117,9 +147,21 @@ export const BannerProduct: React.FC<BannerProductProps> = ({ slides }) => {
           {currentSlide.description}
         </p>
         
-        <button className="content bg-black text-white px-6 py-3 btn text-sm font-semibold hover:bg-neutral-900 transition-all duration-300 shadow-xl shadow-black/10 hover:shadow-black/20 hover:-translate-y-1 active:scale-95">
-          {currentSlide.ctaText}
-        </button>
+        {currentSlide.ctaHref ? (
+          <Link
+            href={currentSlide.ctaHref}
+            className="inline-flex content bg-black text-white px-6 py-3 btn text-sm font-semibold hover:bg-neutral-900 transition-all duration-300 shadow-xl shadow-black/10 hover:shadow-black/20 hover:-translate-y-1 active:scale-95"
+          >
+            {currentSlide.ctaText}
+          </Link>
+        ) : (
+          <button
+            type="button"
+            className="content bg-black text-white px-6 py-3 btn text-sm font-semibold hover:bg-neutral-900 transition-all duration-300 shadow-xl shadow-black/10 hover:shadow-black/20 hover:-translate-y-1 active:scale-95"
+          >
+            {currentSlide.ctaText}
+          </button>
+        )}
       </div>
 
       {/* Image Side */}
@@ -136,19 +178,38 @@ export const BannerProduct: React.FC<BannerProductProps> = ({ slides }) => {
         </div>
       </div>
 
+      {/* Hover Control Area (top = previous, bottom = next) */}
+      {slides.length > 1 && (
+        <div
+          role="button"
+          aria-label="Điều hướng slide theo vị trí chuột"
+          tabIndex={0}
+          onMouseMove={handleControlMouseMove}
+          onClick={handleControlClick}
+          onKeyDown={(event) => {
+            if (event.key === "ArrowUp") handlePrevSlide();
+            if (event.key === "ArrowDown") handleNextSlide();
+          }}
+          className="absolute right-0 top-0 bottom-0 w-16 z-30"
+          style={{
+            cursor: hoverDirection === "up" 
+              ? "url('/assets/icons/arrow-up-cursor.svg') 12 2, pointer" 
+              : "url('/assets/icons/arrow-down-cursor.svg') 12 22, pointer"
+          }}
+        />
+      )}
+
       {/* Pagination Dots */}
-      <div className="absolute right-8 top-1/2 -translate-y-1/2 flex flex-col gap-3 z-20">
+      <div className="pointer-events-none absolute right-8 top-1/2 -translate-y-1/2 flex flex-col gap-3 z-20">
         {slides.map((_, index) => (
-          <button
+          <span
             key={index}
-            onClick={() => changeSlide(index)}
             className={cn(
               "w-2 h-2 rounded-full transition-all duration-500",
               currentIndex === index 
                 ? "bg-black h-6 shadow-md shadow-black/20" 
                 : "bg-gray-300 hover:bg-gray-400"
             )}
-            aria-label={`Go to slide ${index + 1}`}
           />
         ))}
       </div>

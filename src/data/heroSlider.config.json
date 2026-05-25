@@ -1,0 +1,468 @@
+{
+  "slides": [
+    {
+      "id": "slide-1",
+      "folder": "slider_1",
+      "layers": [
+        {
+          "file": "background.webp",
+          "alt": "Nen slide boot mua he",
+          "zIndex": 0,
+          "role": "background",
+          "layout": {
+            "desktop": {
+              "top": "0",
+              "right": "0",
+              "bottom": "0",
+              "left": "0",
+              "width": "100%",
+              "height": "100%",
+              "objectFit": "cover",
+              "objectPosition": "center"
+            },
+            "tablet": { "objectPosition": "center" },
+            "mobile": { "objectPosition": "center" }
+          },
+          "float": {
+            "duration": 4,
+            "delay": 0,
+            "displacement": 0,
+            "ease": "sine.inOut"
+          }
+        },
+        {
+          "file": "model.webp",
+          "alt": "Nguoi mau mang boot mua he",
+          "zIndex": 2,
+          "role": "model",
+          "layout": {
+            "desktop": {
+              "top": "0",
+              "right": "0",
+              "bottom": "0",
+              "left": "0",
+              "width": "100%",
+              "height": "100%",
+              "objectFit": "contain",
+              "objectPosition": "76% 90%"
+            },
+            "tablet": { "objectPosition": "70% 88%" },
+            "mobile": { "objectPosition": "68% 88%" }
+          },
+          "float": {
+            "duration": 3.5,
+            "delay": 1,
+            "displacement": 0,
+            "ease": "sine.inOut"
+          }
+        },
+        {
+          "file": "boot.webp",
+          "alt": "Boot mua he noi bat",
+          "zIndex": 3,
+          "role": "boot",
+          "layout": {
+            "desktop": {
+              "top": "auto",
+              "right": "1.7%",
+              "bottom": "43.7%",
+              "left": "auto",
+              "width": "clamp(150px, 18vw, 320px)",
+              "height": "clamp(105px, 12vw, 220px)",
+              "objectFit": "contain",
+              "objectPosition": "center bottom"
+            },
+            "tablet": {
+              "right": "7%",
+              "bottom": "30%",
+              "width": "clamp(125px, 24vw, 220px)",
+              "height": "clamp(88px, 16vw, 156px)"
+            },
+            "mobile": {
+              "right": "2%",
+              "bottom": "24%",
+              "width": "clamp(104px, 38vw, 182px)",
+              "height": "clamp(74px, 24vw, 128px)"
+            }
+          },
+          "float": {
+            "duration": 4.2,
+            "delay": 0.5,
+            "displacement": 0,
+            "ease": "sine.inOut"
+          }
+        }
+      ],
+      "text": {
+        "badge": "SUMMER COLLECTION",
+        "title": "BOOT NỮ CAO CẤP 2026",
+        "tagline": "Bứt phá phong cách - Khẳng định chất riêng cùng những thiết kế boot hiện đại nhất.",
+        "style": {
+          "badgeColor": "#70737a",
+          "titleColor": "#101114",
+          "taglineColor": "#5f646d",
+          "dividerColor": "#9da1a8",
+          "badgeSize": {
+            "desktop": "0.82rem",
+            "tablet": "0.78rem",
+            "mobile": "0.72rem"
+          },
+          "titleSize": {
+            "desktop": "clamp(30px, 4.8vw, 64px)",
+            "tablet": "clamp(26px, 5vw, 52px)",
+            "mobile": "clamp(22px, 6vw, 40px)"
+          },
+          "taglineSize": {
+            "desktop": "0.9rem",
+            "tablet": "0.84rem",
+            "mobile": "0.78rem"
+          },
+          "buttonSize": {
+            "desktop": "0.78rem",
+            "tablet": "0.72rem",
+            "mobile": "0.66rem"
+          }
+        },
+        "buttons": [
+          {
+            "label": "Khám phá ngay",
+            "link": "/collections/boot-nu",
+            "variant": "primary"
+          },
+          {
+            "label": "XEM BỘ SƯU TẬP",
+            "link": "/collections/boot-nu",
+            "variant": "secondary"
+          }
+        ]
+      },
+      "animation": {
+        "duration": 800,
+        "ease": "power2.out",
+        "entryDirection": "fade"
+      }
+    },
+    {
+      "id": "slide-2",
+      "folder": "slider_2",
+      "layers": [
+        {
+          "file": "background.webp",
+          "alt": "Nen slide boot nam cao cap",
+          "zIndex": 0,
+          "role": "background",
+          "layout": {
+            "desktop": {
+              "top": "0",
+              "right": "0",
+              "bottom": "0",
+              "left": "0",
+              "width": "100%",
+              "height": "100%",
+              "objectFit": "cover",
+              "objectPosition": "52% 50%"
+            },
+            "tablet": { "objectPosition": "54% 50%" },
+            "mobile": { "objectPosition": "58% 50%" }
+          },
+          "float": {
+            "duration": 4.5,
+            "delay": 0.3,
+            "displacement": 0,
+            "ease": "sine.inOut"
+          }
+        },
+        {
+          "file": "buc.webp",
+          "alt": "Buc trung bay",
+          "zIndex": 1,
+          "role": "pedestal",
+          "layout": {
+            "desktop": {
+              "top": "0",
+              "right": "0",
+              "bottom": "0",
+              "left": "0",
+              "width": "100%",
+              "height": "100%",
+              "objectFit": "contain",
+              "objectPosition": "100% 92%"
+            },
+            "tablet": { "objectPosition": "100% 93%" },
+            "mobile": { "objectPosition": "100% 92%" }
+          },
+          "float": {
+            "duration": 3.4,
+            "delay": 0,
+            "displacement": 0,
+            "ease": "sine.inOut"
+          }
+        },
+        {
+          "file": "mau_nam.webp",
+          "alt": "Nguoi mau nam",
+          "zIndex": 2,
+          "role": "model",
+          "layout": {
+            "desktop": {
+              "top": "0",
+              "right": "0",
+              "bottom": "0",
+              "left": "0",
+              "width": "100%",
+              "height": "100%",
+              "objectFit": "contain",
+              "objectPosition": "67.5% 79.5%"
+            },
+            "tablet": { "objectPosition": "69.5% 81%" },
+            "mobile": { "objectPosition": "75% 82%" }
+          },
+          "float": {
+            "duration": 5.5,
+            "delay": 0.8,
+            "displacement": 0,
+            "ease": "sine.inOut"
+          }
+        },
+        {
+          "file": "boot_nam.webp",
+          "alt": "San pham boot nam",
+          "zIndex": 3,
+          "role": "boot",
+          "layout": {
+            "desktop": {
+              "top": "auto",
+              "right": "-4.2%",
+              "bottom": "26.8%",
+              "left": "auto",
+              "width": "clamp(330px, 28vw, 620px)",
+              "height": "clamp(212px, 19vw, 430px)",
+              "objectFit": "contain",
+              "objectPosition": "center bottom"
+            },
+            "tablet": {
+              "right": "1.2%",
+              "bottom": "23.9%",
+              "width": "clamp(236px, 36vw, 410px)",
+              "height": "clamp(152px, 26vw, 286px)"
+            },
+            "mobile": {
+              "right": "1.6%",
+              "bottom": "19.8%",
+              "width": "clamp(188px, 52vw, 330px)",
+              "height": "clamp(120px, 36vw, 212px)"
+            }
+          },
+          "float": {
+            "duration": 3.8,
+            "delay": 1.2,
+            "displacement": 0,
+            "ease": "sine.inOut"
+          }
+        }
+      ],
+      "text": {
+        "badge": "PREMIUM MEN'S BOOTS",
+        "title": "GIÀY NAM CAO CẤP",
+        "tagline": "Da thật - Thiết kế tinh tế - Bền bỉ theo thời gian. Khẳng định phong cách quý ông.",
+        "style": {
+          "badgeColor": "#b2b4b8",
+          "titleColor": "#f5f5f5",
+          "taglineColor": "#d2d3d6",
+          "dividerColor": "#d8d9dd",
+          "badgeSize": {
+            "desktop": "0.82rem",
+            "tablet": "0.78rem",
+            "mobile": "0.72rem"
+          },
+          "titleSize": {
+            "desktop": "clamp(30px, 4.8vw, 64px)",
+            "tablet": "clamp(26px, 5vw, 52px)",
+            "mobile": "clamp(22px, 6vw, 40px)"
+          },
+          "taglineSize": {
+            "desktop": "0.9rem",
+            "tablet": "0.84rem",
+            "mobile": "0.78rem"
+          },
+          "buttonSize": {
+            "desktop": "0.78rem",
+            "tablet": "0.72rem",
+            "mobile": "0.66rem"
+          }
+        },
+        "buttons": [
+          {
+            "label": "Khám phá ngay",
+            "link": "/collections/boot-nam",
+            "variant": "primary"
+          },
+          {
+            "label": "XEM BỘ SƯU TẬP",
+            "link": "/collections/boot-nam",
+            "variant": "secondary"
+          }
+        ]
+      },
+      "animation": {
+        "duration": 800,
+        "ease": "power2.out",
+        "entryDirection": "left"
+      }
+    },
+    {
+      "id": "slide-3",
+      "folder": "slider_3",
+      "layers": [
+        {
+          "file": "background.webp",
+          "alt": "Nen slide boot nu",
+          "zIndex": 0,
+          "role": "background",
+          "layout": {
+            "desktop": {
+              "top": "0",
+              "right": "0",
+              "bottom": "0",
+              "left": "0",
+              "width": "100%",
+              "height": "100%",
+              "objectFit": "cover",
+              "objectPosition": "center"
+            },
+            "tablet": { "objectPosition": "center" },
+            "mobile": { "objectPosition": "center" }
+          },
+          "float": {
+            "duration": 3.8,
+            "delay": 0.6,
+            "displacement": 0,
+            "ease": "sine.inOut"
+          }
+        },
+        {
+          "file": "mau_nam.webp",
+          "alt": "Nguoi mau nam",
+          "zIndex": 2,
+          "role": "model",
+          "layout": {
+            "desktop": {
+              "top": "8%",
+              "right": "3",
+              "bottom": "auto",
+              "left": "auto",
+              "width": "80%",
+              "height": "80%",
+              "objectFit": "contain",
+              "objectPosition": "right 88%"
+            },
+            "tablet": {
+              "right": "-6%",
+              "width": "118%",
+              "height": "118%",
+              "objectPosition": "right 90%"
+            },
+            "mobile": {
+              "right": "-10%",
+              "width": "132%",
+              "height": "132%",
+              "objectPosition": "right 92%"
+            }
+          },
+          "float": {
+            "duration": 4.2,
+            "delay": 0.2,
+            "displacement": 0,
+            "ease": "sine.inOut"
+          }
+        },
+        {
+          "file": "phu_kien.webp",
+          "alt": "Sản phẩm trưng bày",
+          "zIndex": 3,
+          "role": "boot",
+          "layout": {
+            "desktop": {
+              "top": "auto",
+              "right": "3%",
+              "bottom": "0",
+              "left": "auto",
+              "width": "100%",
+              "height": "100%",
+              "objectFit": "contain",
+              "objectPosition": "right bottom"
+            },
+            "tablet": {
+              "right": "-4.2%",
+              "bottom": "10%",
+              "width": "clamp(520px, 62vw, 820px)",
+              "height": "clamp(340px, 46vw, 560px)",
+              "objectPosition": "right bottom"
+            },
+            "mobile": {
+              "right": "-6%",
+              "bottom": "8.2%",
+              "width": "clamp(410px, 88vw, 680px)",
+              "height": "clamp(270px, 64vw, 460px)",
+              "objectPosition": "right bottom"
+            }
+          },
+          "float": {
+            "duration": 4.4,
+            "delay": 1.5,
+            "displacement": 0,
+            "ease": "sine.inOut"
+          }
+        }
+      ],
+      "text": {
+        "badge": "MEN'S ACCESSORIES",
+        "title": "PHỤ KIỆN CAO CẤP",
+        "tagline": "Tối giản - Sang trọng - Tạo điểm nhấn lịch lãm cho bạn.",
+        "style": {
+          "badgeColor": "#3f4652",
+          "titleColor": "#0d0d0d",
+          "taglineColor": "#383f4a",
+          "dividerColor": "#2f3540",
+          "badgeSize": {
+            "desktop": "0.82rem",
+            "tablet": "0.78rem",
+            "mobile": "0.72rem"
+          },
+          "titleSize": {
+            "desktop": "clamp(30px, 4.8vw, 64px)",
+            "tablet": "clamp(26px, 5vw, 52px)",
+            "mobile": "clamp(22px, 6vw, 40px)"
+          },
+          "taglineSize": {
+            "desktop": "0.9rem",
+            "tablet": "0.84rem",
+            "mobile": "0.78rem"
+          },
+          "buttonSize": {
+            "desktop": "0.78rem",
+            "tablet": "0.72rem",
+            "mobile": "0.66rem"
+          }
+        },
+        "buttons": [
+          {
+            "label": "Khám phá ngay",
+            "link": "/collections/phu-kien",
+            "variant": "primary"
+          },
+          {
+            "label": "XEM BỘ SƯU TẬP",
+            "link": "/collections/phu-kien",
+            "variant": "secondary"
+          }
+        ]
+      },
+      "animation": {
+        "duration": 800,
+        "ease": "power2.out",
+        "entryDirection": "right"
+      }
+    }
+  ]
+}

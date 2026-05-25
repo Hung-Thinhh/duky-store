@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState } from "react";
 import Image from "next/image";
@@ -25,11 +25,12 @@ interface BannerContent {
 // Example: fetch("/api/banners/products").then(res => res.json())
 const MOCK_PRODUCTS_BANNER: BannerContent = {
   image: "/assets/banner_products.jpg",
-  alt: "Tất cả sản phẩm - Duky Store",
+  alt: "Táº¥t cáº£ sáº£n pháº©m - Duky Store",
   badge: "ALL PRODUCTS",
-  titleLine1: "BỘ SƯU TẬP",
+  titleLine1: "Bá»˜ SÆ¯U Táº¬P",
   titleLine2: "DUKY STORE",
-  description: "Khám phá bộ sưu tập giày boot nam nữ cao cấp tại Duky Store.",
+  description:
+    "KhÃ¡m phÃ¡ bá»™ sÆ°u táº­p giÃ y boot nam ná»¯ cao cáº¥p táº¡i Duky Store.",
 };
 
 const PRODUCTS_PER_PAGE = 12;
@@ -39,19 +40,22 @@ export default function ProductsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
   const [filterState, setFilterState] = useState<FilterState>({
-    category: "Tất cả",
+    category: "all",
     sizes: [],
     colors: [],
     priceMin: 0,
     priceMax: 5_000_000,
   });
 
-  // Fetch all products (no categorySlug filter)
+  // Fetch products by selected category + price range
   const { products, loading, pagination } = useProducts({
     page: currentPage,
     limit: PRODUCTS_PER_PAGE,
+    categorySlug:
+      filterState.category !== "all" ? filterState.category : undefined,
     minPrice: filterState.priceMin > 0 ? filterState.priceMin : undefined,
-    maxPrice: filterState.priceMax < 5_000_000 ? filterState.priceMax : undefined,
+    maxPrice:
+      filterState.priceMax < 5_000_000 ? filterState.priceMax : undefined,
   });
 
   const totalPages = pagination?.totalPages ?? 1;
@@ -75,7 +79,10 @@ export default function ProductsPage() {
       <Header cartCount={cartCount} />
 
       {/* Hero Banner */}
-      <section className="relative w-full" style={{ width: '100vw', marginLeft: 'calc(-50vw + 50%)' }}>
+      <section
+        className="relative w-full"
+        style={{ width: "100vw", marginLeft: "calc(-50vw + 50%)" }}
+      >
         <Image
           src={MOCK_PRODUCTS_BANNER.image}
           alt={MOCK_PRODUCTS_BANNER.alt}
@@ -92,9 +99,13 @@ export default function ProductsPage() {
               {MOCK_PRODUCTS_BANNER.badge}
             </span>
             <h1 className="leading-[1.1] tracking-tighter text-gray-900">
-              <span className="block text-[36px] md:text-[52px] lg:text-[64px] font-semibold">{MOCK_PRODUCTS_BANNER.titleLine1}</span>
+              <span className="block text-[36px] md:text-[52px] lg:text-[64px] font-semibold">
+                {MOCK_PRODUCTS_BANNER.titleLine1}
+              </span>
               <span className="block text-[30px] md:text-[44px] lg:text-[56px] font-medium italic -mt-1 md:-mt-2">
-                <span className="font-montserrat not-italic font-semibold tracking-wide bg-gradient-to-br from-zinc-500 via-zinc-300 to-zinc-700 bg-clip-text text-transparent inline-block ml-1 md:ml-2">{MOCK_PRODUCTS_BANNER.titleLine2}</span>
+                <span className="font-montserrat not-italic font-semibold tracking-wide bg-gradient-to-br from-zinc-500 via-zinc-300 to-zinc-700 bg-clip-text text-transparent inline-block ml-1 md:ml-2">
+                  {MOCK_PRODUCTS_BANNER.titleLine2}
+                </span>
               </span>
             </h1>
             <div className="flex items-start gap-3 max-w-sm">
@@ -111,8 +122,8 @@ export default function ProductsPage() {
         {/* Breadcrumb */}
         <Navpages
           items={[
-            { label: "Trang chủ", href: "/" },
-            { label: "Tất cả sản phẩm" },
+            { label: "Trang chá»§", href: "/" },
+            { label: "Táº¥t cáº£ sáº£n pháº©m" },
           ]}
         />
 
@@ -126,10 +137,7 @@ export default function ProductsPage() {
               shadowIntensity="lg"
               borderRadius="20px"
             >
-              <Filter
-                onChange={handleFilterChange}
-                className="relative z-30"
-              />
+              <Filter onChange={handleFilterChange} className="relative z-30" />
             </LiquidGlassCard>
           </aside>
 
@@ -161,8 +169,13 @@ export default function ProductsPage() {
               ) : (
                 <div className="products-empty">
                   <PackageOpen size={64} className="products-empty-icon" />
-                  <h3 className="products-empty-title">Không tìm thấy sản phẩm phù hợp</h3>
-                  <p className="products-empty-desc">Hãy thử điều chỉnh bộ lọc để xem thêm sản phẩm khác.</p>
+                  <h3 className="products-empty-title">
+                    KhÃ´ng tÃ¬m tháº¥y sáº£n pháº©m phÃ¹ há»£p
+                  </h3>
+                  <p className="products-empty-desc">
+                    HÃ£y thá»­ Ä‘iá»u chá»‰nh bá»™ lá»c Ä‘á»ƒ xem thÃªm sáº£n
+                    pháº©m khÃ¡c.
+                  </p>
                 </div>
               )}
             </div>
@@ -178,18 +191,22 @@ export default function ProductsPage() {
                     &lt;
                   </button>
                 )}
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                  <button
-                    key={page}
-                    onClick={() => setCurrentPage(page)}
-                    className={`pagination-num ${currentPage === page ? "pagination-num--active" : ""}`}
-                  >
-                    {page}
-                  </button>
-                ))}
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (page) => (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`pagination-num ${currentPage === page ? "pagination-num--active" : ""}`}
+                    >
+                      {page}
+                    </button>
+                  ),
+                )}
                 {currentPage < totalPages && (
                   <button
-                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                    onClick={() =>
+                      setCurrentPage((p) => Math.min(totalPages, p + 1))
+                    }
                     className="pagination-btn"
                   >
                     &gt;
@@ -278,12 +295,21 @@ export default function ProductsPage() {
           margin-bottom: 8px;
         }
 
-        .skeleton-text--long { width: 75%; }
-        .skeleton-text--short { width: 50%; }
+        .skeleton-text--long {
+          width: 75%;
+        }
+        .skeleton-text--short {
+          width: 50%;
+        }
 
         @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
+          0%,
+          100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.5;
+          }
         }
 
         /* Empty */
@@ -338,7 +364,9 @@ export default function ProductsPage() {
           transition: var(--transition-fast);
         }
 
-        .pagination-btn:hover { background: var(--bg-secondary); }
+        .pagination-btn:hover {
+          background: var(--bg-secondary);
+        }
 
         .pagination-num {
           width: 36px;
@@ -356,7 +384,9 @@ export default function ProductsPage() {
           transition: var(--transition-fast);
         }
 
-        .pagination-num:hover { background: var(--bg-secondary); }
+        .pagination-num:hover {
+          background: var(--bg-secondary);
+        }
 
         .pagination-num--active {
           background: var(--accent-black);

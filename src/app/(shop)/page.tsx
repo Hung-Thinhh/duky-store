@@ -63,6 +63,8 @@ const LazyPreFooter = dynamic(
   { loading: () => <SectionSkeleton /> }
 );
 
+import { getHeroSliderData } from "@/data/heroSlider";
+
 export const revalidate = 120;
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -74,13 +76,15 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
-export default function ShopPage() {
+export default async function ShopPage() {
+  const slides = await getHeroSliderData();
+
   return (
     <>
       <JsonLd data={buildWebsiteJsonLd()} />
       {/* Above-fold: rendered synchronously for fast LCP */}
       <HomeHeader />
-      <HomeHeroBanner />
+      <HomeHeroBanner initialSlides={slides} />
       <CategorySection />
       {/* Below-fold: lazy-loaded with Suspense boundaries */}
       <Suspense fallback={<SectionSkeleton />}>

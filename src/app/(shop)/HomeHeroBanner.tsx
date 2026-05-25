@@ -6,22 +6,11 @@ import {
   Headphones,
   ShieldCheck,
 } from "lucide-react";
-import { HeroBanner } from "@/components/shop";
+import { HeroSlider } from "@/components/shop/home/HeroSlider";
+import { HERO_SLIDES } from "@/data/heroSlider";
+import type { TrustItem, SlideConfig } from "@/types/heroSlider";
 
-// TODO: Replace with API call when backend is ready
-// Example: const bannerData = await fetch("/api/banners/home").then(res => res.json());
-const MOCK_HERO_BANNER = {
-  badge: "SUMMER COLLECTION",
-  titleLine1: "BOOT",
-  titleLine2: "MÙA HÈ",
-  titleHighlight: "2026",
-  description: "Bứt phá phong cách – Khẳng định chất riêng cùng những thiết kế boot hiện đại nhất.",
-  backgroundImage: "/assets/banner_hero.png",
-  primaryBtn: { text: "KHÁM PHÁ NGAY", link: "/products" },
-  secondaryBtn: { text: "XEM LOOKBOOK", link: "/gallery" },
-};
-
-const trustItems = [
+const trustItems: TrustItem[] = [
   {
     icon: <Truck size={22} />,
     title: "Giao hàng toàn quốc",
@@ -45,18 +34,14 @@ const trustItems = [
 ];
 
 /**
- * Client component wrapper for HeroBanner with trust items.
+ * Client component wrapper for HeroSlider with trust items.
  * Trust items contain React elements (icons) which are not serializable
  * across the server/client boundary, so they must be defined in a client component.
  */
-export function HomeHeroBanner() {
+export function HomeHeroBanner({ initialSlides }: { initialSlides?: SlideConfig[] }) {
   return (
-    <HeroBanner
-      badge={MOCK_HERO_BANNER.badge}
-      description={MOCK_HERO_BANNER.description}
-      backgroundImage={MOCK_HERO_BANNER.backgroundImage}
-      primaryBtn={MOCK_HERO_BANNER.primaryBtn}
-      secondaryBtn={MOCK_HERO_BANNER.secondaryBtn}
+    <HeroSlider
+      slides={initialSlides ?? HERO_SLIDES}
       trustItems={trustItems}
     />
   );

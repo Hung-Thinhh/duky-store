@@ -1,67 +1,66 @@
-'use client';
+﻿'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import Link from 'next/link';
 import { ArrowRight, Star, ShieldCheck, Award } from 'lucide-react';
 import { BannerProduct, Slide } from '../BannerProduct';
 import { ProductCard } from '../ProductCard';
 import { useProductsByCategories } from '@/hooks/useProductsByCategories';
+import { Product, getProductImageUrl } from '@/types/product';
 
 const trustBadges = [
   {
     icon: <Star size={18} className="text-gray-600" />,
-    value: "50+",
-    label: "Mẫu boot nữ"
+    value: '50+',
+    label: 'Mẫu boot nữ',
   },
   {
     icon: <ShieldCheck size={18} className="text-gray-600" />,
-    value: "100%",
-    label: "Da thật cao cấp"
+    value: '100%',
+    label: 'Da thật cao cấp',
   },
   {
     icon: <Award size={18} className="text-gray-600" />,
-    value: "12 Tháng",
-    label: "Bảo hành chính hãng"
-  }
+    value: '12 Tháng',
+    label: 'Bảo hành chính hãng',
+  },
 ];
 
-const femaleSlides: Slide[] = [
-  {
-    id: 1,
-    label: "NEW COLLECTION",
-    title: "Elegant Stiletto Boot",
-    description: "Sự quyến rũ trong từng đường nét, nâng tầm vóc dáng.",
-    image: "/assets/boot_slide_nu.png",
-    ctaText: "Khám phá ngay"
-  },
-  {
-    id: 2,
-    label: "CHIC STYLE",
-    title: "Minimalist Suede Boot",
-    description: "Chất liệu da lộn mềm mại, mang lại cảm giác nhẹ nhàng.",
-    image: "/assets/boot_slide_nu.png",
-    ctaText: "Khám phá ngay"
-  },
-  {
-    id: 3,
-    label: "TRENDING NOW",
-    title: "Chic Platform Boot",
-    description: "Phong cách hiện đại, trẻ trung và đầy tự tin.",
-    image: "/assets/boot_slide_nu.png",
-    ctaText: "Khám phá ngay"
-  }
-];
+function getSlideLabel(product: Product): string {
+  if (product.isNewArrival) return 'NEW ARRIVAL';
+  if (product.isBestSeller) return 'BEST SELLER';
+  if (product.isFeatured) return 'FEATURED STYLE';
+  return 'BOOT NỮ';
+}
+
+function getSlideDescription(product: Product): string {
+  const fromLegacyDesc = product.desc?.trim();
+  if (fromLegacyDesc) return fromLegacyDesc;
+  return 'Thiết kế tôn dáng, chất liệu cao cấp và linh hoạt cho nhiều phong cách.';
+}
 
 export const BootFemaleSection: React.FC = () => {
-  const { products, loading } = useProductsByCategories("boot-nu", 12);
+  const { products, loading } = useProductsByCategories('boot-nu', 12);
+
+  const femaleSlides = useMemo<Slide[]>(() => {
+    return products
+      .filter((product) => Boolean(product.slug))
+      .slice(0, 3)
+      .map((product, index) => ({
+        id: index + 1,
+        label: getSlideLabel(product),
+        title: product.name,
+        description: getSlideDescription(product),
+        image: getProductImageUrl(product),
+        ctaText: 'Khám phá chi tiết',
+        ctaHref: `/products/${product.slug}`,
+      }));
+  }, [products]);
 
   return (
-    <section 
-      className="pt-24 pb-8 px-6 overflow-hidden"
-    >
+    <section className="pt-24 pb-8 px-6 overflow-hidden">
       <div className="container-custom">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start mt-8">
-          
           {/* Left Content */}
           <div className="lg:col-span-5 space-y-8">
             <div className="space-y-4">
@@ -82,8 +81,8 @@ export const BootFemaleSection: React.FC = () => {
             {/* Trust Badges */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
               {trustBadges.map((badge, index) => (
-                <div 
-                  key={index} 
+                <div
+                  key={index}
                   className="glass-effect p-4 rounded-2xl border border-white/50 flex flex-row gap-2 shadow-sm"
                 >
                   <div className="w-10 h-10 rounded-full bg-white/60 flex items-center justify-center shadow-sm">
@@ -102,9 +101,22 @@ export const BootFemaleSection: React.FC = () => {
 
           {/* Right Banner */}
           <div className="lg:col-span-7">
-            <BannerProduct slides={femaleSlides} />
+            {loading ? (
+              <div
+                className="glass-effect rounded-[2.5rem] border border-white/40 animate-pulse bg-white/30"
+                style={{ aspectRatio: '778 / 352' }}
+              />
+            ) : femaleSlides.length > 0 ? (
+              <BannerProduct slides={femaleSlides} />
+            ) : (
+              <div
+                className="glass-effect rounded-[2.5rem] border border-white/40 p-10 flex items-center"
+                style={{ aspectRatio: '778 / 352' }}
+              >
+                <p className="text-gray-600">Chưa có sản phẩm Boot Nữ để hiển thị.</p>
+              </div>
+            )}
           </div>
-
         </div>
 
         {/* Product Grid */}
@@ -119,19 +131,14 @@ export const BootFemaleSection: React.FC = () => {
                 </div>
               ))
             ) : (
-              products.map((product) => (
-                <ProductCard 
-                  key={product.id}
-                  product={product}
-                />
-              ))
+              products.map((product) => <ProductCard key={product.id} product={product} />)
             )}
           </div>
         </div>
 
         {/* button */}
         <div className="mt-8 justify-center items-center flex">
-          <Link 
+          <Link
             href="/collections/boot-nu"
             className="group glass-effect text-black px-10 py-4 btn text-sm font-semibold flex items-center gap-3 hover:bg-neutral-900 transition-all duration-300 shadow-xl shadow-black/10 hover:shadow-black/20 hover:-translate-y-1 active:scale-95"
           >
