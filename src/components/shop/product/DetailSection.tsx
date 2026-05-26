@@ -133,12 +133,11 @@ const COMMITMENTS = [
 
 // ─── Tabs ───────────────────────────────────────────────────────────────────
 
-type TabKey = 'description' | 'additional' | 'reviews';
+type TabKey = 'description' | 'additional';
 
 const TABS: { key: TabKey; label: string }[] = [
   { key: 'description', label: 'MÔ TẢ SẢN PHẨM' },
   { key: 'additional', label: 'THÔNG TIN BỔ SUNG' },
-  { key: 'reviews', label: `ĐÁNH GIÁ (${MOCK_DETAIL.reviews.length})` },
 ];
 
 // ─── Component ──────────────────────────────────────────────────────────────
@@ -248,25 +247,6 @@ const DetailSection: React.FC<DetailSectionProps> = ({ data = MOCK_DETAIL }) => 
                 ))}
               </tbody>
             </table>
-          </div>
-        )}
-
-        {activeTab === 'reviews' && (
-          <div className="detail-reviews">
-            {data.reviews.map((review) => (
-              <div key={review.id} className="detail-review-item">
-                <div className="detail-review-header">
-                  <span className="detail-review-author">{review.author}</span>
-                  <span className="detail-review-date">{review.date}</span>
-                </div>
-                <div className="detail-review-stars">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <span key={i} className={i < review.rating ? 'star-filled' : 'star-empty'}>★</span>
-                  ))}
-                </div>
-                <p className="detail-review-text">{review.content}</p>
-              </div>
-            ))}
           </div>
         )}
       </div>

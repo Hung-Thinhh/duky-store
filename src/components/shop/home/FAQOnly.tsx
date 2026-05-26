@@ -72,7 +72,7 @@ export const FAQOnly = () => {
                   <span className="badge-title text-[10px] font-bold tracking-[0.3em] text-gray-400 uppercase">
                     FAQ
                   </span>
-                  <h2 className="content text-3xl md:text-3xl lg:text-[40px] font-semibold text-white leading-tight tracking-tight">
+                  <h2 className="text-4xl md:text-5xl lg:text-[40px] font-semibold text-white leading-tight tracking-tight">
                     Câu hỏi <br className="hidden md:block" /> thường gặp
                   </h2>
                 </div>

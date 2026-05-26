@@ -168,28 +168,38 @@ async function fetchParentCategoryProducts(
     }
   }
 
+  const slugsArray = Array.from(slugsToFetch);
+
   // Fetch products from all slugs in parallel
   const results = await Promise.all(
-    Array.from(slugsToFetch).map((s) =>
-      fetchProducts({ categorySlug: s, limit: 100, sort: "newest" }).catch(
-        () => ({ data: [] as Product[], pagination: null })
-      )
+    slugsArray.map((s) =>
+      fetchProducts({ categorySlug: s, limit: 100, sort: "newest" })
+        .then((res) => res.data.map((p) => ({ ...p, categorySlug: s })))
+        .catch(() => [] as Product[])
     )
   );
 
-  // Deduplicate products by id
-  const seen = new Set<string>();
-  const merged: Product[] = [];
-  for (const result of results) {
-    for (const product of result.data) {
-      if (!seen.has(product.id)) {
-        seen.add(product.id);
-        merged.push(product);
+  // Deduplicate products by id, keeping a list of categorySlugs
+  const productMap = new Map<string, Product & { categorySlugs?: string[] }>();
+  for (let i = 0; i < slugsArray.length; i++) {
+    const s = slugsArray[i];
+    const products = results[i];
+    for (const p of products) {
+      if (!productMap.has(p.id)) {
+        productMap.set(p.id, {
+          ...p,
+          categorySlugs: [s],
+        });
+      } else {
+        const existing = productMap.get(p.id)!;
+        if (existing.categorySlugs && !existing.categorySlugs.includes(s)) {
+          existing.categorySlugs.push(s);
+        }
       }
     }
   }
 
-  return merged;
+  return Array.from(productMap.values());
 }
 
 // ─── Page Component (Server) ─────────────────────────────────────────────────

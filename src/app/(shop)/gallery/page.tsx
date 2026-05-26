@@ -2,10 +2,11 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { X } from "lucide-react";
+import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { Header, Footer } from "@/components/layout";
 import { Navpages } from "@/components/shop/Navpages";
 import { useCart } from "@/context/CartContext";
+import { fetchGalleryImages, GalleryImage } from "@/lib/api";
 
 interface BannerContent {
   image: string;
@@ -26,18 +27,44 @@ const MOCK_GALLERY_BANNER: BannerContent = {
   description: "Cảm hứng phối đồ cùng boot – Phong cách riêng, cá tính riêng.",
 };
 
-interface GalleryImage {
-  id: string;
-  src: string;
-  alt: string;
-}
+
 
 export default function GalleryPage() {
   const { cartCount } = useCart();
   const [images, setImages] = useState<GalleryImage[]>([]);
-  const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [banner, setBanner] = useState<BannerContent>(MOCK_GALLERY_BANNER);
+
+  // Keyboard navigation for image preview
+  useEffect(() => {
+    if (selectedIndex === null) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setSelectedIndex(null);
+      } else if (e.key === "ArrowLeft") {
+        setSelectedIndex((prev) => (prev === 0 || prev === null ? images.length - 1 : prev - 1));
+      } else if (e.key === "ArrowRight") {
+        setSelectedIndex((prev) => (prev === images.length - 1 || prev === null ? 0 : prev + 1));
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selectedIndex, images.length]);
+
+  // Disable body scroll when preview modal is open
+  useEffect(() => {
+    if (selectedIndex !== null) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [selectedIndex]);
 
   useEffect(() => {
     // TODO: Fetch banner content from backend API when available
@@ -46,9 +73,8 @@ export default function GalleryPage() {
   }, []);
 
   useEffect(() => {
-    fetch("/api/gallery")
-      .then((res) => res.json())
-      .then((data: GalleryImage[]) => {
+    fetchGalleryImages()
+      .then((data) => {
         setImages(data);
         setLoading(false);
       })
@@ -122,7 +148,7 @@ export default function GalleryPage() {
                   <div
                     key={img.id}
                     className="masonry-item"
-                    onClick={() => setSelectedImage(img)}
+                    onClick={() => setSelectedIndex(images.indexOf(img))}
                   >
                     <div className="masonry-img-wrap">
                       <Image
@@ -152,21 +178,67 @@ export default function GalleryPage() {
         )}
       </section>
 
-      {/* Lightbox */}
-      {selectedImage && (
-        <div className="lightbox" onClick={() => setSelectedImage(null)}>
-          <button className="lightbox-close" onClick={() => setSelectedImage(null)}>
-            <X size={24} />
+      {/* Fullscreen Image Preview Modal */}
+      {selectedIndex !== null && (
+        <div className="image-preview-modal" onClick={() => setSelectedIndex(null)}>
+          <button className="preview-close-btn" aria-label="Đóng" onClick={() => setSelectedIndex(null)}>
+            <div className="close-icon-wrapper">
+              <X size={28} />
+              <span className="close-text">Đóng</span>
+            </div>
           </button>
-          <div className="lightbox-content" onClick={(e) => e.stopPropagation()}>
-            <Image
-              src={selectedImage.src}
-              alt={selectedImage.alt}
-              width={800}
-              height={800}
-              className="lightbox-img"
-            />
-            <p className="lightbox-caption">{selectedImage.alt}</p>
+
+          <div className="preview-content-container" onClick={(e) => e.stopPropagation()}>
+            <button
+              className="preview-nav-btn preview-nav-prev"
+              onClick={() => setSelectedIndex((prev) => (prev === 0 || prev === null ? images.length - 1 : prev - 1))}
+              aria-label="Ảnh trước"
+            >
+              <ChevronLeft size={32} />
+            </button>
+
+            <div className="preview-image-wrapper">
+              <img
+                src={images[selectedIndex].src}
+                alt={images[selectedIndex].alt}
+                className="preview-main-image"
+              />
+            </div>
+
+            <button
+              className="preview-nav-btn preview-nav-next"
+              onClick={() => setSelectedIndex((prev) => (prev === images.length - 1 || prev === null ? 0 : prev + 1))}
+              aria-label="Ảnh sau"
+            >
+              <ChevronRight size={32} />
+            </button>
+          </div>
+
+          <div className="preview-thumbnails-container" onClick={(e) => e.stopPropagation()}>
+            <p className="preview-thumbnails-title">Hình ảnh</p>
+            <div className="preview-thumbnails-list">
+              {(() => {
+                const count = Math.min(5, images.length);
+                const list = [];
+                for (let offset = 0; offset < count; offset++) {
+                  const targetIdx = (selectedIndex + offset) % images.length;
+                  list.push({
+                    img: images[targetIdx],
+                    idx: targetIdx,
+                  });
+                }
+                return list.map(({ img, idx }) => (
+                  <button
+                    key={`${img.id}-${idx}`}
+                    className={`preview-thumbnail-item ${idx === selectedIndex ? "preview-thumbnail-active" : ""}`}
+                    onClick={() => setSelectedIndex(idx)}
+                    aria-label={`Xem ảnh ${idx + 1}`}
+                  >
+                    <img src={img.src} alt={img.alt} className="preview-thumbnail-img" />
+                  </button>
+                ));
+              })()}
+            </div>
           </div>
         </div>
       )}
@@ -250,62 +322,202 @@ export default function GalleryPage() {
           line-height: 1.4;
         }
 
-        /* Lightbox */
-        .lightbox {
+        /* Fullscreen Image Preview Modal */
+        .image-preview-modal {
           position: fixed;
           inset: 0;
-          z-index: 9999;
-          background: rgba(0, 0, 0, 0.85);
+          background: rgba(0, 0, 0, 0.95);
           display: flex;
+          flex-direction: column;
           align-items: center;
           justify-content: center;
-          padding: 40px;
-          backdrop-filter: blur(8px);
+          z-index: 9999;
+          backdrop-filter: blur(12px);
+          animation: fadeIn 0.25s ease-out;
         }
 
-        .lightbox-close {
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+
+        .preview-close-btn {
           position: absolute;
           top: 24px;
           right: 24px;
-          width: 44px;
-          height: 44px;
+          background: transparent;
+          border: none;
+          cursor: pointer;
+          color: #ffffff;
+          transition: transform 0.2s ease, color 0.2s ease;
+          z-index: 10010;
+        }
+
+        .close-icon-wrapper {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 2px;
+        }
+
+        .close-text {
+          font-family: var(--font-main);
+          font-size: 11px;
+          font-weight: 500;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          opacity: 0.8;
+        }
+
+        .preview-close-btn:hover {
+          transform: scale(1.1);
+          color: #f3f4f6;
+        }
+
+        .preview-content-container {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          max-width: 1200px;
+          position: relative;
+          padding: 0 80px;
+        }
+
+        .preview-image-wrapper {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          max-width: 100%;
+          max-height: 60vh;
+          user-select: none;
+        }
+
+        .preview-main-image {
+          max-width: 100%;
+          max-height: 60vh;
+          object-fit: contain;
+          border-radius: 12px;
+          box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+          animation: scaleUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes scaleUp {
+          from {
+            transform: scale(0.9);
+          }
+          to {
+            transform: scale(1);
+          }
+        }
+
+        .preview-nav-btn {
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 56px;
+          height: 56px;
           border-radius: 50%;
-          background: rgba(255, 255, 255, 0.1);
+          background: rgba(255, 255, 255, 0.08);
           border: 1px solid rgba(255, 255, 255, 0.2);
-          color: #fff;
           display: flex;
           align-items: center;
           justify-content: center;
           cursor: pointer;
-          transition: var(--transition-fast);
+          color: #ffffff;
+          transition: all 0.2s ease;
+          z-index: 10005;
         }
 
-        .lightbox-close:hover {
+        .preview-nav-btn:hover {
           background: rgba(255, 255, 255, 0.2);
+          border-color: #ffffff;
+          transform: translateY(-50%) scale(1.05);
         }
 
-        .lightbox-content {
-          max-width: 80vw;
-          max-height: 80vh;
+        .preview-nav-btn:active {
+          transform: translateY(-50%) scale(0.95);
+        }
+
+        .preview-nav-prev {
+          left: 24px;
+        }
+
+        .preview-nav-next {
+          right: 24px;
+        }
+
+        .preview-thumbnails-container {
+          position: absolute;
+          bottom: 30px;
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 16px;
+          gap: 12px;
+          z-index: 10005;
         }
 
-        :global(.lightbox-img) {
-          max-height: 75vh;
-          width: auto;
-          height: auto;
-          object-fit: contain;
-          border-radius: 12px;
-        }
-
-        .lightbox-caption {
+        .preview-thumbnails-title {
           font-family: var(--font-main);
-          font-size: 14px;
-          color: rgba(255, 255, 255, 0.8);
-          text-align: center;
+          font-size: 13px;
+          font-weight: 600;
+          color: rgba(255, 255, 255, 0.7);
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+          margin: 0;
+        }
+
+        .preview-thumbnails-list {
+          display: flex;
+          gap: 12px;
+          overflow-x: auto;
+          max-width: 90vw;
+          padding: 8px 12px;
+          scrollbar-width: thin;
+          scrollbar-color: rgba(255,255,255,0.2) transparent;
+        }
+
+        .preview-thumbnails-list::-webkit-scrollbar {
+          height: 4px;
+        }
+
+        .preview-thumbnails-list::-webkit-scrollbar-thumb {
+          background: rgba(255,255,255,0.2);
+          border-radius: 2px;
+        }
+
+        .preview-thumbnail-item {
+          width: 64px;
+          height: 64px;
+          border-radius: 10px;
+          border: 2px solid transparent;
+          overflow: hidden;
+          cursor: pointer;
+          background: rgba(255, 255, 255, 0.05);
+          padding: 2px;
+          transition: all 0.2s ease;
+          flex-shrink: 0;
+        }
+
+        .preview-thumbnail-item:hover {
+          border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .preview-thumbnail-active {
+          border-color: #ffffff;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .preview-thumbnail-img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          border-radius: 6px;
         }
 
         /* Responsive */

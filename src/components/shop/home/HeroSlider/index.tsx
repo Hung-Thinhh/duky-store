@@ -16,7 +16,7 @@ import { TrustBar } from "./TrustBar";
 
 interface HeroSliderProps {
   slides?: SlideConfig[];
-  autoScrollInterval?: number; // ms, default 5000, min 3000, max 10000
+  autoScrollInterval?: number; // ms, default 4000, min 3000, max 10000
   transitionDuration?: number; // ms, default 800
   trustItems?: TrustItem[];
   className?: string;
@@ -24,7 +24,7 @@ interface HeroSliderProps {
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
-const DEFAULT_AUTO_SCROLL_INTERVAL = 5000;
+const DEFAULT_AUTO_SCROLL_INTERVAL = 4000;
 const MIN_AUTO_SCROLL_INTERVAL = 3000;
 const MAX_AUTO_SCROLL_INTERVAL = 10000;
 const DEFAULT_TRANSITION_DURATION = 800;

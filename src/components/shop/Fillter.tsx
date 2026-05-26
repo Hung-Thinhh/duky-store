@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
@@ -17,6 +17,7 @@ interface FilterProps {
   initialState?: Partial<FilterState>;
   onChange: (state: FilterState) => void;
   className?: string;
+  parentSlug?: string;
 }
 
 interface ColorOption {
@@ -40,6 +41,30 @@ interface BackendCategory {
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api/v1";
 const ALL_CATEGORY_OPTION: CategoryOption = { value: "all", label: "Tất cả" };
 const PARENT_SHOE_CATEGORY_SLUGS = new Set(["boot-nam", "boot-nu"]);
+
+let cachedCategoriesPromise: Promise<BackendCategory[]> | null = null;
+
+async function fetchCategoriesCached(): Promise<BackendCategory[]> {
+  if (cachedCategoriesPromise) {
+    return cachedCategoriesPromise;
+  }
+
+  cachedCategoriesPromise = (async () => {
+    try {
+      const response = await fetch(`${API_URL}/categories`);
+      if (!response.ok) {
+        throw new Error(`Failed to load categories: ${response.status}`);
+      }
+      const json = await response.json();
+      return json?.DT?.data || [];
+    } catch (error) {
+      cachedCategoriesPromise = null;
+      return [];
+    }
+  })();
+
+  return cachedCategoriesPromise;
+}
 
 const SIZES = [34, 35, 36, 37, 38, 39, 40, 41, 42, 43] as const;
 
@@ -426,7 +451,7 @@ function PriceFilter({ min, max, onRangeChange }: PriceFilterProps) {
   );
 }
 
-export default function Filter({ initialState, onChange, className }: FilterProps) {
+export default function Filter({ initialState, onChange, className, parentSlug }: FilterProps) {
   const [categoryOptions, setCategoryOptions] = useState<CategoryOption[]>([
     ALL_CATEGORY_OPTION,
   ]);
@@ -445,17 +470,15 @@ export default function Filter({ initialState, onChange, className }: FilterProp
 
     async function loadCategoryOptions() {
       try {
-        const response = await fetch(`${API_URL}/categories`);
-        if (!response.ok) {
-          throw new Error(`Failed to load categories: ${response.status}`);
-        }
+        const categories = await fetchCategoriesCached();
 
-        const json = await response.json();
-        const categories: BackendCategory[] = json?.DT?.data || [];
+        const targetParentSlugs = parentSlug
+          ? new Set([parentSlug])
+          : PARENT_SHOE_CATEGORY_SLUGS;
 
         const parentCategoryIds = new Set(
           categories
-            .filter((category) => PARENT_SHOE_CATEGORY_SLUGS.has(category.slug))
+            .filter((category) => targetParentSlugs.has(category.slug))
             .map((category) => category.id)
         );
 
@@ -468,7 +491,7 @@ export default function Filter({ initialState, onChange, className }: FilterProp
           childCategories.length > 0
             ? childCategories
             : categories.filter((category) =>
-                PARENT_SHOE_CATEGORY_SLUGS.has(category.slug)
+                targetParentSlugs.has(category.slug)
               );
 
         const uniqueBySlug = new Map<string, CategoryOption>();
@@ -500,7 +523,7 @@ export default function Filter({ initialState, onChange, className }: FilterProp
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [parentSlug]);
 
   const isDefaultState =
     filterState.category === DEFAULT_FILTER_STATE.category &&

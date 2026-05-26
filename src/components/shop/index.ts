@@ -17,3 +17,4 @@ export * from './CollectionHero';
 export * from './PopupTemplate';
 
 export * from './Navpages';
+export * from './Pagination';

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { Header, Footer } from "@/components/layout";
 import { Navpages } from "@/components/shop/Navpages";
+import { Pagination } from "@/components/shop/Pagination";
 import { BlogCard, BlogSidebar } from "@/components/shop/blog";
 import { useBlogPosts } from "@/hooks/useBlogPosts";
 import { useCart } from "@/context/CartContext";
@@ -17,11 +18,29 @@ const POSTS_PER_PAGE = 10;
 export function BlogPageClient() {
   const { cartCount } = useCart();
   const searchParams = useSearchParams();
-  const categorySlug = searchParams.get("category") || undefined;
+  const rawCategory = searchParams.get("category") || undefined;
+
+  // Normalize old category slugs to backend database category slugs
+  const categorySlug = (() => {
+    if (!rawCategory) return undefined;
+    switch (rawCategory) {
+      case "kinh-nghiem":
+        return "kinh-nghiem-giay-boot";
+      case "phoi-do":
+        return "mix-nam-voi-giay-boot";
+      case "cham-soc-giay":
+        return "bi-kip-giay-boot";
+      case "tin-tuc":
+        return "bi-kip-giay-boot";
+      default:
+        return rawCategory;
+    }
+  })();
 
   const [currentPage, setCurrentPage] = useState(1);
   const [categories, setCategories] = useState<BlogCategory[]>([]);
   const [recentPosts, setRecentPosts] = useState<ReturnType<typeof useBlogPosts>["posts"]>([]);
+  const [sidebarLoading, setSidebarLoading] = useState(true);
 
   // Fetch main posts list
   const { posts, loading, pagination } = useBlogPosts({
@@ -33,15 +52,21 @@ export function BlogPageClient() {
 
   const totalPages = pagination?.totalPages ?? 1;
 
-  // Fetch categories and recent posts for sidebar
   useEffect(() => {
-    fetchBlogCategories()
-      .then((cats) => setCategories(cats.length > 0 ? cats : MOCK_BLOG_CATEGORIES))
-      .catch(() => setCategories(MOCK_BLOG_CATEGORIES));
-
-    fetchBlogPosts({ limit: 5, sort: "newest" })
-      .then((res) => setRecentPosts(res.data.length > 0 ? res.data : MOCK_BLOG_POSTS.slice(0, 5)))
-      .catch(() => setRecentPosts(MOCK_BLOG_POSTS.slice(0, 5)));
+    setSidebarLoading(true);
+    Promise.all([
+      fetchBlogCategories()
+        .then((res) => {
+          const cats = res.data;
+          setCategories(cats && cats.length > 0 ? cats : MOCK_BLOG_CATEGORIES);
+        })
+        .catch(() => setCategories(MOCK_BLOG_CATEGORIES)),
+      fetchBlogPosts({ limit: 5, sort: "newest" })
+        .then((res) => setRecentPosts(res.data.length > 0 ? res.data : MOCK_BLOG_POSTS.slice(0, 5)))
+        .catch(() => setRecentPosts(MOCK_BLOG_POSTS.slice(0, 5)))
+    ]).finally(() => {
+      setSidebarLoading(false);
+    });
   }, []);
 
   // Reset page when category changes
@@ -66,11 +91,23 @@ export function BlogPageClient() {
         />
 
         {/* Featured Post */}
-        {featuredPost && !loading && (
+        {loading ? (
+          <div className="blog-featured">
+            <div className="blog-skeleton-featured">
+              <div className="blog-skeleton-featured-badge" />
+              <div className="blog-skeleton-featured-content">
+                <div className="blog-skeleton-featured-tag" />
+                <div className="blog-skeleton-featured-line blog-skeleton-featured-line--title" />
+                <div className="blog-skeleton-featured-line blog-skeleton-featured-line--desc-1" />
+                <div className="blog-skeleton-featured-line blog-skeleton-featured-line--desc-2" />
+              </div>
+            </div>
+          </div>
+        ) : featuredPost ? (
           <div className="blog-featured">
             <BlogCard post={featuredPost} variant="featured" />
           </div>
-        )}
+        ) : null}
 
         {/* Main Content */}
         <div className="blog-layout">
@@ -109,34 +146,12 @@ export function BlogPageClient() {
             ) : null}
 
             {/* Pagination */}
-            {totalPages > 1 && !loading && (
-              <div className="blog-pagination">
-                {currentPage > 1 && (
-                  <button
-                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                    className="blog-pagination-btn"
-                  >
-                    &lt;
-                  </button>
-                )}
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                  <button
-                    key={page}
-                    onClick={() => setCurrentPage(page)}
-                    className={`blog-pagination-num ${currentPage === page ? "blog-pagination-num--active" : ""}`}
-                  >
-                    {page}
-                  </button>
-                ))}
-                {currentPage < totalPages && (
-                  <button
-                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                    className="blog-pagination-btn"
-                  >
-                    &gt;
-                  </button>
-                )}
-              </div>
+            {!loading && (
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
             )}
           </div>
 
@@ -146,6 +161,7 @@ export function BlogPageClient() {
               recentPosts={recentPosts}
               categories={categories}
               activeCategory={categorySlug}
+              loading={sidebarLoading}
             />
           </div>
         </div>
@@ -214,6 +230,73 @@ export function BlogPageClient() {
         }
 
         /* Skeleton */
+        .blog-skeleton-featured {
+          width: 100%;
+          aspect-ratio: 16/9;
+          border-radius: 16px;
+          background: var(--bg-card, #fff);
+          border: 1px solid var(--border-subtle, #f0f0f0);
+          position: relative;
+          overflow: hidden;
+          animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .blog-skeleton-featured-badge {
+          position: absolute;
+          top: 16px;
+          left: 16px;
+          width: 52px;
+          height: 52px;
+          border-radius: 12px;
+          background: var(--bg-secondary, #f5f5f5);
+        }
+
+        .blog-skeleton-featured-content {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          padding: 24px;
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .blog-skeleton-featured-tag {
+          width: 80px;
+          height: 20px;
+          border-radius: 10px;
+          background: var(--bg-secondary, #f5f5f5);
+        }
+
+        .blog-skeleton-featured-line {
+          height: 16px;
+          border-radius: 8px;
+          background: var(--bg-secondary, #f5f5f5);
+        }
+
+        .blog-skeleton-featured-line--title {
+          height: 24px;
+          width: 60%;
+        }
+
+        .blog-skeleton-featured-line--desc-1 {
+          width: 80%;
+        }
+
+        .blog-skeleton-featured-line--desc-2 {
+          width: 50%;
+        }
+
+        @media (min-width: 768px) {
+          .blog-skeleton-featured {
+            aspect-ratio: 21/9;
+          }
+          .blog-skeleton-featured-content {
+            padding: 40px;
+          }
+        }
+
         .blog-skeleton-list {
           display: grid;
           grid-template-columns: repeat(3, 1fr);

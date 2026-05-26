@@ -6,9 +6,22 @@ import { Product } from "@/types/product";
 import { LiquidGlassCard } from "@/components/ui/liquid-glass";
 import { PackageOpen } from "lucide-react";
 import { Navpages } from "@/components/shop/Navpages";
+import { Pagination } from "@/components/shop/Pagination";
 import Filter, { FilterState } from "@/components/shop/Fillter";
 
 const PRODUCTS_PER_PAGE = 8;
+
+const COLOR_MAPPING: Record<string, string> = {
+  "black": "Đen",
+  "dark-brown": "Nâu đậm",
+  "brown": "Nâu",
+  "tan": "Nâu nhạt",
+  "gray": "Xám",
+  "white": "Trắng",
+  "navy": "Xanh navy",
+  "burgundy": "Đỏ đô",
+  "olive": "Xanh rêu",
+};
 
 interface CollectionClientProps {
   initialProducts: Product[];
@@ -33,6 +46,44 @@ export default function CollectionClient({
 
   // Client-side filtering
   const filteredProducts = initialProducts.filter((product) => {
+    // Category filter
+    if (
+      filterState.category &&
+      filterState.category !== "all" &&
+      filterState.category !== "Tất cả"
+    ) {
+      const p = product as Product & { categorySlugs?: string[] };
+      if (!p.categorySlugs || !p.categorySlugs.includes(filterState.category)) {
+        return false;
+      }
+    }
+
+    // Size filter
+    if (filterState.sizes && filterState.sizes.length > 0) {
+      const hasMatchingSize = product.variants?.some((variant: any) => {
+        if (!variant.sizeLabel) return false;
+        const sizeNum = parseInt(variant.sizeLabel, 10);
+        return !isNaN(sizeNum) && filterState.sizes.includes(sizeNum);
+      });
+      if (!hasMatchingSize) return false;
+    }
+
+    // Color filter
+    if (filterState.colors && filterState.colors.length > 0) {
+      const selectedColorNames = filterState.colors
+        .map((c) => COLOR_MAPPING[c])
+        .filter(Boolean);
+
+      const hasMatchingColor = product.variants?.some((variant: any) => {
+        if (!variant.colorName) return false;
+        const normalizedColor = variant.colorName.trim().toLowerCase();
+        return selectedColorNames.some(
+          (name) => name.toLowerCase() === normalizedColor
+        );
+      });
+      if (!hasMatchingColor) return false;
+    }
+
     // Price filter
     const price = product.salePrice ?? product.originalPrice ?? product.price ?? 0;
     if (filterState.priceMin > 0 && price < filterState.priceMin) return false;
@@ -85,6 +136,7 @@ export default function CollectionClient({
             <Filter
               onChange={handleFilterChange}
               className="relative z-30"
+              parentSlug={slug}
             />
           </LiquidGlassCard>
         </aside>
@@ -118,39 +170,11 @@ export default function CollectionClient({
           </div>
 
           {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex items-center justify-center gap-2 pt-10">
-              {currentPage > 1 && (
-                <button
-                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                  className="w-9 h-9 flex items-center justify-center rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors cursor-pointer"
-                >
-                  &lt;
-                </button>
-              )}
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                <button
-                  key={page}
-                  onClick={() => setCurrentPage(page)}
-                  className={`w-9 h-9 flex items-center justify-center rounded-md text-sm font-medium transition-colors cursor-pointer ${
-                    currentPage === page
-                      ? "bg-black text-white"
-                      : "border border-gray-200 text-gray-600 hover:bg-gray-50"
-                  }`}
-                >
-                  {page}
-                </button>
-              ))}
-              {currentPage < totalPages && (
-                <button
-                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                  className="w-9 h-9 flex items-center justify-center rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors cursor-pointer"
-                >
-                  &gt;
-                </button>
-              )}
-            </div>
-          )}
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
         </div>
       </div>
     </section>

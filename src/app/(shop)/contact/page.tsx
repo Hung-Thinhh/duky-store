@@ -14,6 +14,57 @@ import { Navpages } from "@/components/shop/Navpages";
 import { useCart } from "@/context/CartContext";
 import { FAQOnly } from "@/components/shop/home/FAQOnly";
 
+interface BannerContent {
+  image: string;
+  alt: string;
+  badge: string;
+  titleLine1: string;
+  titleLine2: string;
+  description: string;
+}
+
+const CONTACT_BANNER: BannerContent = {
+  image: "/assets/banner_contact.webp",
+  alt: "Liên hệ - Duky Store",
+  badge: "CONTACT US",
+  titleLine1: "LIÊN HỆ",
+  titleLine2: "DUKY STORE",
+  description: "Bạn đang cần sự hỗ trợ? Hãy liên hệ với Duky Store — chúng tôi luôn sẵn sàng giúp đỡ bạn.",
+};
+
+interface StorePhoto {
+  caption: string;
+  image: string;
+}
+
+const STORE_PHOTOS: StorePhoto[] = [
+  {
+    caption: "Không gian mặt tiền sang trọng tại cửa hàng Duky Store",
+    image: "/assets/cua_hang_1.webp",
+  },
+  {
+    caption: "Khu vực trưng bày các sản phẩm giày da cao cấp",
+    image: "/assets/cua_hang_2.webp",
+  },
+  {
+    caption: "Góc trải nghiệm sản phẩm và thử giày rộng rãi",
+    image: "/assets/cua_hang_3.webp",
+  },
+  {
+    caption: "Không gian mua sắm hiện đại và chuyên nghiệp",
+    image: "/assets/cua_hang_4.webp",
+  },
+  {
+    caption: "Nhiều mẫu giày boot nam nữ, giày da cao cấp",
+    image: "/assets/cua_hang_5.webp",
+  },
+];
+
+const STORE_SECTION_HEADER = {
+  title: "Cửa hàng DUKY STORE",
+  subtitle: "Ghé thăm cửa hàng của chúng tôi để trải nghiệm không gian mua sắm hiện đại, sang trọng và nhận sự tư vấn tận tình nhất từ đội ngũ nhân viên chuyên nghiệp.",
+};
+
 export default function ContactPage() {
   const { cartCount } = useCart();
   const [form, setForm] = useState({
@@ -40,6 +91,46 @@ export default function ContactPage() {
     <>
       <Header cartCount={cartCount} />
 
+      {/* Hero Banner */}
+      <section
+        className="relative w-full"
+        style={{ width: "100vw", marginLeft: "calc(-50vw + 50%)" }}
+      >
+        <Image
+          src={CONTACT_BANNER.image}
+          alt={CONTACT_BANNER.alt}
+          width={1920}
+          height={1080}
+          sizes="100vw"
+          className="w-full h-auto"
+          priority
+        />
+        {/* Text overlay */}
+        <div className="absolute inset-0 flex items-center">
+          <div className="px-12 md:px-16 lg:px-[100px] space-y-3">
+            <span className="inline-block text-xs font-medium tracking-widest text-zinc-400 uppercase">
+              {CONTACT_BANNER.badge}
+            </span>
+            <h1 className="leading-[1.1] tracking-tighter text-white">
+              <span className="block text-[36px] md:text-[52px] lg:text-[64px] font-semibold">
+                {CONTACT_BANNER.titleLine1}
+              </span>
+              <span className="block text-[30px] md:text-[44px] lg:text-[56px] font-medium italic -mt-1 md:-mt-2">
+                <span className="font-montserrat not-italic font-semibold tracking-wide text-white inline-block ml-1 md:ml-2">
+                  {CONTACT_BANNER.titleLine2}
+                </span>
+              </span>
+            </h1>
+            <div className="flex items-start gap-3 max-w-sm">
+              <div className="w-8 h-px bg-white mt-2.5 shrink-0" />
+              <p className="text-sm text-zinc-300 leading-relaxed font-light">
+                {CONTACT_BANNER.description}
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="contact-page">
         <Navpages
           items={[
@@ -48,49 +139,53 @@ export default function ContactPage() {
           ]}
         />
 
-        {/* Header */}
-        <div className="contact-header">
-          <h1 className="contact-title">Liên hệ với chúng tôi</h1>
-          <p className="contact-subtitle">
-            Bạn có câu hỏi hoặc cần hỗ trợ? Hãy liên hệ với Duky Store — chúng tôi luôn sẵn sàng giúp đỡ bạn.
-          </p>
-        </div>
+        {/* Company Store Section */}
+        <div className="store-section">
+          <div className="store-header">
+            <h2 className="text-4xl md:text-5xl lg:text-[40px] font-semibold text-black leading-tight tracking-tight py-2">{STORE_SECTION_HEADER.title}</h2>
+            <p className="store-subtitle">{STORE_SECTION_HEADER.subtitle}</p>
+          </div>
 
-        {/* Co-Founders */}
-        <div className="founders-section">
-          <a href="https://www.facebook.com/phamcanty" target="_blank" rel="noopener noreferrer" className="founder-card">
-            <div className="founder-img-wrap">
-              <Image
-                src="/assets/Canty.jpg"
-                alt="Canty Phạm - Co-Founder"
-                width={400}
-                height={500}
-                sizes="(max-width: 768px) 50vw, 400px"
-                className="founder-img"
-              />
-            </div>
-            <div className="founder-info">
-              <span className="founder-role">Co-Founder</span>
-              <h3 className="founder-name">Canty Phạm</h3>
-            </div>
-          </a>
+          <div className="store-grid store-grid-top">
+            {STORE_PHOTOS.slice(0, 2).map((photo, index) => (
+              <div key={index} className="store-card">
+                <div className="store-img-wrap">
+                  <Image
+                    src={photo.image}
+                    alt={photo.caption}
+                    width={600}
+                    height={375}
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    className="store-img"
+                    priority
+                  />
+                </div>
+                <div className="store-info">
+                  <h3 className="store-photo-caption">{photo.caption}</h3>
+                </div>
+              </div>
+            ))}
+          </div>
 
-          <a href="https://www.facebook.com/duckkytran/" target="_blank" rel="noopener noreferrer" className="founder-card">
-            <div className="founder-img-wrap">
-              <Image
-                src="/assets/Duckky.jpg"
-                alt="Ngân Duckky - Co-Founder"
-                width={400}
-                height={500}
-                sizes="(max-width: 768px) 50vw, 400px"
-                className="founder-img"
-              />
-            </div>
-            <div className="founder-info">
-              <span className="founder-role">Co-Founder</span>
-              <h3 className="founder-name">Ngân Duckky</h3>
-            </div>
-          </a>
+          <div className="store-grid store-grid-bottom">
+            {STORE_PHOTOS.slice(2).map((photo, index) => (
+              <div key={index} className="store-card">
+                <div className="store-img-wrap">
+                  <Image
+                    src={photo.image}
+                    alt={photo.caption}
+                    width={400}
+                    height={300}
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                    className="store-img"
+                  />
+                </div>
+                <div className="store-info">
+                  <h3 className="store-photo-caption">{photo.caption}</h3>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className="contact-layout">
@@ -98,8 +193,7 @@ export default function ContactPage() {
           <div className="contact-info">
             <div className="info-card">
               <div className="info-card-header">
-                <MessageCircle size={20} />
-                <h2 className="info-card-title">Thông tin liên hệ</h2>
+                <h2 className="text-4xl md:text-5xl lg:text-[40px] font-semibold text-black leading-tight tracking-tight">Thông tin liên hệ</h2>
               </div>
               <p className="info-card-desc">
                 Liên hệ với chúng tôi qua các kênh dưới đây hoặc gửi tin nhắn trực tiếp.
@@ -187,8 +281,7 @@ export default function ContactPage() {
         .contact-page {
           max-width: 1440px;
           margin: 0 auto;
-          padding: 8px 2rem 56px;
-          margin-top: 80px;
+          padding: 32px 2rem 56px;
         }
 
         .contact-header {
@@ -211,72 +304,100 @@ export default function ContactPage() {
           margin: 0 auto;
         }
 
-        /* ─── Founders Section ─── */
-        .founders-section {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 32px;
-          max-width: 900px;
+        /* ─── Store Section ─── */
+        .store-section {
+          max-width: 1200px;
           margin: 0 auto 56px;
         }
 
-        .founder-card {
-          position: relative;
+        .store-header {
+          text-align: center;
+          margin-bottom: 32px;
+        }
+
+        .store-title {
+          font-family: var(--font-accent);
+          font-size: 28px;
+          font-weight: 700;
+          color: var(--text-main);
+          margin-bottom: 8px;
+        }
+
+        .store-subtitle {
+          font-size: 14px;
+          color: var(--text-muted);
+          max-width: 600px;
+          margin: 0 auto;
+          line-height: 1.6;
+        }
+
+        .store-grid {
+          display: grid;
+          gap: 24px;
+        }
+
+        .store-grid-top {
+          grid-template-columns: repeat(2, 1fr);
+          margin-bottom: 24px;
+        }
+
+        .store-grid-bottom {
+          grid-template-columns: repeat(3, 1fr);
+        }
+
+        .store-card {
+          background: var(--bg-card);
+          border: 1px solid var(--border-card);
           border-radius: 20px;
           overflow: hidden;
-          background: #f8f8f8;
-          text-decoration: none;
-          display: block;
-          cursor: pointer;
+          box-shadow: var(--card-shadow);
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .founder-img-wrap {
+        .store-card:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .store-img-wrap {
           position: relative;
           width: 100%;
-          aspect-ratio: 4 / 5;
+          aspect-ratio: 4 / 3;
           overflow: hidden;
+          background: #f0f0f0;
         }
 
-        :global(.founder-img) {
+        .store-grid-top .store-img-wrap {
+          aspect-ratio: 16 / 10;
+        }
+
+        :global(.store-img) {
           width: 100%;
           height: 100%;
           object-fit: cover;
           display: block;
-          transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+          transition: transform 0.4s ease;
         }
 
-        .founder-card:hover :global(.founder-img) {
-          transform: scale(1.05);
+        .store-card:hover :global(.store-img) {
+          transform: scale(1.06);
         }
 
-        .founder-info {
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          padding: 24px 28px;
-          background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
+        .store-info {
+          padding: 16px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          min-height: 56px;
         }
 
-        .founder-role {
-          display: inline-block;
-          font-size: 11px;
-          font-weight: 600;
-          color: rgba(255,255,255,0.8);
-          background: rgba(255,255,255,0.15);
-          backdrop-filter: blur(4px);
-          padding: 4px 12px;
-          border-radius: 999px;
-          margin-bottom: 8px;
-          letter-spacing: 0.04em;
-        }
-
-        .founder-name {
-          font-family: var(--font-accent);
-          font-size: 26px;
-          font-weight: 700;
-          color: #fff;
-          margin: 0;
+        .store-photo-caption {
+          font-family: var(--font-main);
+          font-size: 14px;
+          font-weight: 500;
+          color: var(--text-main);
+          text-align: center;
+          line-height: 1.4;
         }
 
         .contact-layout {
@@ -524,6 +645,10 @@ export default function ContactPage() {
           .contact-info {
             grid-template-columns: 1fr;
           }
+          .store-grid-top,
+          .store-grid-bottom {
+            grid-template-columns: repeat(2, 1fr);
+          }
         }
 
         @media (max-width: 640px) {
@@ -539,14 +664,13 @@ export default function ContactPage() {
             font-size: 24px;
           }
 
-          .founders-section {
+          .store-grid-top,
+          .store-grid-bottom {
             grid-template-columns: 1fr;
             gap: 20px;
-            margin-bottom: 40px;
           }
-
-          .founder-name {
-            font-size: 22px;
+          .store-grid-top {
+            margin-bottom: 20px;
           }
         }
       `}</style>

@@ -108,9 +108,9 @@ export const Header = ({ cartCount }: HeaderProps) => {
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
   const accountMenuRef = useRef<HTMLDivElement>(null);
-  const { products: searchProducts } = useProducts(
+  const { products: searchProducts, loading: isSearchLoading } = useProducts(
     { limit: 20 },
-    { enabled: isSearchOpen },
+    { enabled: true },
   );
   const { isAuthenticated, customer, logout } = useAuth();
 
@@ -380,6 +380,7 @@ export const Header = ({ cartCount }: HeaderProps) => {
         onClose={() => setIsSearchOpen(false)}
         products={searchProducts}
         popularSearches={popularSearches}
+        isLoading={isSearchLoading}
       />
 
       {/* Contact Popup */}

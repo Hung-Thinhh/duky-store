@@ -46,6 +46,7 @@ export interface Product {
   publishedAt?: string | null;
   createdAt?: string;
   updatedAt?: string;
+  variants?: any[];
 
   // ─── Legacy mock data properties (used by static data files) ─────────────
   desc?: string;

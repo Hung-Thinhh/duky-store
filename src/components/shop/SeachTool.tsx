@@ -8,6 +8,7 @@ import { AnimatePresence, motion } from "motion/react";
 
 import { cn, formatCurrency } from "@/lib/utils";
 import { Product, getProductImageUrl, getDisplayPrice } from "@/types/product";
+import { useProducts } from "@/hooks/useProducts";
 
 // --- Utility Functions ---
 
@@ -51,6 +52,7 @@ export interface SearchToolProps {
   onClose: () => void;
   products: Product[];
   popularSearches?: string[];
+  isLoading?: boolean;
 }
 
 // --- Inline Sub-Components ---
@@ -193,6 +195,33 @@ function ProductSuggestions({ products, onProductClick }: ProductSuggestionsProp
   );
 }
 
+function ProductSuggestionsSkeleton() {
+  return (
+    <div className="mb-4">
+      <p className="text-xs font-medium text-[var(--text-label)] uppercase tracking-wide mb-3 animate-pulse">
+        Gợi ý sản phẩm
+      </p>
+      <div className="py-2 grid grid-cols-2 md:grid-cols-4 gap-3">
+        {Array.from({ length: 4 }).map((_, index) => (
+          <div
+            key={index}
+            className="flex flex-row items-stretch gap-3 p-3 rounded-xl border-2 border-gray-200 bg-gray-100/60 animate-pulse"
+          >
+            <div className="w-[75px] h-[85px] shrink-0 rounded-lg bg-gray-200/50" />
+            <div className="flex-1 flex flex-col justify-between py-2">
+              <div className="space-y-2">
+                <div className="h-3 bg-gray-200/80 rounded w-full" />
+                <div className="h-3 bg-gray-200/80 rounded w-5/6" />
+              </div>
+              <div className="h-3 bg-gray-200/80 rounded w-1/2" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 interface ViewAllFooterProps {
   query: string;
   onViewAll: () => void;
@@ -224,15 +253,43 @@ export function SearchTool({
   onClose,
   products,
   popularSearches,
+  isLoading,
 }: SearchToolProps) {
   const [query, setQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const filteredProducts = useMemo(
-    () => filterProducts(products, query),
-    [products, query]
+  // Debounce input to avoid spamming the backend API
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedQuery(query);
+    }, 300);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [query]);
+
+  // Query database dynamically when user typed keyword is present
+  const { products: dynamicResults, loading: isSearching } = useProducts(
+    { search: debouncedQuery, limit: 4 },
+    { enabled: isOpen && debouncedQuery.trim().length > 0 }
   );
+
+  const displayProducts = useMemo(() => {
+    if (query.trim() === "") {
+      return products.slice(0, 4);
+    }
+    return dynamicResults;
+  }, [query, products, dynamicResults]);
+
+  const isResultsLoading = useMemo(() => {
+    if (query.trim() === "") {
+      return isLoading && products.length === 0;
+    }
+    return query !== debouncedQuery || isSearching;
+  }, [query, debouncedQuery, isLoading, products, isSearching]);
 
   // Body scroll lock
   useEffect(() => {
@@ -333,10 +390,14 @@ export function SearchTool({
                   onTagClick={handleTagClick}
                 />
 
-                <ProductSuggestions
-                  products={filteredProducts}
-                  onProductClick={handleProductClick}
-                />
+                {isResultsLoading ? (
+                  <ProductSuggestionsSkeleton />
+                ) : (
+                  <ProductSuggestions
+                    products={displayProducts}
+                    onProductClick={handleProductClick}
+                  />
+                )}
 
                 <ViewAllFooter
                   query={query}

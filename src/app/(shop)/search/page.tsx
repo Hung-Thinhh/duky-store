@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 import { ProductCard } from "@/components/shop/ProductCard";
 import { Product } from "@/types/product";
 import { LiquidGlassCard } from "@/components/ui/liquid-glass";
@@ -13,31 +14,13 @@ import { useProducts } from "@/hooks/useProducts";
 import { Header, Footer } from "@/components/layout";
 import { useCart } from "@/context/CartContext";
 
-interface BannerContent {
-  image: string;
-  alt: string;
-  badge: string;
-  titleLine1: string;
-  titleLine2: string;
-  description: string;
-}
-
-// TODO: Replace with API call when backend is ready
-// Example: fetch("/api/banners/products").then(res => res.json())
-const MOCK_PRODUCTS_BANNER: BannerContent = {
-  image: "/assets/banner_products.jpg",
-  alt: "Tất cả sản phẩm - Duky Store",
-  badge: "ALL PRODUCTS",
-  titleLine1: "BỘ SƯU TẬP",
-  titleLine2: "DUKY STORE",
-  description:
-    "Khám phá bộ sưu tập giày boot nam nữ cao cấp tại Duky Store.",
-};
-
 const PRODUCTS_PER_PAGE = 12;
 
-export default function ProductsPage() {
+function SearchResults() {
   const { cartCount } = useCart();
+  const searchParams = useSearchParams();
+  const query = searchParams.get("q") || "";
+
   const [currentPage, setCurrentPage] = useState(1);
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
   const [filterState, setFilterState] = useState<FilterState>({
@@ -48,10 +31,11 @@ export default function ProductsPage() {
     priceMax: 5_000_000,
   });
 
-  // Fetch products by selected category + price range
+  // Fetch products by search query + selected category + price range
   const { products, loading, pagination } = useProducts({
     page: currentPage,
     limit: PRODUCTS_PER_PAGE,
+    search: query,
     categorySlug:
       filterState.category !== "all" ? filterState.category : undefined,
     minPrice: filterState.priceMin > 0 ? filterState.priceMin : undefined,
@@ -85,8 +69,8 @@ export default function ProductsPage() {
         style={{ width: "100vw", marginLeft: "calc(-50vw + 50%)" }}
       >
         <Image
-          src={MOCK_PRODUCTS_BANNER.image}
-          alt={MOCK_PRODUCTS_BANNER.alt}
+          src="/assets/banner_products.jpg"
+          alt="Tìm kiếm sản phẩm - Duky Store"
           width={1920}
           height={1080}
           sizes="100vw"
@@ -97,22 +81,24 @@ export default function ProductsPage() {
         <div className="absolute inset-0 flex items-center">
           <div className="px-12 md:px-16 lg:px-[100px] space-y-3">
             <span className="inline-block text-xs font-medium tracking-widest text-gray-500 uppercase">
-              {MOCK_PRODUCTS_BANNER.badge}
+              SEARCH RESULTS
             </span>
             <h1 className="leading-[1.1] tracking-tighter text-gray-900">
               <span className="block text-[36px] md:text-[52px] lg:text-[64px] font-semibold">
-                {MOCK_PRODUCTS_BANNER.titleLine1}
+                KẾT QUẢ TÌM KIẾM
               </span>
               <span className="block text-[30px] md:text-[44px] lg:text-[56px] font-medium italic -mt-1 md:-mt-2">
                 <span className="font-montserrat not-italic font-semibold tracking-wide bg-gradient-to-br from-zinc-500 via-zinc-300 to-zinc-700 bg-clip-text text-transparent inline-block ml-1 md:ml-2">
-                  {MOCK_PRODUCTS_BANNER.titleLine2}
+                  {query ? `"${query.toUpperCase()}"` : "SẢN PHẨM"}
                 </span>
               </span>
             </h1>
             <div className="flex items-start gap-3 max-w-sm">
               <div className="w-8 h-px bg-gray-900 mt-2.5 shrink-0" />
               <p className="text-sm text-gray-500 leading-relaxed font-light">
-                {MOCK_PRODUCTS_BANNER.description}
+                {query
+                  ? `Danh sách sản phẩm phù hợp với từ khóa "${query}".`
+                  : "Vui lòng nhập từ khóa tìm kiếm."}
               </p>
             </div>
           </div>
@@ -124,7 +110,8 @@ export default function ProductsPage() {
         <Navpages
           items={[
             { label: "Trang chủ", href: "/" },
-            { label: "Tất cả sản phẩm" },
+            { label: "Tìm kiếm", href: "/search" },
+            { label: query ? `Kết quả cho "${query}"` : "Tất cả sản phẩm" },
           ]}
         />
 
@@ -171,10 +158,12 @@ export default function ProductsPage() {
                 <div className="products-empty">
                   <PackageOpen size={64} className="products-empty-icon" />
                   <h3 className="products-empty-title">
-                    Không tìm thấy sản phẩm phù hợp
+                    {query
+                      ? `Không tìm thấy sản phẩm nào khớp với từ khóa "${query}"`
+                      : "Không tìm thấy sản phẩm phù hợp"}
                   </h3>
                   <p className="products-empty-desc">
-                    Hãy thử điều chỉnh bộ lọc để xem thêm sản phẩm khác.
+                    Hãy thử tìm kiếm từ khóa khác hoặc điều chỉnh bộ lọc.
                   </p>
                 </div>
               )}
@@ -197,23 +186,6 @@ export default function ProductsPage() {
           max-width: 1440px;
           margin: 0 auto;
           padding: 40px 2rem 80px;
-        }
-
-        .products-header {
-          margin-bottom: 32px;
-        }
-
-        .products-title {
-          font-family: var(--font-accent);
-          font-size: 28px;
-          font-weight: 700;
-          color: var(--text-main);
-          margin-bottom: 8px;
-        }
-
-        .products-subtitle {
-          font-size: 14px;
-          color: var(--text-muted);
         }
 
         .products-layout {
@@ -312,60 +284,6 @@ export default function ProductsPage() {
           max-width: 300px;
         }
 
-        /* Pagination */
-        .products-pagination {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 6px;
-          padding-top: 40px;
-        }
-
-        .pagination-btn {
-          width: 36px;
-          height: 36px;
-          border-radius: 8px;
-          border: 1px solid var(--border-subtle);
-          background: var(--bg-card);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          color: var(--text-main);
-          font-size: 14px;
-          transition: var(--transition-fast);
-        }
-
-        .pagination-btn:hover {
-          background: var(--bg-secondary);
-        }
-
-        .pagination-num {
-          width: 36px;
-          height: 36px;
-          border-radius: 8px;
-          border: 1px solid var(--border-subtle);
-          background: var(--bg-card);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 13px;
-          font-weight: 600;
-          color: var(--text-main);
-          cursor: pointer;
-          transition: var(--transition-fast);
-        }
-
-        .pagination-num:hover {
-          background: var(--bg-secondary);
-        }
-
-        .pagination-num--active {
-          background: var(--accent-black);
-          color: #fff;
-          border-color: var(--accent-black);
-        }
-
         /* Responsive */
         @media (max-width: 1024px) {
           .products-layout {
@@ -395,12 +313,22 @@ export default function ProductsPage() {
           .products-grid {
             grid-template-columns: 1fr;
           }
-
-          .products-title {
-            font-size: 22px;
-          }
         }
       `}</style>
     </>
+  );
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center min-h-[50vh] text-[var(--text-muted)] font-medium">
+          Đang tải trang tìm kiếm...
+        </div>
+      }
+    >
+      <SearchResults />
+    </Suspense>
   );
 }
