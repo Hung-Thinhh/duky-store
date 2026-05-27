@@ -404,16 +404,21 @@ export interface GalleryImage {
   id: string;
   src: string;
   alt: string;
+  forMale?: boolean | null;
 }
 
-export async function fetchGalleryImages(): Promise<GalleryImage[]> {
+export async function fetchGalleryImages(forMale?: boolean): Promise<GalleryImage[]> {
   try {
-    // If backend is ready, it would return GalleryImage[] via apiFetch
-    return await apiFetch<GalleryImage[]>("/gallery");
+    const params: Record<string, string | number | boolean | undefined> = {};
+    if (forMale !== undefined) {
+      params.forMale = forMale;
+    }
+    return await apiFetch<GalleryImage[]>("/gallery", params);
   } catch (error) {
     // Fallback to local Next.js API route /api/gallery
     const baseUrl = typeof window !== "undefined" ? "" : "http://localhost:3000";
-    const res = await fetch(`${baseUrl}/api/gallery`);
+    const query = forMale !== undefined ? `?forMale=${forMale}` : "";
+    const res = await fetch(`${baseUrl}/api/gallery${query}`);
     if (!res.ok) {
       throw new Error("Failed to fetch gallery from both backend and local fallback");
     }

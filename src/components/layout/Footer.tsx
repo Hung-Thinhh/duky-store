@@ -135,8 +135,8 @@ export const Footer = () => {
             </div>
 
             {/* Right Block - Fanpage Banner */}
-            <div className="w-[30%] flex justify-end shrink-0">
-              <BannerPage className="p-2 h-[250px]"/>
+            <div className="w-[30%] flex justify-end items-start shrink-0">
+              <BannerPage className="p-2"/>
             </div>
 
           </div>

@@ -27,14 +27,13 @@ const MOCK_GALLERY_BANNER: BannerContent = {
   description: "Cảm hứng phối đồ cùng boot – Phong cách riêng, cá tính riêng.",
 };
 
-
-
 export default function GalleryPage() {
   const { cartCount } = useCart();
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [banner, setBanner] = useState<BannerContent>(MOCK_GALLERY_BANNER);
+  const [activeTab, setActiveTab] = useState<"all" | "men" | "women">("all");
 
   // Keyboard navigation for image preview
   useEffect(() => {
@@ -44,9 +43,13 @@ export default function GalleryPage() {
       if (e.key === "Escape") {
         setSelectedIndex(null);
       } else if (e.key === "ArrowLeft") {
-        setSelectedIndex((prev) => (prev === 0 || prev === null ? images.length - 1 : prev - 1));
+        setSelectedIndex((prev) =>
+          prev === 0 || prev === null ? images.length - 1 : prev - 1,
+        );
       } else if (e.key === "ArrowRight") {
-        setSelectedIndex((prev) => (prev === images.length - 1 || prev === null ? 0 : prev + 1));
+        setSelectedIndex((prev) =>
+          prev === images.length - 1 || prev === null ? 0 : prev + 1,
+        );
       }
     };
 
@@ -73,17 +76,22 @@ export default function GalleryPage() {
   }, []);
 
   useEffect(() => {
-    fetchGalleryImages()
+    setLoading(true);
+    const forMale = activeTab === "all" ? undefined : activeTab === "men";
+    fetchGalleryImages(forMale)
       .then((data) => {
         setImages(data);
         setLoading(false);
       })
       .catch(() => setLoading(false));
-  }, []);
+  }, [activeTab]);
 
   // Split images into columns for masonry layout
   const columns = 4;
-  const columnImages: GalleryImage[][] = Array.from({ length: columns }, () => []);
+  const columnImages: GalleryImage[][] = Array.from(
+    { length: columns },
+    () => [],
+  );
   images.forEach((img, idx) => {
     columnImages[idx % columns].push(img);
   });
@@ -92,7 +100,10 @@ export default function GalleryPage() {
     <>
       <Header cartCount={cartCount} />
       {/* Hero Banner */}
-      <section className="relative w-full" style={{ width: '100vw', marginLeft: 'calc(-50vw + 50%)' }}>
+      <section
+        className="relative w-full"
+        style={{ width: "100vw", marginLeft: "calc(-50vw + 50%)" }}
+      >
         <Image
           src={banner.image}
           alt={banner.alt}
@@ -109,9 +120,13 @@ export default function GalleryPage() {
               {banner.badge}
             </span>
             <h1 className="leading-[1.1] tracking-tighter text-gray-900">
-              <span className="block text-[36px] md:text-[52px] lg:text-[64px] font-semibold">{banner.titleLine1}</span>
+              <span className="block text-[36px] md:text-[52px] lg:text-[64px] font-semibold">
+                {banner.titleLine1}
+              </span>
               <span className="block text-[30px] md:text-[44px] lg:text-[56px] font-medium italic -mt-1 md:-mt-2">
-                <span className="font-montserrat not-italic font-semibold tracking-wide bg-gradient-to-br from-zinc-500 via-zinc-300 to-zinc-700 bg-clip-text text-transparent inline-block ml-1 md:ml-2">{banner.titleLine2}</span>
+                <span className="font-montserrat not-italic font-semibold tracking-wide bg-gradient-to-br from-zinc-500 via-zinc-300 to-zinc-700 bg-clip-text text-transparent inline-block ml-1 md:ml-2">
+                  {banner.titleLine2}
+                </span>
               </span>
             </h1>
             <div className="flex items-start gap-3 max-w-sm">
@@ -126,11 +141,32 @@ export default function GalleryPage() {
 
       <section className="gallery-page">
         <Navpages
-          items={[
-            { label: "Trang chủ", href: "/" },
-            { label: "Lookbook" },
-          ]}
+          items={[{ label: "Trang chủ", href: "/" }, { label: "Lookbook" }]}
         />
+
+        {/* Tabs Bar */}
+        <div className="gallery-tabs-container">
+          <div className="gallery-tabs">
+            <button
+              className={`gallery-tab-item ${activeTab === "all" ? "active" : ""}`}
+              onClick={() => setActiveTab("all")}
+            >
+              Tất cả
+            </button>
+            <button
+              className={`gallery-tab-item ${activeTab === "men" ? "active" : ""}`}
+              onClick={() => setActiveTab("men")}
+            >
+              Nam
+            </button>
+            <button
+              className={`gallery-tab-item ${activeTab === "women" ? "active" : ""}`}
+              onClick={() => setActiveTab("women")}
+            >
+              Nữ
+            </button>
+          </div>
+        </div>
 
         {/* Loading state */}
         {loading && (
@@ -180,18 +216,32 @@ export default function GalleryPage() {
 
       {/* Fullscreen Image Preview Modal */}
       {selectedIndex !== null && (
-        <div className="image-preview-modal" onClick={() => setSelectedIndex(null)}>
-          <button className="preview-close-btn" aria-label="Đóng" onClick={() => setSelectedIndex(null)}>
+        <div
+          className="image-preview-modal"
+          onClick={() => setSelectedIndex(null)}
+        >
+          <button
+            className="preview-close-btn"
+            aria-label="Đóng"
+            onClick={() => setSelectedIndex(null)}
+          >
             <div className="close-icon-wrapper">
               <X size={28} />
               <span className="close-text">Đóng</span>
             </div>
           </button>
 
-          <div className="preview-content-container" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="preview-content-container"
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
               className="preview-nav-btn preview-nav-prev"
-              onClick={() => setSelectedIndex((prev) => (prev === 0 || prev === null ? images.length - 1 : prev - 1))}
+              onClick={() =>
+                setSelectedIndex((prev) =>
+                  prev === 0 || prev === null ? images.length - 1 : prev - 1,
+                )
+              }
               aria-label="Ảnh trước"
             >
               <ChevronLeft size={32} />
@@ -207,14 +257,21 @@ export default function GalleryPage() {
 
             <button
               className="preview-nav-btn preview-nav-next"
-              onClick={() => setSelectedIndex((prev) => (prev === images.length - 1 || prev === null ? 0 : prev + 1))}
+              onClick={() =>
+                setSelectedIndex((prev) =>
+                  prev === images.length - 1 || prev === null ? 0 : prev + 1,
+                )
+              }
               aria-label="Ảnh sau"
             >
               <ChevronRight size={32} />
             </button>
           </div>
 
-          <div className="preview-thumbnails-container" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="preview-thumbnails-container"
+            onClick={(e) => e.stopPropagation()}
+          >
             <p className="preview-thumbnails-title">Hình ảnh</p>
             <div className="preview-thumbnails-list">
               {(() => {
@@ -234,7 +291,11 @@ export default function GalleryPage() {
                     onClick={() => setSelectedIndex(idx)}
                     aria-label={`Xem ảnh ${idx + 1}`}
                   >
-                    <img src={img.src} alt={img.alt} className="preview-thumbnail-img" />
+                    <img
+                      src={img.src}
+                      alt={img.alt}
+                      className="preview-thumbnail-img"
+                    />
                   </button>
                 ));
               })()}
@@ -250,6 +311,48 @@ export default function GalleryPage() {
           max-width: 1440px;
           margin: 0 auto;
           padding: 32px 2rem 80px;
+        }
+
+        .gallery-tabs-container {
+          display: flex;
+          justify-content: center;
+          margin: 16px 0 16px;
+        }
+
+        .gallery-tabs {
+          display: flex;
+          background: rgba(244, 244, 245, 0.8);
+          backdrop-filter: blur(8px);
+          padding: 6px;
+          border-radius: 9999px;
+          border: 1px solid rgba(228, 228, 231, 0.6);
+          gap: 4px;
+        }
+
+        .gallery-tab-item {
+          font-family: var(--font-main);
+          font-size: 14px;
+          font-weight: 500;
+          color: #71717a;
+          padding: 8px 28px;
+          border: none;
+          background: transparent;
+          border-radius: 9999px;
+          cursor: pointer;
+          transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .gallery-tab-item:hover {
+          color: #18181b;
+        }
+
+        .gallery-tab-item.active {
+          background: #ffffff;
+          color: #18181b;
+          box-shadow:
+            0 4px 12px rgba(0, 0, 0, 0.05),
+            0 1px 3px rgba(0, 0, 0, 0.02);
+          font-weight: 600;
         }
 
         .gallery-loading {
@@ -305,7 +408,11 @@ export default function GalleryPage() {
         .masonry-overlay {
           position: absolute;
           inset: 0;
-          background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 50%);
+          background: linear-gradient(
+            to top,
+            rgba(0, 0, 0, 0.6) 0%,
+            transparent 50%
+          );
           display: flex;
           align-items: flex-end;
           padding: 16px;
@@ -353,7 +460,9 @@ export default function GalleryPage() {
           border: none;
           cursor: pointer;
           color: #ffffff;
-          transition: transform 0.2s ease, color 0.2s ease;
+          transition:
+            transform 0.2s ease,
+            color 0.2s ease;
           z-index: 10010;
         }
 
@@ -478,7 +587,7 @@ export default function GalleryPage() {
           max-width: 90vw;
           padding: 8px 12px;
           scrollbar-width: thin;
-          scrollbar-color: rgba(255,255,255,0.2) transparent;
+          scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
         }
 
         .preview-thumbnails-list::-webkit-scrollbar {
@@ -486,7 +595,7 @@ export default function GalleryPage() {
         }
 
         .preview-thumbnails-list::-webkit-scrollbar-thumb {
-          background: rgba(255,255,255,0.2);
+          background: rgba(255, 255, 255, 0.2);
           border-radius: 2px;
         }
 
@@ -536,7 +645,7 @@ export default function GalleryPage() {
             flex: 1 1 calc(50% - 8px);
           }
 
-          .masonry-column:nth-child(n+3) {
+          .masonry-column:nth-child(n + 3) {
             display: none;
           }
         }
@@ -550,7 +659,7 @@ export default function GalleryPage() {
             flex: 1 1 100%;
           }
 
-          .masonry-column:nth-child(n+2) {
+          .masonry-column:nth-child(n + 2) {
             display: none;
           }
         }
