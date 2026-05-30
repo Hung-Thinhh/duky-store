@@ -537,6 +537,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
 
         @media (max-width: 768px) {
           .od-info-row { flex-direction: column; gap: 16px; padding: 20px; }
+          .od-info-card { padding: 0; }
           .od-info-divider { width: 100%; height: 1px; }
           .od-product-row { flex-direction: column; align-items: flex-start; }
           .od-product-price { align-items: flex-start; }

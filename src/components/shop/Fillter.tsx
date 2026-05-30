@@ -181,6 +181,12 @@ interface FilterSectionProps {
 function FilterSection({ title, defaultExpanded = true, children }: FilterSectionProps) {
   const [expanded, setExpanded] = useState<boolean>(defaultExpanded);
 
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.innerWidth >= 1024 && title === "Danh mục") {
+      setExpanded(true);
+    }
+  }, [title]);
+
   return (
     <div>
       <button

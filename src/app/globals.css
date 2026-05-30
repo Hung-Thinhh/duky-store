@@ -908,6 +908,7 @@ img {
 
 /* Hero slider layer geometry driven by per-layer config (no shared coordinates). */
 .hero-slide-layer {
+  display: var(--layer-display, block);
   top: var(--layer-top, 0);
   right: var(--layer-right, 0);
   bottom: var(--layer-bottom, 0);
@@ -1059,6 +1060,7 @@ img {
   }
 
   .hero-slide-layer {
+    display: var(--layer-display-md, var(--layer-display, block));
     top: var(--layer-top-md, var(--layer-top, 0));
     right: var(--layer-right-md, var(--layer-right, 0));
     bottom: var(--layer-bottom-md, var(--layer-bottom, 0));
@@ -1172,6 +1174,10 @@ img {
 
   /* Shifting models, pedestals, and boots to the top on mobile */
   .hero-slide-layer {
+    display: var(
+      --layer-display-sm,
+      var(--layer-display-md, var(--layer-display, block))
+    );
     top: var(--layer-top-sm, var(--layer-top-md, var(--layer-top, 0)));
     right: var(--layer-right-sm, var(--layer-right-md, var(--layer-right, 0)));
     bottom: var(
@@ -1189,48 +1195,6 @@ img {
     );
   }
 
-  .layer-model {
-    top: 0 !important;
-    bottom: 0 !important;
-    height: 100% !important;
-    width: 100% !important;
-    left: 0 !important;
-  }
-
-  .layer-model .hero-slide-layer__image {
-    object-fit: contain !important;
-    object-position: 80% 62% !important;
-    scale: 1.15 !important;
-    transform-origin: 80% 62% !important;
-  }
-
-  .layer-boot {
-    top: auto !important;
-    bottom: 24% !important;
-    right: 2% !important;
-    left: auto !important;
-    width: clamp(140px, 48vw, 240px) !important;
-    height: clamp(96px, 32vw, 160px) !important;
-  }
-
-  .layer-boot .hero-slide-layer__image {
-    object-fit: contain !important;
-    object-position: right bottom !important;
-  }
-
-  .layer-pedestal {
-    top: auto !important;
-    bottom: 22% !important;
-    right: 0 !important;
-    left: auto !important;
-    width: clamp(160px, 58vw, 280px) !important;
-    height: clamp(80px, 24vw, 140px) !important;
-  }
-
-  .layer-pedestal .hero-slide-layer__image {
-    object-fit: contain !important;
-    object-position: right bottom !important;
-  }
 
   .hero-slide-layer__image {
     object-fit: var(

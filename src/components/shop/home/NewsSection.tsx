@@ -56,8 +56,8 @@ export const NewsSection = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
-
   const [visibleItems, setVisibleItems] = useState(3);
+  const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
@@ -112,6 +112,23 @@ export const NewsSection = () => {
     }
   }, [currentIndex, maxIndex]);
 
+  // Autoplay news items every 4 seconds, pausing on hover
+  useEffect(() => {
+    if (loading || newsItems.length === 0 || isPaused) return;
+
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) => {
+        if (prevIndex >= maxIndex) {
+          return 0;
+        } else {
+          return prevIndex + 1;
+        }
+      });
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [loading, newsItems.length, maxIndex, isPaused]);
+
   return (
     <section className="pt-24 pb-8 px-6 overflow-hidden">
       <div className="container-custom">
@@ -143,7 +160,11 @@ export const NewsSection = () => {
               </Link>
             </div>
 
-            <div className="w-full lg:w-[70%] relative overflow-hidden group/slider news-section-slider">
+            <div 
+              className="w-full lg:w-[70%] relative overflow-x-auto lg:overflow-hidden snap-x snap-mandatory scrollbar-none group/slider news-section-slider"
+              onMouseEnter={() => setIsPaused(true)}
+              onMouseLeave={() => setIsPaused(false)}
+            >
               {loading ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-4">
                   {Array.from({ length: 3 }).map((_, idx) => (
@@ -161,7 +182,7 @@ export const NewsSection = () => {
                 <>
                   <motion.div
                     animate={{
-                      x: `calc(-${currentIndex} * (100% + 24px) / ${visibleItems})`,
+                      x: visibleItems < 3 ? 0 : `calc(-${currentIndex} * (100% + 24px) / ${visibleItems})`,
                     }}
                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
                     className="flex gap-6 pb-4"
@@ -183,7 +204,7 @@ export const NewsSection = () => {
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -10 }}
                         onClick={() => setCurrentIndex((prev) => prev - 1)}
-                        className="absolute left-2 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/95 backdrop-blur-md border border-gray-100 shadow-[0_4px_12px_rgba(0,0,0,0.12)] flex items-center justify-center text-black opacity-100 lg:!opacity-0 lg:group-hover/slider:!opacity-100 lg:group-hover/slider:translate-x-2 transition-all duration-300 hover:bg-gray-100 hover:scale-110 active:scale-95 z-40 cursor-pointer"
+                        className="hidden lg:flex absolute left-2 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/95 backdrop-blur-md border border-gray-100 shadow-[0_4px_12px_rgba(0,0,0,0.12)] items-center justify-center text-black opacity-100 lg:!opacity-0 lg:group-hover/slider:opacity-100 lg:group-hover/slider:translate-x-2 transition-all duration-300 hover:bg-gray-100 hover:scale-110 active:scale-95 z-40 cursor-pointer"
                       >
                         <ChevronLeft size={22} strokeWidth={2.5} />
                       </motion.button>
@@ -197,7 +218,7 @@ export const NewsSection = () => {
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: 10 }}
                         onClick={() => setCurrentIndex((prev) => prev + 1)}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/95 backdrop-blur-md border border-gray-100 shadow-[0_4px_12px_rgba(0,0,0,0.12)] flex items-center justify-center text-black opacity-100 lg:!opacity-0 lg:group-hover/slider:!opacity-100 lg:group-hover/slider:-translate-x-2 transition-all duration-300 hover:bg-gray-100 hover:scale-110 active:scale-95 z-40 cursor-pointer"
+                        className="hidden lg:flex absolute right-2 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/95 backdrop-blur-md border border-gray-100 shadow-[0_4px_12px_rgba(0,0,0,0.12)] items-center justify-center text-black opacity-100 lg:!opacity-0 lg:group-hover/slider:opacity-100 lg:group-hover/slider:-translate-x-2 transition-all duration-300 hover:bg-gray-100 hover:scale-110 active:scale-95 z-40 cursor-pointer"
                       >
                         <ChevronRight size={22} strokeWidth={2.5} />
                       </motion.button>
@@ -327,6 +348,13 @@ export const NewsSection = () => {
           </div>
         </div>
         <style>{`
+          .news-section-slider::-webkit-scrollbar {
+            display: none;
+          }
+          .news-section-slider {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+          }
           @media (min-width: 768px) {
             #newsletter-flex-container {
               flex-direction: row !important;

@@ -31,6 +31,7 @@ export const metadata: Metadata = {
 
 import { ScrollToTop } from "@/components/ui/ScrollToTop";
 import { Providers } from "@/components/Providers";
+import StyledJsxRegistry from "@/lib/registry";
 
 export default function RootLayout({
   children,
@@ -49,10 +50,12 @@ export default function RootLayout({
         )}
       </head>
       <body className="font-sans antialiased" suppressHydrationWarning>
-        <Providers>
-          {children}
-          <ScrollToTop />
-        </Providers>
+        <StyledJsxRegistry>
+          <Providers>
+            {children}
+            <ScrollToTop />
+          </Providers>
+        </StyledJsxRegistry>
       </body>
     </html>
   );

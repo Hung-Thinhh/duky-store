@@ -143,7 +143,7 @@ const RecommendSection: React.FC<RecommendSectionProps> = ({
           border-radius: 50%;
           background: var(--bg-card);
           border: 1px solid var(--border-subtle);
-          display: flex;
+          display: none;
           align-items: center;
           justify-content: center;
           cursor: pointer;
@@ -153,6 +153,11 @@ const RecommendSection: React.FC<RecommendSectionProps> = ({
           z-index: 10;
           opacity: 0;
           pointer-events: none;
+        }
+        @media (min-width: 1024px) {
+          .recommend-nav {
+            display: flex;
+          }
         }
         .recommend-carousel-wrapper:hover .recommend-nav {
           opacity: 1;

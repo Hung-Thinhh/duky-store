@@ -87,6 +87,7 @@ export function SlideLayer({
 
   const styleVars = {
     zIndex,
+    "--layer-display": layout?.desktop?.display ?? "block",
     "--layer-top": layout?.desktop?.top ?? "0",
     "--layer-right": layout?.desktop?.right ?? "0",
     "--layer-bottom": layout?.desktop?.bottom ?? "0",
@@ -95,6 +96,7 @@ export function SlideLayer({
     "--layer-height": layout?.desktop?.height ?? "100%",
     "--layer-object-fit": layout?.desktop?.objectFit ?? "cover",
     "--layer-object-position": layout?.desktop?.objectPosition ?? "center",
+    "--layer-display-md": layout?.tablet?.display,
     "--layer-top-md": layout?.tablet?.top,
     "--layer-right-md": layout?.tablet?.right,
     "--layer-bottom-md": layout?.tablet?.bottom,
@@ -103,6 +105,7 @@ export function SlideLayer({
     "--layer-height-md": layout?.tablet?.height,
     "--layer-object-fit-md": layout?.tablet?.objectFit,
     "--layer-object-position-md": layout?.tablet?.objectPosition,
+    "--layer-display-sm": layout?.mobile?.display,
     "--layer-top-sm": layout?.mobile?.top,
     "--layer-right-sm": layout?.mobile?.right,
     "--layer-bottom-sm": layout?.mobile?.bottom,

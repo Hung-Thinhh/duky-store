@@ -162,6 +162,7 @@ export const Header = ({ cartCount }: HeaderProps) => {
     { name: "Boot Nữ", href: "/collections/boot-nu" },
     { name: "Phụ kiện", href: "/collections/phu-kien" },
     { name: "Unisex", href: "/collections/unisex" },
+    { name: "Phối đồ", href: "/gallery" },
     { name: "Kinh nghiệm", href: "/blog" },
     { name: "Liên hệ", href: "/contact" },
   ];
@@ -170,7 +171,7 @@ export const Header = ({ cartCount }: HeaderProps) => {
     <header className="fixed top-1 left-0 right-0 z-50 px-6 md:px-10">
       <div
         className={cn(
-          "max-w-[1440px] mx-auto glass-effect rounded-full shadow-2xl transition-all duration-500 flex items-center justify-between px-6 md:px-10 py-2 md:py-4 bg-white/70 backdrop-blur-lg !overflow-visible",
+          "max-w-[1440px] mx-auto glass-effect rounded-full shadow-2xl transition-all duration-500 flex items-center justify-between px-6 md:px-10 py-2 md:py-4 bg-white/70 backdrop-blur-lg !overflow-visible relative",
         )}
       >
         {/* Logo - Left */}
@@ -195,8 +196,8 @@ export const Header = ({ cartCount }: HeaderProps) => {
           </Link>
         </div>
 
-        {/* Desktop Nav - Center */}
-        <nav className="hidden lg:flex items-center gap-16 xl:gap-16 text-[15px] font-medium text-text-main">
+        {/* Desktop Nav - Absolutely Centered */}
+        <nav className="hidden lg:flex absolute left-1/2 -translate-x-1/2 items-center gap-8 xl:gap-12 text-[14px] xl:text-[15px] font-medium text-text-main">
           {navItems.map((item) => (
             <Link
               key={item.name}
@@ -346,12 +347,12 @@ export const Header = ({ cartCount }: HeaderProps) => {
           </div>
 
           {/* Vertical Separator */}
-          <div className="hidden lg:block w-px h-6 bg-black/10" />
+          <div className="hidden xl:block w-px h-6 bg-black/10" />
 
           {/* Hotline */}
           <button
             onClick={() => setIsContactOpen(true)}
-            className="hidden lg:flex items-center gap-2 text-text-main hover:text-accent-gold transition-colors cursor-pointer group"
+            className="hidden xl:flex items-center gap-2 text-text-main hover:text-accent-gold transition-colors cursor-pointer group"
           >
             <div className="w-8 h-8 rounded-full bg-black/5 flex items-center justify-center group-hover:bg-black group-hover:text-white transition-all">
               <Phone size={14} strokeWidth={2.5} />

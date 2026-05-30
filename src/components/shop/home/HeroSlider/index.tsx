@@ -284,6 +284,33 @@ export function HeroSlider({
     transitionToSlide(nextIndex);
   }, [currentSlide, isTransitioning, transitionToSlide, validSlides.length]);
 
+  // ─── Swipe Detection (Mobile Only) ───────────────────────────────────────
+
+  const touchStartX = useRef<number | null>(null);
+  const touchEndX = useRef<number | null>(null);
+
+  const onTouchStart = useCallback((e: React.TouchEvent) => {
+    touchEndX.current = null;
+    touchStartX.current = e.targetTouches[0].clientX;
+  }, []);
+
+  const onTouchMove = useCallback((e: React.TouchEvent) => {
+    touchEndX.current = e.targetTouches[0].clientX;
+  }, []);
+
+  const onTouchEnd = useCallback(() => {
+    if (!touchStartX.current || !touchEndX.current) return;
+
+    const distance = touchStartX.current - touchEndX.current;
+    const minSwipeDistance = 50;
+
+    if (distance > minSwipeDistance) {
+      handleNextSlide();
+    } else if (distance < -minSwipeDistance) {
+      handlePrevSlide();
+    }
+  }, [handleNextSlide, handlePrevSlide]);
+
   // ─── Page Visibility API ─────────────────────────────────────────────────
 
   useEffect(() => {
@@ -343,6 +370,9 @@ export function HeroSlider({
       )}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
     >
       {/* All slides rendered, only active one visible */}
       {validSlides.map((slide, index) => {

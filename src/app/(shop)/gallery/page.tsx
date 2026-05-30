@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { Header, Footer } from "@/components/layout";
@@ -34,6 +34,36 @@ export default function GalleryPage() {
   const [loading, setLoading] = useState(true);
   const [banner, setBanner] = useState<BannerContent>(MOCK_GALLERY_BANNER);
   const [activeTab, setActiveTab] = useState<"all" | "men" | "women">("all");
+
+  // Swipe gesture handlers for fullscreen preview
+  const previewTouchStartX = useRef<number | null>(null);
+  const previewTouchEndX = useRef<number | null>(null);
+
+  const handlePreviewTouchStart = useCallback((e: React.TouchEvent) => {
+    previewTouchEndX.current = null;
+    previewTouchStartX.current = e.targetTouches[0].clientX;
+  }, []);
+
+  const handlePreviewTouchMove = useCallback((e: React.TouchEvent) => {
+    previewTouchEndX.current = e.targetTouches[0].clientX;
+  }, []);
+
+  const handlePreviewTouchEnd = useCallback(() => {
+    if (!previewTouchStartX.current || !previewTouchEndX.current) return;
+
+    const distance = previewTouchStartX.current - previewTouchEndX.current;
+    const minSwipeDistance = 50;
+
+    if (distance > minSwipeDistance) {
+      setSelectedIndex((prev) =>
+        prev === images.length - 1 || prev === null ? 0 : prev + 1,
+      );
+    } else if (distance < -minSwipeDistance) {
+      setSelectedIndex((prev) =>
+        prev === 0 || prev === null ? images.length - 1 : prev - 1,
+      );
+    }
+  }, [images.length]);
 
   // Keyboard navigation for image preview
   useEffect(() => {
@@ -224,6 +254,9 @@ export default function GalleryPage() {
           <div
             className="preview-content-container"
             onClick={(e) => e.stopPropagation()}
+            onTouchStart={handlePreviewTouchStart}
+            onTouchMove={handlePreviewTouchMove}
+            onTouchEnd={handlePreviewTouchEnd}
           >
             <button
               className="preview-nav-btn preview-nav-prev"
@@ -520,13 +553,19 @@ export default function GalleryPage() {
           border-radius: 50%;
           background: rgba(255, 255, 255, 0.08);
           border: 1px solid rgba(255, 255, 255, 0.2);
-          display: flex;
+          display: none;
           align-items: center;
           justify-content: center;
           cursor: pointer;
           color: #ffffff;
           transition: all 0.2s ease;
           z-index: 10005;
+        }
+
+        @media (min-width: 1024px) {
+          .preview-nav-btn {
+            display: flex;
+          }
         }
 
         .preview-nav-btn:hover {

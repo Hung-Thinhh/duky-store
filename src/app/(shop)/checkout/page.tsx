@@ -375,6 +375,33 @@ function CheckoutContent() {
 
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
+
+      // Scroll to the first invalid field in visual order
+      const fieldOrder: (keyof ValidationErrors)[] = [
+        "fullName",
+        "phone",
+        "email",
+        "province",
+        "district",
+        "ward",
+        "addressLine",
+      ];
+      const firstErrorField = fieldOrder.find((field) => errors[field]);
+      if (firstErrorField) {
+        const inputName =
+          firstErrorField === "addressLine" ? "address" : firstErrorField;
+        const element = document.getElementsByName(inputName)[0];
+        if (element) {
+          const formField = element.closest(".form-field");
+          if (formField) {
+            formField.scrollIntoView({ behavior: "smooth", block: "center" });
+            element.focus({ preventScroll: true });
+          } else {
+            element.scrollIntoView({ behavior: "smooth", block: "center" });
+            element.focus({ preventScroll: true });
+          }
+        }
+      }
       return;
     }
 
@@ -402,7 +429,9 @@ function CheckoutContent() {
       >
         <div className="address-modal-content">
           <p className="address-modal__text">
-            Bạn chưa có địa chỉ giao hàng nào được lưu trong tài khoản. Bạn có muốn lưu thông tin này làm địa chỉ mặc định cho các lần mua hàng sau không?
+            Bạn chưa có địa chỉ giao hàng nào được lưu trong tài khoản. Bạn có
+            muốn lưu thông tin này làm địa chỉ mặc định cho các lần mua hàng sau
+            không?
           </p>
           <div className="address-modal__actions">
             <button
@@ -667,8 +696,6 @@ function CheckoutContent() {
                 )}
               </div>
             </div>
-
-
 
             {/* Note */}
             <div className="form-field">

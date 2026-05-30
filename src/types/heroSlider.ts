@@ -16,6 +16,7 @@ export interface LayerViewportLayout {
   height?: string;
   objectFit?: "cover" | "contain";
   objectPosition?: string;
+  display?: string;
 }
 
 export interface LayerLayout {
