@@ -99,7 +99,10 @@ export function BlogDetailPageClient({
     }
 
     fetchBlogCategories()
-      .then((cats) => setCategories(cats.length > 0 ? cats : MOCK_BLOG_CATEGORIES))
+      .then((res) => {
+        const cats = res.data;
+        setCategories(cats && cats.length > 0 ? cats : MOCK_BLOG_CATEGORIES);
+      })
       .catch(() => setCategories(MOCK_BLOG_CATEGORIES));
 
     fetchBlogPosts({ limit: 5, sort: "newest" })

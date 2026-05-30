@@ -17,6 +17,7 @@ import {
   ShoppingCart,
   Sparkles,
   CreditCard,
+  X,
 } from 'lucide-react';
 import { Navpages } from '@/components/shop/Navpages';
 import { validateAddToCart, type ValidationError } from '@/lib/cart-validation';
@@ -111,7 +112,87 @@ const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, varia
   const [zoomPosition, setZoomPosition] = useState({ x: 50, y: 50 });
   const [validationErrors, setValidationErrors] = useState<ValidationError[]>([]);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState(0);
   const galleryRef = useRef<HTMLDivElement>(null);
+
+  // Keyboard navigation for image preview
+  useEffect(() => {
+    if (!isPreviewOpen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsPreviewOpen(false);
+      } else if (e.key === 'ArrowLeft') {
+        setPreviewImage((prev) => (prev === 0 ? product.images.length - 1 : prev - 1));
+      } else if (e.key === 'ArrowRight') {
+        setPreviewImage((prev) => (prev === product.images.length - 1 ? 0 : prev + 1));
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isPreviewOpen, product.images.length]);
+
+  // Disable body scroll when preview modal is open
+  useEffect(() => {
+    if (isPreviewOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isPreviewOpen]);
+
+  // Helper to check if a size has stock
+  const isSizeAvailable = (size: number) => {
+    if (!variants || variants.length === 0) return true;
+    return variants.some((v) => {
+      const sizeMatch = v.sizeLabel === String(size);
+      const colorMatch = selectedColor === null || v.colorName === selectedColor;
+      const hasStock = v.inventory && v.inventory.availableQuantity > 0;
+      return sizeMatch && colorMatch && hasStock;
+    });
+  };
+
+  // Helper to check if a color has stock
+  const isColorAvailable = (color: string) => {
+    if (!variants || variants.length === 0) return true;
+    return variants.some((v) => {
+      const sizeMatch = selectedSize === null || v.sizeLabel === String(selectedSize);
+      const colorMatch = v.colorName === color;
+      const hasStock = v.inventory && v.inventory.availableQuantity > 0;
+      return sizeMatch && colorMatch && hasStock;
+    });
+  };
+
+  // Auto-deselect invalid combinations when size changes
+  useEffect(() => {
+    if (selectedSize !== null && selectedColor !== null && variants.length > 0) {
+      const match = variants.find(
+        (v) => v.sizeLabel === String(selectedSize) && v.colorName === selectedColor
+      );
+      const hasStock = match?.inventory && match.inventory.availableQuantity > 0;
+      if (!hasStock) {
+        setSelectedColor(null);
+      }
+    }
+  }, [selectedSize, variants]);
+
+  // Auto-deselect invalid combinations when color changes
+  useEffect(() => {
+    if (selectedSize !== null && selectedColor !== null && variants.length > 0) {
+      const match = variants.find(
+        (v) => v.sizeLabel === String(selectedSize) && v.colorName === selectedColor
+      );
+      const hasStock = match?.inventory && match.inventory.availableQuantity > 0;
+      if (!hasStock) {
+        setSelectedSize(null);
+      }
+    }
+  }, [selectedColor, variants]);
 
   // Find matched variant based on selected size + color
   const matchedVariant = variants.find((v) => {
@@ -222,21 +303,37 @@ const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, varia
           <div className="gallery-main" ref={galleryRef} onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)} onMouseMove={handleMouseMove}>
             {/* Action Buttons */}
             <div className="gallery-actions">
-              <button className="gallery-action-btn" aria-label="Yêu thích">
-                <Heart size={20} />
-              </button>
-              <button className={`gallery-action-btn ${zoomEnabled ? 'gallery-action-btn-active' : ''}`} aria-label="Zoom in" onClick={() => setZoomEnabled(!zoomEnabled)}>
+              <button
+                className="gallery-action-btn"
+                aria-label="Xem toàn màn hình"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setPreviewImage(selectedImage);
+                  setIsPreviewOpen(true);
+                }}
+              >
                 <ZoomIn size={20} />
               </button>
             </div>
 
             {/* Main Image */}
-            <div className={`gallery-image-wrapper ${zoomEnabled && isHovered ? 'gallery-zoomed' : ''}`} style={zoomEnabled && isHovered ? { transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%` } : undefined}>
+            <div
+              className={`gallery-image-wrapper ${zoomEnabled && isHovered ? 'gallery-zoomed' : ''}`}
+              style={{
+                cursor: 'pointer',
+                ...(zoomEnabled && isHovered ? { transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%` } : {})
+              }}
+              onClick={() => {
+                setPreviewImage(selectedImage);
+                setIsPreviewOpen(true);
+              }}
+            >
               <Image
                 src={product.images[selectedImage]}
                 alt={product.name}
                 width={600}
                 height={600}
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
                 className="gallery-image"
                 priority
               />
@@ -320,18 +417,24 @@ const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, varia
           {/* Size & Color Selector */}
           <div className="info-variant-selectors">
             <div className="info-variant-group">
-              <span className="selector-label">Chọn size:</span>
-              <div className="variant-dropdown">
-                <select
-                  value={selectedSize ?? ''}
-                  onChange={(e) => setSelectedSize(Number(e.target.value))}
-                  className="variant-select"
-                >
-                  <option value="" disabled>Chọn size</option>
-                  {product.sizes.map((size) => (
-                    <option key={size} value={size}>{size}</option>
-                  ))}
-                </select>
+              <span className="selector-label">
+                Chọn size: {selectedSize && <span className="selected-value">{selectedSize}</span>}
+              </span>
+              <div className="variant-buttons">
+                {product.sizes.map((size) => {
+                  const available = isSizeAvailable(size);
+                  return (
+                    <button
+                      key={size}
+                      type="button"
+                      className={`variant-btn ${selectedSize === size ? 'variant-btn-active' : ''}`}
+                      onClick={() => setSelectedSize(selectedSize === size ? null : size)}
+                      disabled={!available}
+                    >
+                      {size}
+                    </button>
+                  );
+                })}
               </div>
               {validationErrors.find(e => e.field === 'size') && (
                 <span className="validation-error">{validationErrors.find(e => e.field === 'size')!.message}</span>
@@ -340,18 +443,24 @@ const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, varia
 
             {product.colors.length > 0 && (
               <div className="info-variant-group">
-                <span className="selector-label">Màu:</span>
-                <div className="variant-dropdown">
-                  <select
-                    value={selectedColor ?? ''}
-                    onChange={(e) => setSelectedColor(e.target.value)}
-                    className="variant-select"
-                  >
-                    <option value="" disabled>Chọn màu</option>
-                    {product.colors.map((color) => (
-                      <option key={color} value={color}>{color}</option>
-                    ))}
-                  </select>
+                <span className="selector-label">
+                  Màu: {selectedColor && <span className="selected-value">{selectedColor}</span>}
+                </span>
+                <div className="variant-buttons">
+                  {product.colors.map((color) => {
+                    const available = isColorAvailable(color);
+                    return (
+                      <button
+                        key={color}
+                        type="button"
+                        className={`variant-btn ${selectedColor === color ? 'variant-btn-active' : ''}`}
+                        onClick={() => setSelectedColor(selectedColor === color ? null : color)}
+                        disabled={!available}
+                      >
+                        {color}
+                      </button>
+                    );
+                  })}
                 </div>
                 {validationErrors.find(e => e.field === 'color') && (
                   <span className="validation-error">{validationErrors.find(e => e.field === 'color')!.message}</span>
@@ -395,6 +504,60 @@ const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, varia
         </div>
         </div>
       </div>
+
+      {/* Fullscreen Image Preview Modal */}
+      {isPreviewOpen && (
+        <div className="image-preview-modal" onClick={() => setIsPreviewOpen(false)}>
+          <button className="preview-close-btn" aria-label="Đóng" onClick={() => setIsPreviewOpen(false)}>
+            <div className="close-icon-wrapper">
+              <X size={28} />
+              <span className="close-text">Đóng</span>
+            </div>
+          </button>
+
+          <div className="preview-content-container" onClick={(e) => e.stopPropagation()}>
+            <button
+              className="preview-nav-btn preview-nav-prev"
+              onClick={() => setPreviewImage((prev) => (prev === 0 ? product.images.length - 1 : prev - 1))}
+              aria-label="Ảnh trước"
+            >
+              <ChevronLeft size={32} />
+            </button>
+
+            <div className="preview-image-wrapper">
+              <img
+                src={product.images[previewImage]}
+                alt={product.name}
+                className="preview-main-image"
+              />
+            </div>
+
+            <button
+              className="preview-nav-btn preview-nav-next"
+              onClick={() => setPreviewImage((prev) => (prev === product.images.length - 1 ? 0 : prev + 1))}
+              aria-label="Ảnh sau"
+            >
+              <ChevronRight size={32} />
+            </button>
+          </div>
+
+          <div className="preview-thumbnails-container" onClick={(e) => e.stopPropagation()}>
+            <p className="preview-thumbnails-title">Hình ảnh</p>
+            <div className="preview-thumbnails-list">
+              {product.images.map((img, idx) => (
+                <button
+                  key={idx}
+                  className={`preview-thumbnail-item ${idx === previewImage ? 'preview-thumbnail-active' : ''}`}
+                  onClick={() => setPreviewImage(idx)}
+                  aria-label={`Xem ảnh ${idx + 1}`}
+                >
+                  <img src={img} alt={`Thumbnail ${idx + 1}`} className="preview-thumbnail-img" />
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       <style jsx>{`
         .info-section {
@@ -717,40 +880,66 @@ const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, varia
         /* ─── Variant Selectors (Size & Color) ─── */
         .info-variant-selectors {
           display: flex;
-          align-items: center;
-          gap: 16px;
+          flex-direction: column;
+          gap: 18px;
+          align-items: flex-start;
+          width: 100%;
         }
         .info-variant-group {
           display: flex;
-          align-items: center;
-          gap: 10px;
+          flex-direction: column;
+          gap: 8px;
+          align-items: flex-start;
+          width: 100%;
         }
         .selector-label {
           font-family: var(--font-main);
           font-size: 14px;
-          font-weight: 600;
+          font-weight: 500;
+          color: var(--text-muted);
+          display: flex;
+          gap: 6px;
+          align-items: center;
+        }
+        .selected-value {
           color: var(--text-main);
-          white-space: nowrap;
+          font-weight: 600;
         }
-        .variant-dropdown {
-          min-width: 120px;
-        }
-        .variant-select {
+        .variant-buttons {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 10px;
           width: 100%;
-          padding: 10px 16px;
-          border: 1px solid var(--border-input);
-          border-radius: var(--radius-sm);
+        }
+        .variant-btn {
+          padding: 8px 18px;
           font-family: var(--font-main);
-          font-size: 14px;
+          font-size: 13px;
+          font-weight: 500;
           color: var(--text-main);
           background: var(--bg-card);
+          border: 1.5px solid var(--border-subtle);
+          border-radius: 999px;
           cursor: pointer;
-          outline: none;
-          appearance: auto;
-          transition: var(--transition-fast);
+          transition: all var(--transition-fast);
         }
-        .variant-select:focus {
+        .variant-btn:hover {
+          border-color: var(--text-muted);
+          background: var(--bg-secondary);
+        }
+        .variant-btn-active {
           border-color: var(--text-main);
+          background: var(--bg-card);
+          font-weight: 600;
+          box-shadow: 0 0 0 1px var(--text-main);
+        }
+        .variant-btn:disabled {
+          opacity: 0.35;
+          cursor: not-allowed;
+          pointer-events: none;
+          background: var(--bg-secondary);
+          border-color: var(--border-subtle);
+          color: var(--text-muted);
         }
 
         /* ─── Quantity & Add to Cart ─── */
@@ -903,6 +1092,212 @@ const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, varia
           .thumbnail-item {
             width: 56px;
             height: 56px;
+          }
+        }
+
+        /* ─── Fullscreen Image Preview Modal ─── */
+        .image-preview-modal {
+          position: fixed;
+          inset: 0;
+          background: rgba(0, 0, 0, 0.95);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          z-index: 9999;
+          backdrop-filter: blur(12px);
+          animation: fadeIn 0.25s ease-out;
+        }
+
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+
+        .preview-close-btn {
+          position: absolute;
+          top: 24px;
+          right: 24px;
+          background: transparent;
+          border: none;
+          cursor: pointer;
+          color: #ffffff;
+          transition: var(--transition-fast);
+          z-index: 10010;
+        }
+
+        .close-icon-wrapper {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 2px;
+        }
+
+        .close-text {
+          font-family: var(--font-main);
+          font-size: 11px;
+          font-weight: 500;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          opacity: 0.8;
+        }
+
+        .preview-close-btn:hover {
+          transform: scale(1.1);
+          color: #f3f4f6;
+        }
+
+        .preview-content-container {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          max-width: 1200px;
+          position: relative;
+          padding: 0 80px;
+        }
+
+        .preview-image-wrapper {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          max-width: 100%;
+          max-height: 65vh;
+          user-select: none;
+        }
+
+        .preview-main-image {
+          max-width: 100%;
+          max-height: 65vh;
+          object-fit: contain;
+          border-radius: 12px;
+          box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+          animation: scaleUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes scaleUp {
+          from {
+            transform: scale(0.9);
+          }
+          to {
+            transform: scale(1);
+          }
+        }
+
+        .preview-nav-btn {
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 56px;
+          height: 56px;
+          border-radius: 50%;
+          background: rgba(255, 255, 255, 0.08);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          color: #ffffff;
+          transition: all var(--transition-fast);
+          z-index: 10005;
+        }
+
+        .preview-nav-btn:hover {
+          background: rgba(255, 255, 255, 0.2);
+          border-color: #ffffff;
+          transform: translateY(-50%) scale(1.05);
+        }
+
+        .preview-nav-btn:active {
+          transform: translateY(-50%) scale(0.95);
+        }
+
+        .preview-nav-prev {
+          left: 24px;
+        }
+
+        .preview-nav-next {
+          right: 24px;
+        }
+
+        .preview-thumbnails-container {
+          position: absolute;
+          bottom: 40px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 12px;
+          z-index: 10005;
+        }
+
+        .preview-thumbnails-title {
+          font-family: var(--font-main);
+          font-size: 13px;
+          font-weight: 600;
+          color: rgba(255, 255, 255, 0.7);
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+          margin: 0;
+        }
+
+        .preview-thumbnails-list {
+          display: flex;
+          gap: 12px;
+        }
+
+        .preview-thumbnail-item {
+          width: 64px;
+          height: 64px;
+          border-radius: 10px;
+          border: 2px solid transparent;
+          overflow: hidden;
+          cursor: pointer;
+          background: rgba(255, 255, 255, 0.05);
+          padding: 2px;
+          transition: all var(--transition-fast);
+        }
+
+        .preview-thumbnail-item:hover {
+          border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .preview-thumbnail-active {
+          border-color: #ffffff;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .preview-thumbnail-img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          border-radius: 6px;
+        }
+
+        @media (max-width: 768px) {
+          .preview-content-container {
+            padding: 0 48px;
+          }
+          .preview-nav-btn {
+            width: 44px;
+            height: 44px;
+          }
+          .preview-nav-prev {
+            left: 12px;
+          }
+          .preview-nav-next {
+            right: 12px;
+          }
+          .preview-thumbnail-item {
+            width: 52px;
+            height: 52px;
+          }
+          .preview-thumbnails-container {
+            bottom: 24px;
           }
         }
       `}</style>

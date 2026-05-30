@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useRef, useEffect } from "react";
 import { motion } from "motion/react";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
@@ -8,7 +10,7 @@ import { useProducts } from "@/hooks/useProducts";
 const CATEGORIES_DATA = [
   { title: "Boot nam", imageSrc: "/assets/boot_nam.png", href: "/collections/boot-nam" },
   { title: "Boot nữ", imageSrc: "/assets/boot_nu.png", href: "/collections/boot-nu" },
-  { title: "Outfit", imageSrc: "/assets/out_fit.png", href: "/collections/outfit" },
+  { title: "Unisex", imageSrc: "/assets/out_fit.png", href: "/collections/unisex" },
   { title: "Phụ kiện", imageSrc: "/assets/phu_kien.png", href: "/collections/phu-kien" },
 ];
 
@@ -113,7 +115,7 @@ export const CategorySection = () => {
         >
           {/* Header Khối */}
           <div className="flex justify-between items-center mb-6 md:mb-8">
-            <h3 className="content text-2xl md:text-2xl lg:text-[40px] font-semibold text-text-main leading-tight tracking-tight">
+            <h3 className="text-2xl md:text-2xl lg:text-[40px] font-semibold text-text-main leading-tight tracking-tight">
               Sản phẩm bán chạy
             </h3>
             <a href="/products?isBestSeller=true" className="group flex items-center gap-1.5 text-sm md:text-base font-medium text-gray-500 hover:text-black transition-colors">

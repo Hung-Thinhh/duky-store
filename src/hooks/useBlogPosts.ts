@@ -50,8 +50,15 @@ export function useBlogPosts(params?: BlogListParams): UseBlogPostsResult {
 
           // Filter by category
           if (params?.categorySlug) {
+            const categorySlugToMatch =
+              params.categorySlug === "kinh-nghiem-giay-boot" ? "kinh-nghiem" :
+              params.categorySlug === "mix-nam-voi-giay-boot" ? "phoi-do" :
+              params.categorySlug === "mix-nu" ? "phoi-do" :
+              params.categorySlug === "bi-kip-giay-boot" ? "cham-soc-giay" :
+              params.categorySlug;
+
             filtered = filtered.filter((p) =>
-              p.categories.some((c) => c.slug === params.categorySlug)
+              p.categories.some((c) => c.slug === categorySlugToMatch || c.slug === params.categorySlug)
             );
           }
 

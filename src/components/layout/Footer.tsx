@@ -99,7 +99,7 @@ export const Footer = () => {
                     { label: 'Giày boot nam', href: '/collections/boot-nam' },
                     { label: 'Giày boot nữ', href: '/collections/boot-nu' },
                     { label: 'Phụ kiện', href: '/collections/phu-kien' },
-                    { label: 'Outfit', href: '/collections/outfit' },
+                    { label: 'Unisex', href: '/collections/unisex' },
                     { label: 'Phối đồ', href: '/gallery' },
                     { label: 'Kinh nghiệm', href: '/blog' },
                     { label: 'Liên hệ', href: '/contact' },
@@ -135,8 +135,8 @@ export const Footer = () => {
             </div>
 
             {/* Right Block - Fanpage Banner */}
-            <div className="w-[30%] flex justify-end shrink-0">
-              <BannerPage className="p-2 h-[250px]"/>
+            <div className="w-[30%] flex justify-end items-start shrink-0">
+              <BannerPage className="p-2"/>
             </div>
 
           </div>

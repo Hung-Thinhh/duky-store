@@ -1,99 +1,305 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { X } from "lucide-react";
+import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { Header, Footer } from "@/components/layout";
 import { Navpages } from "@/components/shop/Navpages";
 import { useCart } from "@/context/CartContext";
+import { fetchGalleryImages, GalleryImage } from "@/lib/api";
 
-// ─── Mock gallery data (replace with API later) ─────────────────────────────
-const GALLERY_IMAGES = [
-  { id: "1", src: "/assets/mau_nam_1.png", alt: "Boot nam phối đồ công sở", height: 380 },
-  { id: "2", src: "/assets/mau_nam_2.png", alt: "Boot Chelsea phối quần jean", height: 280 },
-  { id: "3", src: "/assets/mau_nam_3.png", alt: "Boot cao cổ phối áo khoác", height: 450 },
-  { id: "4", src: "/assets/mau_nam_4.png", alt: "Boot nữ phối váy", height: 320 },
-  { id: "5", src: "/assets/mau_nam_5.png", alt: "Boot đế vuông phối quần ống rộng", height: 400 },
-  { id: "6", src: "/assets/mau_nam_1.png", alt: "Boot mũi nhọn phối đầm", height: 300 },
-  { id: "7", src: "/assets/mau_nam_2.png", alt: "Boot combat phối streetwear", height: 420 },
-  { id: "8", src: "/assets/mau_nam_3.png", alt: "Boot da phối suit", height: 350 },
-  { id: "9", src: "/assets/mau_nam_4.png", alt: "Boot nữ phối chân váy xếp ly", height: 280 },
-  { id: "10", src: "/assets/mau_nam_5.png", alt: "Boot cổ thấp phối quần kaki", height: 380 },
-  { id: "11", src: "/assets/mau_nam_1.png", alt: "Boot zip phối áo blazer", height: 440 },
-  { id: "12", src: "/assets/mau_nam_2.png", alt: "Boot platform phối quần skinny", height: 320 },
-  { id: "13", src: "/assets/mau_nam_3.png", alt: "Boot Chelsea nữ phối trench coat", height: 400 },
-  { id: "14", src: "/assets/mau_nam_4.png", alt: "Boot viền phối đồ casual", height: 300 },
-  { id: "15", src: "/assets/mau_nam_5.png", alt: "Boot da bóng phối tuxedo", height: 360 },
-  { id: "16", src: "/assets/mau_nam_1.png", alt: "Boot nữ phối jumpsuit", height: 420 },
-];
+interface BannerContent {
+  image: string;
+  alt: string;
+  badge: string;
+  titleLine1: string;
+  titleLine2: string;
+  description: string;
+}
+
+// TODO: Replace with API call when backend is ready
+const MOCK_GALLERY_BANNER: BannerContent = {
+  image: "/assets/banner_lookbook.jpg",
+  alt: "Lookbook - Duky Store",
+  badge: "LOOKBOOK",
+  titleLine1: "PHONG CÁCH",
+  titleLine2: "DUKY STORE",
+  description: "Cảm hứng phối đồ cùng boot – Phong cách riêng, cá tính riêng.",
+};
 
 export default function GalleryPage() {
   const { cartCount } = useCart();
-  const [selectedImage, setSelectedImage] = useState<typeof GALLERY_IMAGES[0] | null>(null);
+  const [images, setImages] = useState<GalleryImage[]>([]);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [banner, setBanner] = useState<BannerContent>(MOCK_GALLERY_BANNER);
+  const [activeTab, setActiveTab] = useState<"all" | "men" | "women">("all");
+
+  // Keyboard navigation for image preview
+  useEffect(() => {
+    if (selectedIndex === null) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setSelectedIndex(null);
+      } else if (e.key === "ArrowLeft") {
+        setSelectedIndex((prev) =>
+          prev === 0 || prev === null ? images.length - 1 : prev - 1,
+        );
+      } else if (e.key === "ArrowRight") {
+        setSelectedIndex((prev) =>
+          prev === images.length - 1 || prev === null ? 0 : prev + 1,
+        );
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selectedIndex, images.length]);
+
+  // Disable body scroll when preview modal is open
+  useEffect(() => {
+    if (selectedIndex !== null) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [selectedIndex]);
+
+  useEffect(() => {
+    // TODO: Fetch banner content from backend API when available
+    // fetch("/api/banners/gallery").then(res => res.json()).then(setBanner);
+    setBanner(MOCK_GALLERY_BANNER);
+  }, []);
+
+  useEffect(() => {
+    setLoading(true);
+    const forMale = activeTab === "all" ? undefined : activeTab === "men";
+    fetchGalleryImages(forMale)
+      .then((data) => {
+        setImages(data);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, [activeTab]);
 
   // Split images into columns for masonry layout
   const columns = 4;
-  const columnImages: typeof GALLERY_IMAGES[] = Array.from({ length: columns }, () => []);
-  GALLERY_IMAGES.forEach((img, idx) => {
+  const columnImages: GalleryImage[][] = Array.from(
+    { length: columns },
+    () => [],
+  );
+  images.forEach((img, idx) => {
     columnImages[idx % columns].push(img);
   });
 
   return (
     <>
       <Header cartCount={cartCount} />
-
-      <section className="gallery-page">
-        <Navpages
-          items={[
-            { label: "Trang chủ", href: "/" },
-            { label: "Lookbook" },
-          ]}
+      {/* Hero Banner */}
+      <section
+        className="relative w-full"
+        style={{ width: "100vw", marginLeft: "calc(-50vw + 50%)" }}
+      >
+        <Image
+          src={banner.image}
+          alt={banner.alt}
+          width={1920}
+          height={1080}
+          sizes="100vw"
+          className="w-full h-auto"
+          priority
         />
-
-        {/* Masonry Grid */}
-        <div className="masonry-grid">
-          {columnImages.map((col, colIdx) => (
-            <div key={colIdx} className="masonry-column">
-              {col.map((img) => (
-                <div
-                  key={img.id}
-                  className="masonry-item"
-                  onClick={() => setSelectedImage(img)}
-                >
-                  <div className="masonry-img-wrap" style={{ height: img.height }}>
-                    <Image
-                      src={img.src}
-                      alt={img.alt}
-                      fill
-                      className="masonry-img"
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                    />
-                  </div>
-                  <div className="masonry-overlay">
-                    <span className="masonry-caption">{img.alt}</span>
-                  </div>
-                </div>
-              ))}
+        {/* Text overlay */}
+        <div className="absolute inset-0 flex items-center">
+          <div className="px-12 md:px-16 lg:px-[100px] space-y-3">
+            <span className="inline-block text-xs font-medium tracking-widest text-gray-500 uppercase">
+              {banner.badge}
+            </span>
+            <h1 className="leading-[1.1] tracking-tighter text-gray-900">
+              <span className="block text-[36px] md:text-[52px] lg:text-[64px] font-semibold">
+                {banner.titleLine1}
+              </span>
+              <span className="block text-[30px] md:text-[44px] lg:text-[56px] font-medium italic -mt-1 md:-mt-2">
+                <span className="font-montserrat not-italic font-semibold tracking-wide bg-gradient-to-br from-zinc-500 via-zinc-300 to-zinc-700 bg-clip-text text-transparent inline-block ml-1 md:ml-2">
+                  {banner.titleLine2}
+                </span>
+              </span>
+            </h1>
+            <div className="flex items-start gap-3 max-w-sm">
+              <div className="w-8 h-px bg-gray-900 mt-2.5 shrink-0" />
+              <p className="text-sm text-gray-500 leading-relaxed font-light">
+                {banner.description}
+              </p>
             </div>
-          ))}
+          </div>
         </div>
       </section>
 
-      {/* Lightbox */}
-      {selectedImage && (
-        <div className="lightbox" onClick={() => setSelectedImage(null)}>
-          <button className="lightbox-close" onClick={() => setSelectedImage(null)}>
-            <X size={24} />
+      <section className="gallery-page">
+        <Navpages
+          items={[{ label: "Trang chủ", href: "/" }, { label: "Lookbook" }]}
+        />
+
+        {/* Tabs Bar */}
+        <div className="gallery-tabs-container">
+          <div className="gallery-tabs">
+            <button
+              className={`gallery-tab-item ${activeTab === "all" ? "active" : ""}`}
+              onClick={() => setActiveTab("all")}
+            >
+              Tất cả
+            </button>
+            <button
+              className={`gallery-tab-item ${activeTab === "men" ? "active" : ""}`}
+              onClick={() => setActiveTab("men")}
+            >
+              Nam
+            </button>
+            <button
+              className={`gallery-tab-item ${activeTab === "women" ? "active" : ""}`}
+              onClick={() => setActiveTab("women")}
+            >
+              Nữ
+            </button>
+          </div>
+        </div>
+
+        {/* Loading state */}
+        {loading && (
+          <div className="gallery-loading">
+            <p>Đang tải hình ảnh...</p>
+          </div>
+        )}
+
+        {/* Masonry Grid */}
+        {!loading && images.length > 0 && (
+          <div className="masonry-grid">
+            {columnImages.map((col, colIdx) => (
+              <div key={colIdx} className="masonry-column">
+                {col.map((img) => (
+                  <div
+                    key={img.id}
+                    className="masonry-item"
+                    onClick={() => setSelectedIndex(images.indexOf(img))}
+                  >
+                    <div className="masonry-img-wrap">
+                      <Image
+                        src={img.src}
+                        alt={img.alt}
+                        width={400}
+                        height={500}
+                        className="masonry-img"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                      />
+                    </div>
+                    <div className="masonry-overlay">
+                      <span className="masonry-caption">{img.alt}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Empty state */}
+        {!loading && images.length === 0 && (
+          <div className="gallery-loading">
+            <p>Chưa có hình ảnh nào trong gallery.</p>
+          </div>
+        )}
+      </section>
+
+      {/* Fullscreen Image Preview Modal */}
+      {selectedIndex !== null && (
+        <div
+          className="image-preview-modal"
+          onClick={() => setSelectedIndex(null)}
+        >
+          <button
+            className="preview-close-btn"
+            aria-label="Đóng"
+            onClick={() => setSelectedIndex(null)}
+          >
+            <div className="close-icon-wrapper">
+              <X size={28} />
+              <span className="close-text">Đóng</span>
+            </div>
           </button>
-          <div className="lightbox-content" onClick={(e) => e.stopPropagation()}>
-            <Image
-              src={selectedImage.src}
-              alt={selectedImage.alt}
-              width={800}
-              height={800}
-              className="lightbox-img"
-            />
-            <p className="lightbox-caption">{selectedImage.alt}</p>
+
+          <div
+            className="preview-content-container"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className="preview-nav-btn preview-nav-prev"
+              onClick={() =>
+                setSelectedIndex((prev) =>
+                  prev === 0 || prev === null ? images.length - 1 : prev - 1,
+                )
+              }
+              aria-label="Ảnh trước"
+            >
+              <ChevronLeft size={32} />
+            </button>
+
+            <div className="preview-image-wrapper">
+              <img
+                src={images[selectedIndex].src}
+                alt={images[selectedIndex].alt}
+                className="preview-main-image"
+              />
+            </div>
+
+            <button
+              className="preview-nav-btn preview-nav-next"
+              onClick={() =>
+                setSelectedIndex((prev) =>
+                  prev === images.length - 1 || prev === null ? 0 : prev + 1,
+                )
+              }
+              aria-label="Ảnh sau"
+            >
+              <ChevronRight size={32} />
+            </button>
+          </div>
+
+          <div
+            className="preview-thumbnails-container"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <p className="preview-thumbnails-title">Hình ảnh</p>
+            <div className="preview-thumbnails-list">
+              {(() => {
+                const count = Math.min(5, images.length);
+                const list = [];
+                for (let offset = 0; offset < count; offset++) {
+                  const targetIdx = (selectedIndex + offset) % images.length;
+                  list.push({
+                    img: images[targetIdx],
+                    idx: targetIdx,
+                  });
+                }
+                return list.map(({ img, idx }) => (
+                  <button
+                    key={`${img.id}-${idx}`}
+                    className={`preview-thumbnail-item ${idx === selectedIndex ? "preview-thumbnail-active" : ""}`}
+                    onClick={() => setSelectedIndex(idx)}
+                    aria-label={`Xem ảnh ${idx + 1}`}
+                  >
+                    <img
+                      src={img.src}
+                      alt={img.alt}
+                      className="preview-thumbnail-img"
+                    />
+                  </button>
+                ));
+              })()}
+            </div>
           </div>
         </div>
       )}
@@ -104,28 +310,56 @@ export default function GalleryPage() {
         .gallery-page {
           max-width: 1440px;
           margin: 0 auto;
-          padding: 8px 2rem 80px;
-          margin-top: 80px;
+          padding: 32px 2rem 80px;
         }
 
-        .gallery-header {
-          margin-bottom: 40px;
+        .gallery-tabs-container {
+          display: flex;
+          justify-content: center;
+          margin: 16px 0 16px;
+        }
+
+        .gallery-tabs {
+          display: flex;
+          background: rgba(244, 244, 245, 0.8);
+          backdrop-filter: blur(8px);
+          padding: 6px;
+          border-radius: 9999px;
+          border: 1px solid rgba(228, 228, 231, 0.6);
+          gap: 4px;
+        }
+
+        .gallery-tab-item {
+          font-family: var(--font-main);
+          font-size: 14px;
+          font-weight: 500;
+          color: #71717a;
+          padding: 8px 28px;
+          border: none;
+          background: transparent;
+          border-radius: 9999px;
+          cursor: pointer;
+          transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .gallery-tab-item:hover {
+          color: #18181b;
+        }
+
+        .gallery-tab-item.active {
+          background: #ffffff;
+          color: #18181b;
+          box-shadow:
+            0 4px 12px rgba(0, 0, 0, 0.05),
+            0 1px 3px rgba(0, 0, 0, 0.02);
+          font-weight: 600;
+        }
+
+        .gallery-loading {
           text-align: center;
-        }
-
-        .gallery-title {
-          font-family: var(--font-accent);
-          font-size: 32px;
-          font-weight: 700;
-          color: var(--text-main);
-          margin-bottom: 8px;
-        }
-
-        .gallery-subtitle {
+          padding: 60px 0;
           font-size: 14px;
           color: var(--text-muted);
-          max-width: 500px;
-          margin: 0 auto;
         }
 
         /* Masonry */
@@ -165,6 +399,8 @@ export default function GalleryPage() {
         }
 
         :global(.masonry-img) {
+          width: 100%;
+          height: auto;
           object-fit: cover;
           border-radius: 16px;
         }
@@ -172,7 +408,11 @@ export default function GalleryPage() {
         .masonry-overlay {
           position: absolute;
           inset: 0;
-          background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 50%);
+          background: linear-gradient(
+            to top,
+            rgba(0, 0, 0, 0.6) 0%,
+            transparent 50%
+          );
           display: flex;
           align-items: flex-end;
           padding: 16px;
@@ -189,62 +429,204 @@ export default function GalleryPage() {
           line-height: 1.4;
         }
 
-        /* Lightbox */
-        .lightbox {
+        /* Fullscreen Image Preview Modal */
+        .image-preview-modal {
           position: fixed;
           inset: 0;
-          z-index: 9999;
-          background: rgba(0, 0, 0, 0.85);
+          background: rgba(0, 0, 0, 0.95);
           display: flex;
+          flex-direction: column;
           align-items: center;
           justify-content: center;
-          padding: 40px;
-          backdrop-filter: blur(8px);
+          z-index: 9999;
+          backdrop-filter: blur(12px);
+          animation: fadeIn 0.25s ease-out;
         }
 
-        .lightbox-close {
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+
+        .preview-close-btn {
           position: absolute;
           top: 24px;
           right: 24px;
-          width: 44px;
-          height: 44px;
+          background: transparent;
+          border: none;
+          cursor: pointer;
+          color: #ffffff;
+          transition:
+            transform 0.2s ease,
+            color 0.2s ease;
+          z-index: 10010;
+        }
+
+        .close-icon-wrapper {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 2px;
+        }
+
+        .close-text {
+          font-family: var(--font-main);
+          font-size: 11px;
+          font-weight: 500;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          opacity: 0.8;
+        }
+
+        .preview-close-btn:hover {
+          transform: scale(1.1);
+          color: #f3f4f6;
+        }
+
+        .preview-content-container {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          max-width: 1200px;
+          position: relative;
+          padding: 0 80px;
+        }
+
+        .preview-image-wrapper {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          max-width: 100%;
+          max-height: 60vh;
+          user-select: none;
+        }
+
+        .preview-main-image {
+          max-width: 100%;
+          max-height: 60vh;
+          object-fit: contain;
+          border-radius: 12px;
+          box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+          animation: scaleUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes scaleUp {
+          from {
+            transform: scale(0.9);
+          }
+          to {
+            transform: scale(1);
+          }
+        }
+
+        .preview-nav-btn {
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 56px;
+          height: 56px;
           border-radius: 50%;
-          background: rgba(255, 255, 255, 0.1);
+          background: rgba(255, 255, 255, 0.08);
           border: 1px solid rgba(255, 255, 255, 0.2);
-          color: #fff;
           display: flex;
           align-items: center;
           justify-content: center;
           cursor: pointer;
-          transition: var(--transition-fast);
+          color: #ffffff;
+          transition: all 0.2s ease;
+          z-index: 10005;
         }
 
-        .lightbox-close:hover {
+        .preview-nav-btn:hover {
           background: rgba(255, 255, 255, 0.2);
+          border-color: #ffffff;
+          transform: translateY(-50%) scale(1.05);
         }
 
-        .lightbox-content {
-          max-width: 80vw;
-          max-height: 80vh;
+        .preview-nav-btn:active {
+          transform: translateY(-50%) scale(0.95);
+        }
+
+        .preview-nav-prev {
+          left: 24px;
+        }
+
+        .preview-nav-next {
+          right: 24px;
+        }
+
+        .preview-thumbnails-container {
+          position: absolute;
+          bottom: 30px;
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 16px;
+          gap: 12px;
+          z-index: 10005;
         }
 
-        :global(.lightbox-img) {
-          max-height: 75vh;
-          width: auto;
-          height: auto;
-          object-fit: contain;
-          border-radius: 12px;
-        }
-
-        .lightbox-caption {
+        .preview-thumbnails-title {
           font-family: var(--font-main);
-          font-size: 14px;
-          color: rgba(255, 255, 255, 0.8);
-          text-align: center;
+          font-size: 13px;
+          font-weight: 600;
+          color: rgba(255, 255, 255, 0.7);
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+          margin: 0;
+        }
+
+        .preview-thumbnails-list {
+          display: flex;
+          gap: 12px;
+          overflow-x: auto;
+          max-width: 90vw;
+          padding: 8px 12px;
+          scrollbar-width: thin;
+          scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+        }
+
+        .preview-thumbnails-list::-webkit-scrollbar {
+          height: 4px;
+        }
+
+        .preview-thumbnails-list::-webkit-scrollbar-thumb {
+          background: rgba(255, 255, 255, 0.2);
+          border-radius: 2px;
+        }
+
+        .preview-thumbnail-item {
+          width: 64px;
+          height: 64px;
+          border-radius: 10px;
+          border: 2px solid transparent;
+          overflow: hidden;
+          cursor: pointer;
+          background: rgba(255, 255, 255, 0.05);
+          padding: 2px;
+          transition: all 0.2s ease;
+          flex-shrink: 0;
+        }
+
+        .preview-thumbnail-item:hover {
+          border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .preview-thumbnail-active {
+          border-color: #ffffff;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .preview-thumbnail-img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          border-radius: 6px;
         }
 
         /* Responsive */
@@ -263,7 +645,7 @@ export default function GalleryPage() {
             flex: 1 1 calc(50% - 8px);
           }
 
-          .masonry-column:nth-child(n+3) {
+          .masonry-column:nth-child(n + 3) {
             display: none;
           }
         }
@@ -277,12 +659,8 @@ export default function GalleryPage() {
             flex: 1 1 100%;
           }
 
-          .masonry-column:nth-child(n+2) {
+          .masonry-column:nth-child(n + 2) {
             display: none;
-          }
-
-          .gallery-title {
-            font-size: 24px;
           }
         }
       `}</style>

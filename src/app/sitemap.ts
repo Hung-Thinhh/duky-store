@@ -7,7 +7,7 @@ import type { Product } from "@/types/product";
 export const revalidate = 3600;
 
 function siteUrl() {
-  return (process.env.NEXT_PUBLIC_SITE_URL || "https://dukystore.com").replace(
+  return (process.env.NEXT_PUBLIC_SITE_URL || "https://dukystore.vn").replace(
     /\/+$/,
     "",
   );
@@ -57,7 +57,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 1,
     },
     {
-      url: absoluteUrl("/products"),
+      url: absoluteUrl("/san-pham"),
       lastModified: now,
       changeFrequency: "daily",
       priority: 0.9,
@@ -75,13 +75,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     },
     {
-      url: absoluteUrl("/gallery"),
+      url: absoluteUrl("/thu-vien"),
       lastModified: now,
       changeFrequency: "monthly",
       priority: 0.5,
     },
     {
-      url: absoluteUrl("/contact"),
+      url: absoluteUrl("/lien-he"),
       lastModified: now,
       changeFrequency: "monthly",
       priority: 0.5,
@@ -103,6 +103,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     productsResult.status === "fulfilled"
       ? productsResult.value
           .filter((product) => Boolean(product.slug))
+          .filter((product) => !product.seo?.noIndex)
           .map((product) => ({
             url: absoluteUrl(`/san-pham/${product.slug}`),
             lastModified: toDate(product.updatedAt || product.publishedAt),

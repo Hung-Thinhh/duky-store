@@ -7,8 +7,16 @@ import {
   fetchBlogPosts,
 } from "@/lib/api";
 import { blogText, sanitizeBlogHtml } from "@/lib/blog-content";
+import { buildMetadata } from "@/lib/metadata";
+import {
+  buildArticleJsonLd,
+  buildBreadcrumbJsonLd,
+} from "@/lib/structured-data";
+import { JsonLd } from "@/components/seo/JsonLd";
 import type { BlogCategory, BlogPost } from "@/types/blog";
 import { BlogDetailPageClient } from "./BlogDetailPageClient";
+
+export const revalidate = 300;
 
 interface BlogDetailPageProps {
   params: Promise<{ slug: string }>;
@@ -16,28 +24,8 @@ interface BlogDetailPageProps {
 
 const getBlogPostBySlug = cache(fetchBlogPostBySlug);
 
-function siteUrl() {
-  return (process.env.NEXT_PUBLIC_SITE_URL || "https://dukystore.com").replace(
-    /\/+$/,
-    "",
-  );
-}
-
-function absoluteUrl(pathOrUrl?: string | null) {
-  if (!pathOrUrl) return undefined;
-  if (pathOrUrl.startsWith("http://") || pathOrUrl.startsWith("https://")) {
-    return pathOrUrl;
-  }
-
-  return new URL(pathOrUrl, siteUrl()).toString();
-}
-
-function cleanText(value?: string | null) {
-  return blogText(value);
-}
-
 function truncateMeta(value?: string | null, maxLength = 160) {
-  const text = cleanText(value);
+  const text = blogText(value);
 
   if (text.length <= maxLength) {
     return text || undefined;
@@ -57,110 +45,13 @@ async function getBlogPageData(slug: string) {
   ]);
 
   const categories: BlogCategory[] =
-    categoriesResult.status === "fulfilled" ? categoriesResult.value : [];
+    categoriesResult.status === "fulfilled" ? categoriesResult.value.data : [];
   const recentPosts: BlogPost[] =
     recentPostsResult.status === "fulfilled"
       ? recentPostsResult.value.data
       : [];
 
   return { post, categories, recentPosts };
-}
-
-function buildBlogJsonLd(post: BlogPost) {
-  const seo = post.seo;
-  const canonicalUrl = absoluteUrl(seo?.canonicalUrl || `/blog/${post.slug}`);
-  const imageUrl = absoluteUrl(post.coverMedia?.secureUrl || post.coverMedia?.url);
-  const description = truncateMeta(
-    seo?.metaDescription || post.excerpt || post.content,
-  );
-  const authorName = post.author?.fullName || "Duky Store";
-  const publisherLogo = absoluteUrl("/assets/logo_header.png");
-  const keywords =
-    seo?.focusKeyword ||
-    post.tags.map((tag) => tag.name).filter(Boolean).join(", ") ||
-    undefined;
-  const articleSections = post.categories
-    .map((category) => category.name)
-    .filter(Boolean);
-  const schemaFromDb =
-    seo?.schemaJson && Object.keys(seo.schemaJson).length
-      ? seo.schemaJson
-      : {};
-
-  return {
-    "@context": "https://schema.org",
-    "@type": seo?.schemaType || "BlogPosting",
-    headline: seo?.metaTitle || post.title,
-    description,
-    image: imageUrl ? [imageUrl] : undefined,
-    datePublished: post.publishedAt || post.createdAt,
-    dateModified: post.updatedAt || post.publishedAt || post.createdAt,
-    author: {
-      "@type": post.author ? "Person" : "Organization",
-      name: authorName,
-    },
-    publisher: {
-      "@type": "Organization",
-      name: "Duky Store",
-      logo: publisherLogo
-        ? {
-            "@type": "ImageObject",
-            url: publisherLogo,
-          }
-        : undefined,
-    },
-    mainEntityOfPage: canonicalUrl
-      ? {
-          "@type": "WebPage",
-          "@id": canonicalUrl,
-        }
-      : undefined,
-    url: canonicalUrl,
-    keywords,
-    articleSection: articleSections.length ? articleSections : undefined,
-    ...schemaFromDb,
-  };
-}
-
-function buildBreadcrumbJsonLd(post: BlogPost) {
-  const blogUrl = absoluteUrl("/blog");
-  const postUrl = absoluteUrl(post.seo?.canonicalUrl || `/blog/${post.slug}`);
-
-  return {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "Trang chủ",
-        item: siteUrl(),
-      },
-      {
-        "@type": "ListItem",
-        position: 2,
-        name: "Blog",
-        item: blogUrl,
-      },
-      {
-        "@type": "ListItem",
-        position: 3,
-        name: post.title,
-        item: postUrl,
-      },
-    ],
-  };
-}
-
-function JsonLdScript({ data }: { data: Record<string, unknown> | Record<string, unknown>[] }) {
-  return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{
-        __html: JSON.stringify(data).replace(/</g, "\\u003c"),
-      }}
-    />
-  );
 }
 
 export async function generateMetadata({
@@ -171,53 +62,34 @@ export async function generateMetadata({
   try {
     const post = await getBlogPostBySlug(slug);
     const seo = post.seo;
-    const coverUrl = absoluteUrl(
-      post.coverMedia?.secureUrl || post.coverMedia?.url,
-    );
+    const coverUrl =
+      post.coverMedia?.secureUrl || post.coverMedia?.url || undefined;
     const title = seo?.metaTitle || post.title;
-    const description = truncateMeta(
-      seo?.metaDescription || post.excerpt || post.content,
-    );
-    const canonical = absoluteUrl(seo?.canonicalUrl || `/blog/${post.slug}`);
+    const description =
+      truncateMeta(seo?.metaDescription || post.excerpt || post.content) ||
+      "Bai viet Duky Store";
 
     return {
-      title,
-      description,
-      alternates: {
-        canonical,
-      },
+      ...buildMetadata({
+        title,
+        description,
+        path: seo?.canonicalUrl || `/blog/${post.slug}`,
+        image: coverUrl,
+        type: "article",
+      }),
       robots: {
         index: !seo?.noIndex,
         follow: !seo?.noFollow,
       },
-      openGraph: {
-        title: seo?.ogTitle || title,
-        description: seo?.ogDescription || description,
-        url: canonical,
-        type: "article",
-        publishedTime: post.publishedAt || undefined,
-        modifiedTime: post.updatedAt || undefined,
-        images: coverUrl
-          ? [
-              {
-                url: coverUrl,
-                alt: post.coverMedia?.altText || post.title,
-              },
-            ]
-          : undefined,
-      },
-      twitter: {
-        card: coverUrl ? "summary_large_image" : "summary",
-        title: seo?.twitterTitle || seo?.ogTitle || title,
-        description:
-          seo?.twitterDescription || seo?.ogDescription || description,
-        images: coverUrl ? [coverUrl] : undefined,
-      },
     };
   } catch {
     return {
-      title: "Blog | Duky Store",
-      description: "Bai viet Duky Store",
+      ...buildMetadata({
+        title: "Blog",
+        description: "Bai viet Duky Store",
+        path: `/blog/${slug}`,
+        type: "article",
+      }),
       robots: {
         index: false,
         follow: false,
@@ -236,11 +108,28 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
     notFound();
   }
 
+  const articleJsonLd = {
+    ...buildArticleJsonLd({
+      title: data.post.title,
+      slug: data.post.slug,
+      excerpt: data.post.excerpt,
+      content: data.post.content,
+      publishedAt: data.post.publishedAt,
+      updatedAt: data.post.updatedAt,
+      coverMedia: data.post.coverMedia,
+    }),
+    ...(data.post.seo?.schemaJson || {}),
+  };
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+    { name: "Trang chu", url: "/" },
+    { name: "Blog", url: "/blog" },
+    { name: data.post.title, url: `/blog/${data.post.slug}` },
+  ]);
+
   return (
     <>
-      <JsonLdScript
-        data={[buildBlogJsonLd(data.post), buildBreadcrumbJsonLd(data.post)]}
-      />
+      <JsonLd data={articleJsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
       <BlogDetailPageClient
         slug={slug}
         initialPost={{

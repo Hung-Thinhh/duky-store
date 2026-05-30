@@ -5,6 +5,7 @@ export interface CollectionSeo {
   heroImage: string;
   heroTitle: string;
   heroDescription: string;
+  kicker: string;
   metaTitle: string;
   metaDescription: string;
   contentIntro: string;
@@ -16,10 +17,11 @@ export const COLLECTIONS: Record<string, CollectionSeo> = {
     title: "Giay Boot Nam Cao Cap",
     description:
       "Bo suu tap giay boot nam cao cap, de phoi do va phu hop nhieu phong cach.",
-    heroImage: "/assets/banner_boot_nam.png",
-    heroTitle: "GIAY BOOT NAM CAO CAP",
+    heroImage: "/assets/banner_boot_nam.jpg",
+    heroTitle: "GIAY BOOT\nNAM CAO CAP",
     heroDescription:
       "Thiet ke nam tinh, chat lieu ben dep va form dang de mang hang ngay.",
+    kicker: "MEN'S COLLECTION",
     metaTitle: "Giay Boot Nam Cao Cap",
     metaDescription:
       "Mua giay boot nam cao cap tai Duky Store: boot da, combat boot, chelsea boot va cac mau giay de phoi do cho nam.",
@@ -31,10 +33,11 @@ export const COLLECTIONS: Record<string, CollectionSeo> = {
     title: "Giay Boot Nu Cao Cap",
     description:
       "Bo suu tap giay boot nu cao cap, ton dang va de phoi voi nhieu outfit.",
-    heroImage: "/assets/banner_boot_nu.png",
-    heroTitle: "GIAY BOOT NU CAO CAP",
+    heroImage: "/assets/banner_boot_nu.jpg",
+    heroTitle: "GIAY BOOT\nNU CAO CAP",
     heroDescription:
       "Ton dang trong tung buoc di voi cac mau boot nu thanh lich va ca tinh.",
+    kicker: "WOMEN'S COLLECTION",
     metaTitle: "Giay Boot Nu Cao Cap",
     metaDescription:
       "Kham pha giay boot nu cao cap tai Duky Store: boot co ngan, boot cao co, boot mui nhon va cac mau ton dang de phoi do.",
@@ -46,25 +49,27 @@ export const COLLECTIONS: Record<string, CollectionSeo> = {
     title: "Phu Kien Thoi Trang",
     description:
       "Phu kien thoi trang giup hoan thien outfit voi giay boot va ao khoac da.",
-    heroImage: "/assets/phu_kien.png",
-    heroTitle: "PHU KIEN THOI TRANG",
+    heroImage: "/assets/banner_phukien.jpg",
+    heroTitle: "PHU KIEN\nCAO CAP",
     heroDescription:
       "Hoan thien phong cach voi nhung chi tiet nho nhung co diem nhan.",
+    kicker: "ACCESSORIES",
     metaTitle: "Phu Kien Thoi Trang",
     metaDescription:
       "Mua phu kien thoi trang tai Duky Store: tat, that lung, ca vat, non va cac mon phu kien de phoi voi giay boot.",
     contentIntro:
       "Phu kien Duky Store duoc chon de di cung giay boot, ao khoac da va cac outfit hang ngay, giup tong the gon gon va co diem nhan hon.",
   },
-  outfit: {
-    slug: "outfit",
-    title: "Outfit Phoi Do",
+  unisex: {
+    slug: "unisex",
+    title: "Unisex",
     description:
       "Goi y outfit phoi do cung giay boot, ao khoac da va phu kien Duky Store.",
-    heroImage: "/assets/out_fit.png",
-    heroTitle: "OUTFIT PHOI DO",
+    heroImage: "/assets/banner_outfit.jpg",
+    heroTitle: "UNISEX\nPHOI DO",
     heroDescription:
       "Goi y cach ket hop san pham Duky Store thanh nhung set do co phong cach rieng.",
+    kicker: "UNISEX",
     metaTitle: "Outfit Phoi Do Voi Giay Boot",
     metaDescription:
       "Tham khao outfit phoi do voi giay boot, ao khoac da va phu kien Duky Store cho nam nu.",

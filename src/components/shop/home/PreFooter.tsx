@@ -22,7 +22,7 @@ export const PreFooter = () => {
               className="flex flex-col items-start space-y-8"
             >
               <div className="space-y-4">
-                <h2 className="content text-3xl md:text-3xl lg:text-[40px] font-semibold text-text-main leading-tight tracking-tight">
+                <h2 className="text-4xl md:text-5xl lg:text-[40px] font-semibold text-text-main leading-tight tracking-tight">
                   Sẵn sàng tìm đôi boot <br className="hidden md:block" />
                   hợp phong cách của bạn?
                 </h2>

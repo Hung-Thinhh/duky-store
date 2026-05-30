@@ -8,6 +8,7 @@ interface BlogSidebarProps {
   recentPosts: BlogPost[];
   categories: BlogCategory[];
   activeCategory?: string;
+  loading?: boolean;
 }
 
 function formatDate(dateStr: string | null): string {
@@ -20,7 +21,43 @@ function formatDate(dateStr: string | null): string {
   });
 }
 
-export function BlogSidebar({ recentPosts, categories, activeCategory }: BlogSidebarProps) {
+export function BlogSidebar({ recentPosts, categories, activeCategory, loading = false }: BlogSidebarProps) {
+  if (loading) {
+    return (
+      <aside className="space-y-8">
+        {/* Categories Skeleton */}
+        <div className="bg-white rounded-2xl border border-gray-100 p-5 animate-pulse">
+          <h3 className="text-sm font-bold uppercase tracking-wider text-gray-900 mb-4">
+            Danh mục
+          </h3>
+          <ul className="space-y-3">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <li key={i} className="h-9 bg-gray-100 rounded-lg w-full" />
+            ))}
+          </ul>
+        </div>
+
+        {/* Recent Posts Skeleton */}
+        <div className="bg-white rounded-2xl border border-gray-100 p-5 animate-pulse">
+          <h3 className="text-sm font-bold uppercase tracking-wider text-gray-900 mb-4">
+            Bài viết mới
+          </h3>
+          <ul className="space-y-4">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <li key={i} className="flex gap-3 items-start">
+                <div className="w-16 h-16 bg-gray-100 rounded-lg flex-shrink-0" />
+                <div className="flex-1 space-y-2 py-1">
+                  <div className="h-4 bg-gray-100 rounded w-full" />
+                  <div className="h-3 bg-gray-100 rounded w-1/3" />
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </aside>
+    );
+  }
+
   return (
     <aside className="space-y-8">
       {/* Categories */}

@@ -108,9 +108,9 @@ export const Header = ({ cartCount }: HeaderProps) => {
   const [isContactOpen, setIsContactOpen] = useState(false);
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
   const accountMenuRef = useRef<HTMLDivElement>(null);
-  const { products: searchProducts } = useProducts(
+  const { products: searchProducts, loading: isSearchLoading } = useProducts(
     { limit: 20 },
-    { enabled: isSearchOpen },
+    { enabled: true },
   );
   const { isAuthenticated, customer, logout } = useAuth();
 
@@ -138,14 +138,14 @@ export const Header = ({ cartCount }: HeaderProps) => {
     "Boot đế chunky",
     "Chelsea boot",
     "Phụ kiện",
-    "Outfit nữ",
+    "Unisex nữ",
   ];
 
   const navItems = [
     { name: 'Boot Nam', href: '/collections/boot-nam' },
     { name: 'Boot Nữ', href: '/collections/boot-nu' },
     { name: 'Phụ kiện', href: '/collections/phu-kien' },
-    { name: 'Outfit', href: '/collections/outfit' },
+    { name: 'Unisex', href: '/collections/unisex' },
     { name: 'Kinh nghiệm', href: '/blog' },
     { name: 'Liên hệ', href: '/contact' }
   ];
@@ -168,6 +168,7 @@ export const Header = ({ cartCount }: HeaderProps) => {
                 src="/assets/logo_header.png" 
                 alt="Duky Store Logo" 
                 fill
+                priority
                 sizes="(max-width: 768px) 40px, 56px"
                 className="object-contain"
               />
@@ -379,6 +380,7 @@ export const Header = ({ cartCount }: HeaderProps) => {
         onClose={() => setIsSearchOpen(false)}
         products={searchProducts}
         popularSearches={popularSearches}
+        isLoading={isSearchLoading}
       />
 
       {/* Contact Popup */}

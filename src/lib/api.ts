@@ -274,8 +274,8 @@ export async function fetchBlogPostBySlug(slug: string): Promise<BlogPost> {
   return apiFetch<BlogPost>(`/blog/${slug}`);
 }
 
-export async function fetchBlogCategories(): Promise<BlogCategoryType[]> {
-  return apiFetch<BlogCategoryType[]>("/blog/categories");
+export async function fetchBlogCategories(): Promise<{ data: BlogCategoryType[] }> {
+  return apiFetch<{ data: BlogCategoryType[] }>("/blog/categories");
 }
 
 // ─── Checkout API ────────────────────────────────────────────────────────────
@@ -397,4 +397,31 @@ export async function checkoutAPI(payload: CheckoutPayload): Promise<CheckoutOrd
   }
 
   return json.DT;
+}
+
+// ─── Gallery API ─────────────────────────────────────────────────────────────
+export interface GalleryImage {
+  id: string;
+  src: string;
+  alt: string;
+  forMale?: boolean | null;
+}
+
+export async function fetchGalleryImages(forMale?: boolean): Promise<GalleryImage[]> {
+  try {
+    const params: Record<string, string | number | boolean | undefined> = {};
+    if (forMale !== undefined) {
+      params.forMale = forMale;
+    }
+    return await apiFetch<GalleryImage[]>("/gallery", params);
+  } catch (error) {
+    // Fallback to local Next.js API route /api/gallery
+    const baseUrl = typeof window !== "undefined" ? "" : "http://localhost:3000";
+    const query = forMale !== undefined ? `?forMale=${forMale}` : "";
+    const res = await fetch(`${baseUrl}/api/gallery${query}`);
+    if (!res.ok) {
+      throw new Error("Failed to fetch gallery from both backend and local fallback");
+    }
+    return res.json();
+  }
 }

@@ -1,11 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { ChevronUp, ChevronDown, Check, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-// ─── Exported Interface ─────────────────────────────────────────────────────
 
 export interface FilterState {
   category: string;
@@ -15,15 +13,12 @@ export interface FilterState {
   priceMax: number;
 }
 
-// ─── Internal Interfaces ────────────────────────────────────────────────────
-
 interface FilterProps {
   initialState?: Partial<FilterState>;
   onChange: (state: FilterState) => void;
   className?: string;
+  parentSlug?: string;
 }
-
-// ─── Types ──────────────────────────────────────────────────────────────────
 
 interface ColorOption {
   id: string;
@@ -31,16 +26,45 @@ interface ColorOption {
   hex: string;
 }
 
-// ─── Constants ──────────────────────────────────────────────────────────────
+interface CategoryOption {
+  value: string;
+  label: string;
+}
 
-const CATEGORIES = [
-  "Tất cả",
-  "Boot cổ thấp",
-  "Boot cổ cao",
-  "Chelsea",
-  "Derby / Oxford",
-  "Sneaker",
-] as const;
+interface BackendCategory {
+  id: string;
+  name: string;
+  slug: string;
+  parentId: string | null;
+}
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api/v1";
+const ALL_CATEGORY_OPTION: CategoryOption = { value: "all", label: "Tất cả" };
+const PARENT_SHOE_CATEGORY_SLUGS = new Set(["boot-nam", "boot-nu"]);
+
+let cachedCategoriesPromise: Promise<BackendCategory[]> | null = null;
+
+async function fetchCategoriesCached(): Promise<BackendCategory[]> {
+  if (cachedCategoriesPromise) {
+    return cachedCategoriesPromise;
+  }
+
+  cachedCategoriesPromise = (async () => {
+    try {
+      const response = await fetch(`${API_URL}/categories`);
+      if (!response.ok) {
+        throw new Error(`Failed to load categories: ${response.status}`);
+      }
+      const json = await response.json();
+      return json?.DT?.data || [];
+    } catch (error) {
+      cachedCategoriesPromise = null;
+      return [];
+    }
+  })();
+
+  return cachedCategoriesPromise;
+}
 
 const SIZES = [34, 35, 36, 37, 38, 39, 40, 41, 42, 43] as const;
 
@@ -68,47 +92,44 @@ const PRICE_CONFIG = {
 } as const;
 
 const DEFAULT_FILTER_STATE: FilterState = {
-  category: "Tất cả",
+  category: ALL_CATEGORY_OPTION.value,
   sizes: [],
   colors: [],
   priceMin: 0,
   priceMax: 5_000_000,
 };
 
-// ─── Internal Sub-Components ────────────────────────────────────────────────
-
 interface CategoryFilterProps {
   selected: string;
+  categories: CategoryOption[];
   onSelect: (category: string) => void;
 }
 
-function CategoryFilter({ selected, onSelect }: CategoryFilterProps) {
+function CategoryFilter({ selected, categories, onSelect }: CategoryFilterProps) {
   return (
     <fieldset className="border-none p-0 m-0">
       <legend className="sr-only">Danh mục sản phẩm</legend>
       <div className="space-y-2">
-        {CATEGORIES.map((category) => {
-          const isSelected = selected === category;
+        {categories.map((category) => {
+          const isSelected = selected === category.value;
           return (
             <label
-              key={category}
+              key={category.value}
               className="flex items-center gap-2 cursor-pointer min-h-[36px] md:min-h-0"
             >
               <input
                 type="radio"
                 name="category"
-                value={category}
+                value={category.value}
                 checked={isSelected}
-                onChange={() => onSelect(category)}
+                onChange={() => onSelect(category.value)}
                 className="sr-only peer"
               />
               <span
                 aria-hidden="true"
                 className={cn(
                   "w-4 h-4 rounded-full border-2 flex-shrink-0 peer-focus-visible:ring-2 peer-focus-visible:ring-black/20 peer-focus-visible:ring-offset-2",
-                  isSelected
-                    ? "bg-black border-black"
-                    : "border-gray-300"
+                  isSelected ? "bg-black border-black" : "border-gray-300"
                 )}
               />
               <span
@@ -117,7 +138,7 @@ function CategoryFilter({ selected, onSelect }: CategoryFilterProps) {
                   isSelected ? "text-black font-medium" : "text-gray-600"
                 )}
               >
-                {category}
+                {category.label}
               </span>
             </label>
           );
@@ -310,7 +331,6 @@ function PriceFilter({ min, max, onRangeChange }: PriceFilterProps) {
   const [minText, setMinText] = useState<string>(formatPrice(min));
   const [maxText, setMaxText] = useState<string>(formatPrice(max));
 
-  // Sync text inputs when slider values change (from parent or slider interaction)
   React.useEffect(() => {
     setMinText(formatPrice(min));
   }, [min]);
@@ -337,13 +357,11 @@ function PriceFilter({ min, max, onRangeChange }: PriceFilterProps) {
   const validateAndApplyMin = () => {
     const parsed = parsePrice(minText);
     if (parsed === null) {
-      // Non-numeric: revert to previous valid value
       setMinText(formatPrice(min));
       return;
     }
-    // Clamp to [0, 5,000,000] range
+
     let clamped = Math.max(PRICE_CONFIG.min, Math.min(PRICE_CONFIG.max, parsed));
-    // Clamp min to not exceed current max
     clamped = Math.min(clamped, max);
     setMinText(formatPrice(clamped));
     onRangeChange(clamped, max);
@@ -352,13 +370,11 @@ function PriceFilter({ min, max, onRangeChange }: PriceFilterProps) {
   const validateAndApplyMax = () => {
     const parsed = parsePrice(maxText);
     if (parsed === null) {
-      // Non-numeric: revert to previous valid value
       setMaxText(formatPrice(max));
       return;
     }
-    // Clamp to [0, 5,000,000] range
+
     let clamped = Math.max(PRICE_CONFIG.min, Math.min(PRICE_CONFIG.max, parsed));
-    // Clamp max to not go below current min
     clamped = Math.max(clamped, min);
     setMaxText(formatPrice(clamped));
     onRangeChange(min, clamped);
@@ -380,16 +396,12 @@ function PriceFilter({ min, max, onRangeChange }: PriceFilterProps) {
 
   return (
     <div>
-      {/* Dual range slider */}
       <div className="relative w-full h-6 my-4">
-        {/* Track background */}
         <div className="absolute top-1/2 -translate-y-1/2 w-full h-1 bg-gray-200 rounded-full" />
-        {/* Filled track */}
         <div
           className="absolute top-1/2 -translate-y-1/2 h-1 bg-black rounded-full"
           style={{ left: `${leftPercent}%`, width: `${widthPercent}%` }}
         />
-        {/* Min range input */}
         <input
           type="range"
           min={PRICE_CONFIG.min}
@@ -403,7 +415,6 @@ function PriceFilter({ min, max, onRangeChange }: PriceFilterProps) {
           )}
           aria-label="Giá tối thiểu"
         />
-        {/* Max range input */}
         <input
           type="range"
           min={PRICE_CONFIG.min}
@@ -416,7 +427,6 @@ function PriceFilter({ min, max, onRangeChange }: PriceFilterProps) {
         />
       </div>
 
-      {/* Formatted text inputs */}
       <div className="flex items-center gap-4 mt-4">
         <input
           type="text"
@@ -441,13 +451,79 @@ function PriceFilter({ min, max, onRangeChange }: PriceFilterProps) {
   );
 }
 
-// ─── Main Component ─────────────────────────────────────────────────────────
+export default function Filter({ initialState, onChange, className, parentSlug }: FilterProps) {
+  const [categoryOptions, setCategoryOptions] = useState<CategoryOption[]>([
+    ALL_CATEGORY_OPTION,
+  ]);
 
-export default function Filter({ initialState, onChange, className }: FilterProps) {
-  const [filterState, setFilterState] = useState<FilterState>({
+  const [filterState, setFilterState] = useState<FilterState>(() => ({
     ...DEFAULT_FILTER_STATE,
     ...initialState,
-  });
+    category:
+      initialState?.category === "Tất cả"
+        ? ALL_CATEGORY_OPTION.value
+        : (initialState?.category ?? DEFAULT_FILTER_STATE.category),
+  }));
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadCategoryOptions() {
+      try {
+        const categories = await fetchCategoriesCached();
+
+        const targetParentSlugs = parentSlug
+          ? new Set([parentSlug])
+          : PARENT_SHOE_CATEGORY_SLUGS;
+
+        const parentCategoryIds = new Set(
+          categories
+            .filter((category) => targetParentSlugs.has(category.slug))
+            .map((category) => category.id)
+        );
+
+        const childCategories = categories.filter(
+          (category) =>
+            category.parentId !== null && parentCategoryIds.has(category.parentId)
+        );
+
+        const sourceCategories =
+          childCategories.length > 0
+            ? childCategories
+            : categories.filter((category) =>
+                targetParentSlugs.has(category.slug)
+              );
+
+        const uniqueBySlug = new Map<string, CategoryOption>();
+        for (const category of sourceCategories) {
+          if (!category.slug) continue;
+          uniqueBySlug.set(category.slug, {
+            value: category.slug,
+            label: category.name,
+          });
+        }
+
+        const options: CategoryOption[] = [
+          ALL_CATEGORY_OPTION,
+          ...Array.from(uniqueBySlug.values()),
+        ];
+
+        if (!cancelled) {
+          setCategoryOptions(options);
+        }
+      } catch {
+        if (!cancelled) {
+          setCategoryOptions([ALL_CATEGORY_OPTION]);
+        }
+      }
+    }
+
+    loadCategoryOptions();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [parentSlug]);
 
   const isDefaultState =
     filterState.category === DEFAULT_FILTER_STATE.category &&
@@ -498,15 +574,13 @@ export default function Filter({ initialState, onChange, className }: FilterProp
       <FilterSection title="Danh mục" defaultExpanded={false}>
         <CategoryFilter
           selected={filterState.category}
+          categories={categoryOptions}
           onSelect={handleCategorySelect}
         />
       </FilterSection>
 
       <FilterSection title="Size" defaultExpanded={false}>
-        <SizeFilter
-          selected={filterState.sizes}
-          onToggle={handleSizeToggle}
-        />
+        <SizeFilter selected={filterState.sizes} onToggle={handleSizeToggle} />
       </FilterSection>
 
       <FilterSection title="Màu sắc" defaultExpanded={false}>

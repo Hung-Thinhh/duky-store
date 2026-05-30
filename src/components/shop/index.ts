@@ -1,6 +1,7 @@
 export * from './ProductCard';
 export * from './CartDrawer';
 export * from './home/HeroBanner';
+export * from './home/HeroSlider';
 export * from './home/CategorySection';
 export * from './home/BootMaleSection';
 export * from './home/BootFemaleSection';
@@ -16,3 +17,4 @@ export * from './CollectionHero';
 export * from './PopupTemplate';
 
 export * from './Navpages';
+export * from './Pagination';
