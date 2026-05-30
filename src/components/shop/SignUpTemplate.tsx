@@ -375,6 +375,16 @@ const SignUpTemplate: React.FC = () => {
         .login-link:hover {
           color: #333333;
         }
+
+        @media (max-width: 480px) {
+          .signup-form-container {
+            padding: 24px 16px !important;
+            gap: 18px !important;
+          }
+          .signup-title {
+            font-size: 24px !important;
+          }
+        }
       `}</style>
     </div>
   );

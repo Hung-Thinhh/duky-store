@@ -5,15 +5,21 @@ import { motion, AnimatePresence } from "motion/react";
 import { Plus } from "lucide-react";
 import { FAQ_DATA } from "@/data/faq";
 
-const DarkAccordionItem = ({ id, question, answer, isOpen, onClick }: { 
-  id: number,
-  question: string, 
-  answer: string, 
-  isOpen: boolean, 
-  onClick: () => void 
+const DarkAccordionItem = ({
+  id,
+  question,
+  answer,
+  isOpen,
+  onClick,
+}: {
+  id: number;
+  question: string;
+  answer: string;
+  isOpen: boolean;
+  onClick: () => void;
 }) => {
   return (
-    <motion.div 
+    <motion.div
       whileHover={{ x: 8 }}
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
       className="border-b border-white/10 last:border-0"
@@ -24,11 +30,15 @@ const DarkAccordionItem = ({ id, question, answer, isOpen, onClick }: {
       >
         <div className="flex items-center gap-4">
           <span className="text-white/40 text-xs font-medium w-4">{id}.</span>
-          <span className={`text-sm md:text-base font-medium transition-colors duration-300 ${isOpen ? 'text-white' : 'text-white/70 group-hover:text-white'}`}>
+          <span
+            className={`text-sm md:text-base font-medium transition-colors duration-300 ${isOpen ? "text-white" : "text-white/70 group-hover:text-white"}`}
+          >
             {question}
           </span>
         </div>
-        <div className={`flex-shrink-0 ml-4 transition-transform duration-300 ${isOpen ? 'rotate-45 text-white' : 'rotate-0 text-white/60 group-hover:text-white'}`}>
+        <div
+          className={`flex-shrink-0 ml-4 transition-transform duration-300 ${isOpen ? "rotate-45 text-white" : "rotate-0 text-white/60 group-hover:text-white"}`}
+        >
           <Plus size={20} />
         </div>
       </button>
@@ -51,20 +61,20 @@ const DarkAccordionItem = ({ id, question, answer, isOpen, onClick }: {
   );
 };
 
-export const FAQOnly = () => {
+export const FAQOnly = ({ className = "" }: { className?: string }) => {
   const [openId, setOpenId] = useState<number | null>(null);
 
   return (
-    <section className="px-6 pb-12 overflow-hidden mb-8">
-      <div className="container-custom">
+    <div className={`overflow-hidden mt-8 mb-8 ${className}`}>
+      <div className="relative">
         <div className="relative">
           {/* Glossy Effect Border */}
           <div className="absolute -inset-[1px] bg-gradient-to-b from-white/20 to-transparent rounded-[40px] pointer-events-none z-10" />
-          
+
           <div className="bg-black/90 backdrop-blur-2xl p-8 md:p-12 rounded-[40px] border overflow-hidden">
             {/* Glossy light effect */}
             <div className="absolute top-0 left-1/4 right-1/4 h-[1px] bg-gradient-to-r from-transparent via-white/30 to-transparent blur-[1px]" />
-            
+
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr] gap-12 lg:gap-20 items-start relative z-20">
               {/* Left: Content Header */}
               <div className="space-y-6">
@@ -77,7 +87,8 @@ export const FAQOnly = () => {
                   </h2>
                 </div>
                 <p className="content text-white/50 text-sm md:text-base leading-relaxed max-w-sm">
-                  Những thông tin khách hàng quan tâm để mua sắm tự tin hơn tại Duky Store.
+                  Những thông tin khách hàng quan tâm để mua sắm tự tin hơn tại
+                  Duky Store.
                 </p>
               </div>
 
@@ -90,17 +101,19 @@ export const FAQOnly = () => {
                     question={item.question}
                     answer={item.answer}
                     isOpen={openId === item.id}
-                    onClick={() => setOpenId(openId === item.id ? null : item.id)}
+                    onClick={() =>
+                      setOpenId(openId === item.id ? null : item.id)
+                    }
                   />
                 ))}
               </div>
             </div>
-            
+
             {/* Subtle bottom shine */}
             <div className="absolute bottom-0 left-0 right-0 h-[100px] bg-gradient-to-t from-white/5 to-transparent pointer-events-none" />
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 };

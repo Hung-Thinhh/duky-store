@@ -327,6 +327,19 @@ const LoginTemplate: React.FC<LoginTemplateProps> = ({ onSwitchToSignup }) => {
         .register-link:hover {
           color: #333333;
         }
+
+        @media (max-width: 480px) {
+          .login-form-container {
+            padding: 32px 16px !important;
+            gap: 20px !important;
+          }
+          .login-title {
+            font-size: 26px !important;
+          }
+          .login-options {
+            font-size: 13px !important;
+          }
+        }
       `}</style>
     </div>
   );

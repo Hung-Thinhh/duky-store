@@ -90,30 +90,32 @@ export default function ProductsPage() {
           width={1920}
           height={1080}
           sizes="100vw"
-          className="w-full h-auto"
+          className="w-full h-[260px] sm:h-[320px] md:h-auto object-cover"
           priority
         />
         {/* Text overlay */}
         <div className="absolute inset-0 flex items-center">
-          <div className="px-12 md:px-16 lg:px-[100px] space-y-3">
-            <span className="inline-block text-xs font-medium tracking-widest text-gray-500 uppercase">
-              {MOCK_PRODUCTS_BANNER.badge}
-            </span>
-            <h1 className="leading-[1.1] tracking-tighter text-gray-900">
-              <span className="block text-[36px] md:text-[52px] lg:text-[64px] font-semibold">
-                {MOCK_PRODUCTS_BANNER.titleLine1}
+          <div className="w-full max-w-[1440px] mx-auto px-6 md:px-20">
+            <div className="space-y-2 md:space-y-3 max-w-sm sm:max-w-md">
+              <span className="inline-block text-[10px] md:text-xs font-medium tracking-widest text-gray-500 uppercase">
+                {MOCK_PRODUCTS_BANNER.badge}
               </span>
-              <span className="block text-[30px] md:text-[44px] lg:text-[56px] font-medium italic -mt-1 md:-mt-2">
-                <span className="font-montserrat not-italic font-semibold tracking-wide bg-gradient-to-br from-zinc-500 via-zinc-300 to-zinc-700 bg-clip-text text-transparent inline-block ml-1 md:ml-2">
-                  {MOCK_PRODUCTS_BANNER.titleLine2}
+              <h1 className="leading-[1.1] tracking-tighter text-gray-900">
+                <span className="block text-[24px] sm:text-[36px] md:text-[52px] lg:text-[64px] font-semibold">
+                  {MOCK_PRODUCTS_BANNER.titleLine1}
                 </span>
-              </span>
-            </h1>
-            <div className="flex items-start gap-3 max-w-sm">
-              <div className="w-8 h-px bg-gray-900 mt-2.5 shrink-0" />
-              <p className="text-sm text-gray-500 leading-relaxed font-light">
-                {MOCK_PRODUCTS_BANNER.description}
-              </p>
+                <span className="block text-[20px] sm:text-[30px] md:text-[44px] lg:text-[56px] font-medium italic -mt-1 md:-mt-2">
+                  <span className="font-montserrat not-italic font-semibold tracking-wide bg-gradient-to-br from-zinc-500 via-zinc-300 to-zinc-700 bg-clip-text text-transparent inline-block ml-1 md:ml-2">
+                    {MOCK_PRODUCTS_BANNER.titleLine2}
+                  </span>
+                </span>
+              </h1>
+              <div className="flex items-start gap-2 md:gap-3 max-w-[170px] sm:max-w-sm">
+                <div className="w-6 sm:w-8 h-px bg-gray-900 mt-2 shrink-0" />
+                <p className="text-[11px] md:text-sm text-gray-500 leading-relaxed font-light line-clamp-3 sm:line-clamp-none">
+                  {MOCK_PRODUCTS_BANNER.description}
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -241,7 +243,7 @@ export default function ProductsPage() {
 
         .products-grid {
           display: grid;
-          grid-template-columns: repeat(4, 1fr);
+          grid-template-columns: repeat(4, minmax(0, 1fr));
           gap: 16px;
         }
 
@@ -377,13 +379,13 @@ export default function ProductsPage() {
           }
 
           .products-grid {
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(3, minmax(0, 1fr));
           }
         }
 
         @media (max-width: 768px) {
           .products-grid {
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(2, minmax(0, 1fr));
           }
         }
 
@@ -393,7 +395,8 @@ export default function ProductsPage() {
           }
 
           .products-grid {
-            grid-template-columns: 1fr;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
           }
 
           .products-title {

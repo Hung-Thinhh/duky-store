@@ -19,6 +19,12 @@ export default function LoginPage() {
           background-attachment: fixed;
         }
 
+        @media (max-width: 640px) {
+          main {
+            padding: 12px !important;
+          }
+        }
+
         .glass-effect {
           background: rgba(255, 255, 255, 0.7);
           backdrop-filter: blur(10px);

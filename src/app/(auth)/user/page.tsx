@@ -19,26 +19,134 @@ import { Header, Footer } from "@/components/layout";
 import { useCart } from "@/context/CartContext";
 import { formatCurrency } from "@/lib/utils";
 import { UserSidebar } from "@/components/auth/UserSidebar";
+import { listAddresses, listCustomerOrders } from "@/lib/auth-api";
+import { CheckoutOrder } from "@/lib/api";
 
 // ─── Mock data (replace with real API later) ─────────────────────────────────
-const MOCK_ORDERS = [
-  { id: "DH12345", date: "12 Tháng 5, 2024", status: "Đã giao hàng", statusColor: "#16a34a", amount: 2450000 },
-  { id: "DH12344", date: "05 Tháng 5, 2024", status: "Đang vận chuyển", statusColor: "#f59e0b", amount: 1850000 },
-  { id: "DH12343", date: "28 Tháng 4, 2024", status: "Đã hủy", statusColor: "#ef4444", amount: 1250000 },
-  { id: "DH12342", date: "20 Tháng 4, 2024", status: "Đã giao hàng", statusColor: "#16a34a", amount: 2950000 },
-];
+function getStatusLabel(status: string): string {
+  switch (status) {
+    case "PENDING":
+      return "Chờ xác nhận";
+    case "CONFIRMED":
+      return "Đã xác nhận";
+    case "PROCESSING":
+      return "Đang xử lý";
+    case "SHIPPING":
+      return "Đang giao";
+    case "DELIVERED":
+      return "Hoàn thành";
+    case "CANCELLED":
+      return "Đã hủy";
+    case "COMPLETED":
+      return "Hoàn thành";
+    case "RETURNED":
+      return "Đã trả hàng";
+    case "REFUNDED":
+      return "Đã hoàn tiền";
+    default:
+      return status;
+  }
+}
+
+function getStatusColor(status: string): { color: string; bg: string } {
+  switch (status) {
+    case "PENDING":
+      return { color: "#f59e0b", bg: "#fef3c7" };
+    case "CONFIRMED":
+      return { color: "#3b82f6", bg: "#dbeafe" };
+    case "PROCESSING":
+      return { color: "#8b5cf6", bg: "#ede9fe" };
+    case "SHIPPING":
+      return { color: "#f59e0b", bg: "#fef3c7" };
+    case "DELIVERED":
+    case "COMPLETED":
+      return { color: "#16a34a", bg: "#dcfce7" };
+    case "CANCELLED":
+      return { color: "#ef4444", bg: "#fef2f2" };
+    case "RETURNED":
+      return { color: "#6b7280", bg: "#f3f4f6" };
+    case "REFUNDED":
+      return { color: "#6b7280", bg: "#f3f4f6" };
+    default:
+      return { color: "#6b7280", bg: "#f3f4f6" };
+  }
+}
+
+function formatOrderDate(dateStr: string): string {
+  try {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString("vi-VN", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  } catch {
+    return dateStr;
+  }
+}
 
 export default function UserDashboardPage() {
   const { customer, isAuthenticated, isLoading } = useAuth();
   const { cartCount } = useCart();
+  const [defaultAddress, setDefaultAddress] =
+    React.useState<string>("Chưa cập nhật");
+  const [recentOrders, setRecentOrders] = React.useState<CheckoutOrder[]>([]);
+  const [isOrdersLoading, setIsOrdersLoading] = React.useState<boolean>(true);
 
-  const displayName = customer?.fullName || customer?.email?.split("@")[0] || "Khách";
+  React.useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const addresses = await listAddresses();
+        const def = addresses.find((addr) => addr.isDefault);
+        if (def) {
+          const parts = [
+            def.addressLine,
+            def.ward,
+            def.district,
+            def.province,
+          ].filter(Boolean);
+          setDefaultAddress(parts.join(", "));
+        } else {
+          setDefaultAddress("Chưa cập nhật");
+        }
+      } catch (err) {
+        setDefaultAddress("Chưa cập nhật");
+      }
+
+      setIsOrdersLoading(true);
+      try {
+        const orders = await listCustomerOrders();
+        setRecentOrders(orders.slice(0, 4));
+      } catch (err) {
+        setRecentOrders([]);
+      } finally {
+        setIsOrdersLoading(false);
+      }
+    };
+
+    if (isAuthenticated) {
+      fetchData();
+    }
+  }, [isAuthenticated]);
+
+  const displayName =
+    customer?.fullName || customer?.email?.split("@")[0] || "Khách";
 
   if (isLoading) {
     return (
       <>
         <Header cartCount={cartCount} />
-        <main style={{ minHeight: "60vh", display: "flex", alignItems: "center", justifyContent: "center", marginTop: 80 }}>
+        <main
+          style={{
+            minHeight: "60vh",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            marginTop: 80,
+          }}
+        >
           <p style={{ color: "#888", fontSize: 16 }}>Đang tải...</p>
         </main>
         <Footer />
@@ -65,7 +173,8 @@ export default function UserDashboardPage() {
             <div className="dashboard-welcome">
               <h1 className="dashboard-title">Tài khoản của tôi</h1>
               <p className="dashboard-subtitle">
-                Chào mừng bạn trở lại, {displayName} 👋<br />
+                Chào mừng bạn trở lại, {displayName} 👋
+                <br />
                 Quản lý thông tin tài khoản và hoạt động của bạn tại đây.
               </p>
             </div>
@@ -82,22 +191,104 @@ export default function UserDashboardPage() {
                 </div>
 
                 <div className="orders-list">
-                  {MOCK_ORDERS.map((order) => (
-                    <div key={order.id} className="order-row">
-                      <div className="order-row-img">
-                        <Package size={20} />
-                      </div>
-                      <div className="order-row-info">
-                        <span className="order-row-code">Đơn hàng #{order.id}</span>
-                        <span className="order-row-date">{order.date}</span>
-                      </div>
-                      <span className="order-row-status" style={{ color: order.statusColor }}>
-                        {order.status}
+                  {isOrdersLoading ? (
+                    <div
+                      style={{
+                        padding: "32px 0",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: 12,
+                      }}
+                    >
+                      <div
+                        className="loading-spinner-simple"
+                        style={{
+                          width: 24,
+                          height: 24,
+                          borderRadius: "50%",
+                          border: "2px solid #e5e7eb",
+                          borderTopColor: "#000",
+                          animation: "spin 0.8s linear infinite",
+                        }}
+                      />
+                      <span
+                        style={{ fontSize: 13, color: "var(--text-muted)" }}
+                      >
+                        Đang tải đơn hàng...
                       </span>
-                      <span className="order-row-amount">{formatCurrency(order.amount)}</span>
-                      <span className="order-row-arrow">›</span>
+                      <style>{`
+                        @keyframes spin {
+                          to { transform: rotate(360deg); }
+                        }
+                      `}</style>
                     </div>
-                  ))}
+                  ) : recentOrders.length === 0 ? (
+                    <div
+                      style={{
+                        padding: "40px 0",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: 12,
+                      }}
+                    >
+                      <Package size={48} strokeWidth={1.5} style={{ color: "#9ca3af" }} />
+                      <span
+                        style={{
+                          fontSize: 14,
+                          fontWeight: 500,
+                          color: "#6b7280",
+                        }}
+                      >
+                        Không có đơn hàng nào
+                      </span>
+                    </div>
+                  ) : (
+                    recentOrders.map((order) => {
+                      const statusStyle = getStatusColor(order.status);
+                      return (
+                        <Link
+                          href={`/user/order/${order.code}`}
+                          key={order.id}
+                          style={{ textDecoration: "none", color: "inherit" }}
+                        >
+                          <div className="order-row">
+                            <div className="order-row-img">
+                              <Package size={20} />
+                            </div>
+                            <div className="order-row-info">
+                              <span className="order-row-code">
+                                #{order.code}
+                              </span>
+                              <span className="order-row-date">
+                                {formatOrderDate(order.createdAt)}
+                              </span>
+                            </div>
+                            <span
+                              className="order-row-status"
+                              style={{
+                                color: statusStyle.color,
+                                background: statusStyle.bg,
+                                padding: "2px 8px",
+                                borderRadius: 4,
+                                fontSize: 11,
+                                fontWeight: 600,
+                              }}
+                            >
+                              {getStatusLabel(order.status)}
+                            </span>
+                            <span className="order-row-amount">
+                              {formatCurrency(order.grandTotal)}
+                            </span>
+                            <span className="order-row-arrow">›</span>
+                          </div>
+                        </Link>
+                      );
+                    })
+                  )}
                 </div>
               </div>
 
@@ -116,7 +307,9 @@ export default function UserDashboardPage() {
                     <User size={16} className="account-info-icon" />
                     <div className="account-info-content">
                       <span className="account-info-label">Họ và tên</span>
-                      <span className="account-info-value">{customer?.fullName || "Chưa cập nhật"}</span>
+                      <span className="account-info-value">
+                        {customer?.fullName || "Chưa cập nhật"}
+                      </span>
                     </div>
                   </div>
 
@@ -124,7 +317,9 @@ export default function UserDashboardPage() {
                     <Mail size={16} className="account-info-icon" />
                     <div className="account-info-content">
                       <span className="account-info-label">Email</span>
-                      <span className="account-info-value">{customer?.email || "Chưa cập nhật"}</span>
+                      <span className="account-info-value">
+                        {customer?.email || "Chưa cập nhật"}
+                      </span>
                     </div>
                   </div>
 
@@ -132,7 +327,9 @@ export default function UserDashboardPage() {
                     <Phone size={16} className="account-info-icon" />
                     <div className="account-info-content">
                       <span className="account-info-label">Số điện thoại</span>
-                      <span className="account-info-value">{customer?.phone || "Chưa cập nhật"}</span>
+                      <span className="account-info-value">
+                        {customer?.phone || "Chưa cập nhật"}
+                      </span>
                     </div>
                   </div>
 
@@ -140,15 +337,21 @@ export default function UserDashboardPage() {
                     <Calendar size={16} className="account-info-icon" />
                     <div className="account-info-content">
                       <span className="account-info-label">Ngày tham gia</span>
-                      <span className="account-info-value">15 Tháng 3, 2024</span>
+                      <span className="account-info-value">
+                        15 Tháng 3, 2024
+                      </span>
                     </div>
                   </div>
 
                   <div className="account-info-item">
                     <MapPinned size={16} className="account-info-icon" />
                     <div className="account-info-content">
-                      <span className="account-info-label">Địa chỉ mặc định</span>
-                      <span className="account-info-value">Chưa cập nhật</span>
+                      <span className="account-info-label">
+                        Địa chỉ mặc định
+                      </span>
+                      <span className="account-info-value">
+                        {defaultAddress}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -605,6 +808,10 @@ export default function UserDashboardPage() {
             position: static;
           }
 
+          .dashboard-main {
+            min-width: 0;
+          }
+
           .dashboard-bottom {
             grid-template-columns: 1fr;
           }
@@ -617,6 +824,18 @@ export default function UserDashboardPage() {
 
           .dashboard-title {
             font-size: 22px;
+          }
+
+          .order-row {
+            gap: 8px;
+          }
+
+          .order-row-img {
+            display: none;
+          }
+
+          .order-row-amount {
+            min-width: auto;
           }
         }
       `}</style>

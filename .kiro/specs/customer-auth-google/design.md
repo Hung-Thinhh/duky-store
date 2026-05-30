@@ -64,7 +64,7 @@ graph TB
 
 ```typescript
 // src/modules/customer-auth/dto/register.dto.ts
-import { IsEmail, IsString, MinLength, MaxLength } from 'class-validator';
+import { IsEmail, IsString, MinLength, MaxLength } from "class-validator";
 
 export class RegisterDto {
   @IsEmail()
@@ -86,7 +86,7 @@ export class RegisterDto {
 
 ```typescript
 // src/modules/customer-auth/dto/login.dto.ts
-import { IsEmail, IsString, MinLength } from 'class-validator';
+import { IsEmail, IsString, MinLength } from "class-validator";
 
 export class LoginDto {
   @IsEmail()
@@ -135,7 +135,11 @@ interface AuthState {
 
 interface AuthContextValue extends AuthState {
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, passwordConfirmation: string) => Promise<void>;
+  register: (
+    email: string,
+    password: string,
+    passwordConfirmation: string,
+  ) => Promise<void>;
   googleLogin: (idToken: string) => Promise<void>;
   logout: () => Promise<void>;
   refresh: () => Promise<void>;
@@ -145,6 +149,7 @@ interface AuthContextValue extends AuthState {
 #### 6. authFetch (`src/lib/auth-fetch.ts`)
 
 An authenticated fetch wrapper that:
+
 - Attaches `Authorization: Bearer <accessToken>` header
 - On 401 response, attempts token refresh (single in-flight refresh via promise deduplication)
 - Queues concurrent requests during refresh
@@ -165,6 +170,7 @@ export async function getProfile(): Promise<CustomerProfile> { ... }
 #### 8. GoogleLoginButton (`src/components/shop/GoogleLoginButton.tsx`)
 
 A reusable component wrapping `@react-oauth/google`'s `useGoogleLogin`:
+
 - Renders the existing Google button UI from LoginTemplate/SignUpTemplate
 - Handles the popup flow
 - Calls `AuthContext.googleLogin()` with the received ID token
@@ -175,7 +181,7 @@ A reusable component wrapping `@react-oauth/google`'s `useGoogleLogin`:
 - Reads `AuthContext` state
 - When authenticated: shows circular avatar (32×32 desktop, 28×28 mobile) with customer's Google picture or fallback initial
 - When unauthenticated: shows existing `User` icon linking to `/login`
-- Avatar links to `/account` (or future account page)
+- Avatar links to `/user` (or future account page)
 
 #### 10. Providers (modified)
 
@@ -201,9 +207,9 @@ All endpoints follow the existing response envelope:
 
 ```typescript
 interface ApiResponse<T> {
-  EC: number;  // 0 = success, non-zero = error
-  EM: string;  // error/success message
-  DT: T;       // data payload
+  EC: number; // 0 = success, non-zero = error
+  EM: string; // error/success message
+  DT: T; // data payload
 }
 ```
 
@@ -211,10 +217,10 @@ interface ApiResponse<T> {
 
 ```typescript
 interface AuthResponseData {
-  tokenType: 'Bearer';
+  tokenType: "Bearer";
   accessToken: string;
   refreshToken: string;
-  accessExpiresIn: string;  // e.g. "15m"
+  accessExpiresIn: string; // e.g. "15m"
   refreshExpiresIn: string; // e.g. "7d"
   customer: CustomerProfile;
 }
@@ -228,8 +234,8 @@ interface CustomerProfile {
   email: string;
   fullName: string;
   phone: string | null;
-  status: 'ACTIVE' | 'BLOCKED';
-  type: 'NEW' | 'REGULAR' | 'VIP' | 'WHOLESALE';
+  status: "ACTIVE" | "BLOCKED";
+  type: "NEW" | "REGULAR" | "VIP" | "WHOLESALE";
   emailVerifiedAt: string | null; // ISO date string
 }
 ```
@@ -247,109 +253,108 @@ interface FailedAttemptRecord {
 
 ### localStorage Keys
 
-| Key | Value |
-|-----|-------|
-| `duky_access_token` | JWT access token string |
+| Key                  | Value                       |
+| -------------------- | --------------------------- |
+| `duky_access_token`  | JWT access token string     |
 | `duky_refresh_token` | Opaque refresh token string |
-
 
 ## Correctness Properties
 
-*A property is a characteristic or behavior that should hold true across all valid executions of a system — essentially, a formal statement about what the system should do. Properties serve as the bridge between human-readable specifications and machine-verifiable correctness guarantees.*
+_A property is a characteristic or behavior that should hold true across all valid executions of a system — essentially, a formal statement about what the system should do. Properties serve as the bridge between human-readable specifications and machine-verifiable correctness guarantees._
 
 ### Property 1: Registration and Login Round-Trip
 
-*For any* valid email (properly formatted) and valid password (8–72 characters), registering a new customer and then logging in with the same email and password SHALL return a successful authentication response containing an access token, refresh token, and a customer profile with matching email (lowercased).
+_For any_ valid email (properly formatted) and valid password (8–72 characters), registering a new customer and then logging in with the same email and password SHALL return a successful authentication response containing an access token, refresh token, and a customer profile with matching email (lowercased).
 
 **Validates: Requirements 1.1, 2.1**
 
 ### Property 2: Email Normalization Idempotence
 
-*For any* email string with mixed-case characters, the system SHALL normalize it to lowercase before storage and before lookup, such that registering with `Foo@Bar.COM` and logging in with `foo@bar.com` (or any other case variation) SHALL authenticate the same customer.
+_For any_ email string with mixed-case characters, the system SHALL normalize it to lowercase before storage and before lookup, such that registering with `Foo@Bar.COM` and logging in with `foo@bar.com` (or any other case variation) SHALL authenticate the same customer.
 
 **Validates: Requirements 1.6, 2.5**
 
 ### Property 3: Invalid Registration Input Rejection
 
-*For any* registration input where the password length is outside [8, 72] characters, OR the email does not match a valid email format, OR the password and passwordConfirmation differ, the system SHALL return a validation error and SHALL NOT create a customer record.
+_For any_ registration input where the password length is outside [8, 72] characters, OR the email does not match a valid email format, OR the password and passwordConfirmation differ, the system SHALL return a validation error and SHALL NOT create a customer record.
 
 **Validates: Requirements 1.3, 1.5, 1.7**
 
 ### Property 4: Duplicate Email Rejection
 
-*For any* email that already exists in the system (case-insensitive), attempting to register with that email SHALL return an error indicating the email is already registered, and the error message SHALL NOT reveal whether the existing account was created via email or Google.
+_For any_ email that already exists in the system (case-insensitive), attempting to register with that email SHALL return an error indicating the email is already registered, and the error message SHALL NOT reveal whether the existing account was created via email or Google.
 
 **Validates: Requirements 1.2**
 
 ### Property 5: Password Hash Verification Round-Trip
 
-*For any* valid password provided during registration, the stored bcrypt hash SHALL verify successfully against the original password using bcrypt compare, and the hash cost factor SHALL be at least 10.
+_For any_ valid password provided during registration, the stored bcrypt hash SHALL verify successfully against the original password using bcrypt compare, and the hash cost factor SHALL be at least 10.
 
 **Validates: Requirements 1.4**
 
 ### Property 6: Login Error Uniformity
 
-*For any* login attempt where either the email does not exist in the system OR the password does not match the stored hash, the system SHALL return an identical error response (same error code and message structure) for both cases, preventing email enumeration.
+_For any_ login attempt where either the email does not exist in the system OR the password does not match the stored hash, the system SHALL return an identical error response (same error code and message structure) for both cases, preventing email enumeration.
 
 **Validates: Requirements 2.3**
 
 ### Property 7: Invalid Login Input Rejection Without Authentication
 
-*For any* login input where the email format is invalid OR the password is fewer than 8 characters, the system SHALL return a validation error without attempting password verification or database lookup.
+_For any_ login input where the email format is invalid OR the password is fewer than 8 characters, the system SHALL return a validation error without attempting password verification or database lookup.
 
 **Validates: Requirements 2.2**
 
 ### Property 8: Google Login Creates Customer with Correct Profile
 
-*For any* valid Google token containing a new email (not in the system), the system SHALL create a customer with: the email lowercased, fullName set to the Google profile name (or email local-part if name is empty), status ACTIVE, and emailVerifiedAt set to the current timestamp.
+_For any_ valid Google token containing a new email (not in the system), the system SHALL create a customer with: the email lowercased, fullName set to the Google profile name (or email local-part if name is empty), status ACTIVE, and emailVerifiedAt set to the current timestamp.
 
 **Validates: Requirements 3.2, 3.6**
 
 ### Property 9: Google Login Preserves Existing Customer Data
 
-*For any* existing active customer, authenticating via Google with the same email SHALL NOT modify the customer's fullName, phone, status, or type fields.
+_For any_ existing active customer, authenticating via Google with the same email SHALL NOT modify the customer's fullName, phone, status, or type fields.
 
 **Validates: Requirements 3.3**
 
 ### Property 10: Token Refresh Rotation
 
-*For any* valid (non-revoked, non-expired) refresh token, calling the refresh endpoint SHALL return a new access token and refresh token pair, AND the original refresh token SHALL no longer be usable for subsequent refresh calls.
+_For any_ valid (non-revoked, non-expired) refresh token, calling the refresh endpoint SHALL return a new access token and refresh token pair, AND the original refresh token SHALL no longer be usable for subsequent refresh calls.
 
 **Validates: Requirements 4.1**
 
 ### Property 11: Revoked Token Triggers Full Revocation
 
-*For any* refresh token that has been revoked (used once already), attempting to use it again SHALL cause all refresh tokens for that customer to be revoked, and SHALL return an unauthorized error.
+_For any_ refresh token that has been revoked (used once already), attempting to use it again SHALL cause all refresh tokens for that customer to be revoked, and SHALL return an unauthorized error.
 
 **Validates: Requirements 4.2**
 
 ### Property 12: Logout Idempotence
 
-*For any* string provided as a refresh token (valid, invalid, already revoked, or expired), calling the logout endpoint SHALL return a success response (`{ success: true }`), never an error.
+_For any_ string provided as a refresh token (valid, invalid, already revoked, or expired), calling the logout endpoint SHALL return a success response (`{ success: true }`), never an error.
 
 **Validates: Requirements 5.1, 5.2**
 
 ### Property 13: 401 Interceptor with Refresh Queuing
 
-*For any* set of N concurrent API requests that all receive 401 responses while a valid refresh token exists, the auth-fetch layer SHALL trigger exactly one refresh call, and all N requests SHALL be retried with the new access token and resolve successfully.
+_For any_ set of N concurrent API requests that all receive 401 responses while a valid refresh token exists, the auth-fetch layer SHALL trigger exactly one refresh call, and all N requests SHALL be retried with the new access token and resolve successfully.
 
 **Validates: Requirements 6.4, 6.5**
 
 ### Property 14: Invalid Tokens Rejected
 
-*For any* string that does not correspond to a valid, non-expired token in the system (random strings, malformed JWTs, expired tokens), the refresh endpoint and the profile endpoint SHALL return an unauthorized error.
+_For any_ string that does not correspond to a valid, non-expired token in the system (random strings, malformed JWTs, expired tokens), the refresh endpoint and the profile endpoint SHALL return an unauthorized error.
 
 **Validates: Requirements 4.6, 9.2**
 
 ### Property 15: Profile Endpoint Excludes Sensitive Fields
 
-*For any* authenticated customer, the profile endpoint response SHALL contain only the fields: id, email, fullName, phone, status, type, and emailVerifiedAt. The response SHALL NOT contain passwordHash, deletedAt, or any other internal fields.
+_For any_ authenticated customer, the profile endpoint response SHALL contain only the fields: id, email, fullName, phone, status, type, and emailVerifiedAt. The response SHALL NOT contain passwordHash, deletedAt, or any other internal fields.
 
 **Validates: Requirements 9.1**
 
 ### Property 16: Avatar Renders with Accessible Name
 
-*For any* authenticated customer with a non-empty fullName, the header avatar SHALL have an alt attribute containing the customer's fullName, AND if the avatar image fails to load, the fallback SHALL display the first character of fullName as an uppercase letter.
+_For any_ authenticated customer with a non-empty fullName, the header avatar SHALL have an alt attribute containing the customer's fullName, AND if the avatar image fails to load, the fallback SHALL display the first character of fullName as an uppercase letter.
 
 **Validates: Requirements 8.4, 8.5**
 
@@ -359,16 +364,16 @@ interface FailedAttemptRecord {
 
 All errors follow the standard `ApiResponse` envelope with `EC !== 0`:
 
-| Scenario | EC | HTTP Status | EM |
-|----------|-----|-------------|-----|
-| Validation error (bad email, short password, mismatch) | 1 | 400 | Specific validation messages |
-| Email already registered | 2 | 409 | "Email đã được đăng ký" |
-| Invalid credentials (wrong email or password) | 3 | 401 | "Email hoặc mật khẩu không đúng" |
-| Account blocked | 4 | 403 | "Tài khoản đã bị khóa" |
-| Invalid/expired token | 5 | 401 | "Token không hợp lệ" |
-| Rate limited | 6 | 429 | "Quá nhiều lần thử, vui lòng đợi 15 phút" |
-| Google token invalid | 7 | 401 | "Google token không hợp lệ" |
-| Google email not verified | 8 | 401 | "Email Google chưa được xác minh" |
+| Scenario                                               | EC  | HTTP Status | EM                                        |
+| ------------------------------------------------------ | --- | ----------- | ----------------------------------------- |
+| Validation error (bad email, short password, mismatch) | 1   | 400         | Specific validation messages              |
+| Email already registered                               | 2   | 409         | "Email đã được đăng ký"                   |
+| Invalid credentials (wrong email or password)          | 3   | 401         | "Email hoặc mật khẩu không đúng"          |
+| Account blocked                                        | 4   | 403         | "Tài khoản đã bị khóa"                    |
+| Invalid/expired token                                  | 5   | 401         | "Token không hợp lệ"                      |
+| Rate limited                                           | 6   | 429         | "Quá nhiều lần thử, vui lòng đợi 15 phút" |
+| Google token invalid                                   | 7   | 401         | "Google token không hợp lệ"               |
+| Google email not verified                              | 8   | 401         | "Email Google chưa được xác minh"         |
 
 ### Frontend Error Handling
 
@@ -390,6 +395,7 @@ All errors follow the standard `ApiResponse` envelope with `EC !== 0`:
 ### Backend Testing (Jest)
 
 **Unit Tests:**
+
 - `CustomerAuthService.register()` — valid registration, duplicate email, validation errors
 - `CustomerAuthService.loginWithEmail()` — valid login, wrong password, non-existent email, blocked account, rate limiting
 - `CustomerAuthService.loginWithGoogle()` — valid token, invalid token, new customer creation, existing customer login
@@ -398,6 +404,7 @@ All errors follow the standard `ApiResponse` envelope with `EC !== 0`:
 - `CustomerAuthService.me()` — active customer, blocked customer, deleted customer
 
 **Property-Based Tests (using `fast-check` with Jest):**
+
 - Property 1: Registration + Login round-trip
 - Property 2: Email normalization idempotence
 - Property 3: Invalid input rejection
@@ -414,6 +421,7 @@ Each property test runs minimum 100 iterations with `fast-check`.
 Tag format: `Feature: customer-auth-google, Property {N}: {title}`
 
 **Integration Tests:**
+
 - Google token verification with mocked HTTP responses
 - Full auth flow: register → login → refresh → logout
 - Rate limiting behavior (5 attempts → lockout)
@@ -421,15 +429,18 @@ Tag format: `Feature: customer-auth-google, Property {N}: {title}`
 ### Frontend Testing (Jest + React Testing Library)
 
 **Unit Tests:**
+
 - `AuthContext` — state transitions, token storage, refresh logic
 - `authFetch` — 401 interception, refresh queuing, retry behavior
 - `auth-api.ts` — correct API calls with proper payloads
 
 **Property-Based Tests (using `fast-check`):**
+
 - Property 13: 401 interceptor with refresh queuing
 - Property 16: Avatar renders with accessible name
 
 **Component Tests:**
+
 - `LoginTemplate` — form submission, validation display, loading states
 - `SignUpTemplate` — form submission, validation display, terms checkbox
 - `GoogleLoginButton` — click handling, disabled state, error display
@@ -438,8 +449,10 @@ Tag format: `Feature: customer-auth-google, Property {N}: {title}`
 ### New Dependencies Required
 
 **Backend:**
+
 - None new — `bcryptjs` already in dependencies
 
 **Frontend:**
+
 - `@react-oauth/google` — React wrapper for Google Identity Services
 - `fast-check` (devDependency) — property-based testing library

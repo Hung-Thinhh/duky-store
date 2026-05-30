@@ -54,13 +54,13 @@ export const CategoryCard = ({
       </Link>
 
       {/* Left Content Section */}
-      <div className="relative z-10 flex flex-col items-start justify-center h-full max-w-[56%] pr-3">
-        <h3 className="text-lg md:text-xl lg:text-2xl font-medium text-text-main leading-snug tracking-tight">
+      <div className="relative z-10 flex flex-col items-center justify-center text-center md:items-start md:text-left h-full max-w-[56%] pr-3">
+        <h3 className="text-lg md:text-xl lg:text-2xl font-medium text-text-main leading-snug tracking-tight w-full">
           {title}
         </h3>
 
         {/* Divider + CTA (added vertical padding for readability) */}
-        <div className="mt-4 md:mt-5 space-y-4">
+        <div className="mt-4 md:mt-5 space-y-4 hidden md:block">
           <div className="w-8 h-px bg-text-main/25 group-hover:w-12 transition-all duration-300 ease-out" />
           <div className="flex items-center gap-2 text-xs md:text-sm font-medium text-text-main/60 group-hover:text-text-main transition-colors duration-300">
             <span className="tracking-wide">Xem ngay</span>

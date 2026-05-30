@@ -159,7 +159,7 @@ export const GuideSection = () => {
     <section className="pt-24 pb-8 px-6 overflow-hidden">
       <div className="container-custom">
         <div className="glass-effect p-4 mt-8 md:p-8 lg:p-12 overflow-hidden shadow-2xl">
-          <div className="w-full max-w-[1380px] relative flex flex-row lg:flex-row items-center justify-between gap-2 lg:gap-0">
+          <div className="w-full max-w-[1380px] relative flex flex-row lg:flex-row items-center justify-between gap-2 lg:gap-0 size-guide-row">
             {/* Left Content */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
@@ -191,7 +191,7 @@ export const GuideSection = () => {
 
             {/* Right Steps */}
             <div className="w-full lg:w-[60%] flex items-center justify-center lg:justify-end gap-4 lg:pr-12">
-              <div className="flex flex-row md:flex-row items-center gap-4 lg:gap-6">
+              <div className="flex flex-row md:flex-row items-center gap-4 lg:gap-6 size-guide-steps">
                 {STEPS.map((step, index) => (
                   <React.Fragment key={step.id}>
                     <motion.div

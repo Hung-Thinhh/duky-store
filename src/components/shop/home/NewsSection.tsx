@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
@@ -57,7 +57,23 @@ export const NewsSection = () => {
   const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const visibleItems = 3;
+  const [visibleItems, setVisibleItems] = useState(3);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 640) {
+        setVisibleItems(1);
+      } else if (window.innerWidth < 1024) {
+        setVisibleItems(2);
+      } else {
+        setVisibleItems(3);
+      }
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -87,7 +103,7 @@ export const NewsSection = () => {
 
   const maxIndex = useMemo(
     () => Math.max(0, newsItems.length - visibleItems),
-    [newsItems.length]
+    [newsItems.length, visibleItems],
   );
 
   useEffect(() => {
@@ -100,8 +116,8 @@ export const NewsSection = () => {
     <section className="pt-24 pb-8 px-6 overflow-hidden">
       <div className="container-custom">
         <div className="glass-effect p-6 md:p-8 rounded-[40px] shadow-2xl relative overflow-hidden mt-8">
-          <div className="flex flex-row lg:flex-row gap-12 items-start">
-            <div className="w-[30%] lg:w-[30%] space-y-8 top-10 lg:sticky ">
+          <div className="flex flex-col lg:flex-row gap-12 items-start news-section-row">
+            <div className="w-full lg:w-[30%] space-y-8 top-10 lg:sticky news-section-title">
               <div className="space-y-4">
                 <span className="badge-title text-[10px] font-bold tracking-[0.3em] text-gray-400 uppercase">
                   Tin tức
@@ -110,8 +126,8 @@ export const NewsSection = () => {
                   Cập nhật xu hướng <br /> mới nhất
                 </h2>
                 <p className="content text-gray-500 text-sm md:text-base max-w-xs">
-                  Khám phá những xu hướng thời trang mới nhất, mẹo phối đồ và câu
-                  chuyện từ Duky Store.
+                  Khám phá những xu hướng thời trang mới nhất, mẹo phối đồ và
+                  câu chuyện từ Duky Store.
                 </p>
               </div>
 
@@ -127,9 +143,9 @@ export const NewsSection = () => {
               </Link>
             </div>
 
-            <div className="w-[70%] lg:w-[70%] relative overflow-hidden group/slider">
+            <div className="w-full lg:w-[70%] relative overflow-hidden group/slider news-section-slider">
               {loading ? (
-                <div className="grid grid-cols-3 gap-6 pb-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-4">
                   {Array.from({ length: 3 }).map((_, idx) => (
                     <div
                       key={idx}
@@ -153,7 +169,7 @@ export const NewsSection = () => {
                     {newsItems.map((news) => (
                       <div
                         key={news.id}
-                        className="w-[calc((100%-48px)/3)] flex-shrink-0 snap-start"
+                        className="w-full sm:w-[calc((100%-24px)/2)] lg:w-[calc((100%-48px)/3)] flex-shrink-0 snap-start news-card-wrapper"
                       >
                         <NewsCard {...news} />
                       </div>
@@ -194,7 +210,7 @@ export const NewsSection = () => {
         </div>
 
         <div className="glass-effect p-6 md:p-12 rounded-[40px] shadow-2xl relative overflow-hidden mt-8">
-          <div className="flex flex-row lg:flex-row gap-6 items-center relative z-10">
+          <div id="newsletter-flex-container" className="flex flex-col md:flex-row gap-6 items-center relative z-10">
             <div className="absolute -bottom-12 -right-12 opacity-[0.05] pointer-events-none">
               <svg
                 width="400"
@@ -203,14 +219,38 @@ export const NewsSection = () => {
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
               >
-                <circle cx="200" cy="200" r="199.5" stroke="black" strokeDasharray="10 10" />
-                <circle cx="200" cy="200" r="150" stroke="black" strokeDasharray="10 10" />
-                <circle cx="200" cy="200" r="100" stroke="black" strokeDasharray="10 10" />
-                <circle cx="200" cy="200" r="50" stroke="black" strokeDasharray="10 10" />
+                <circle
+                  cx="200"
+                  cy="200"
+                  r="199.5"
+                  stroke="black"
+                  strokeDasharray="10 10"
+                />
+                <circle
+                  cx="200"
+                  cy="200"
+                  r="150"
+                  stroke="black"
+                  strokeDasharray="10 10"
+                />
+                <circle
+                  cx="200"
+                  cy="200"
+                  r="100"
+                  stroke="black"
+                  strokeDasharray="10 10"
+                />
+                <circle
+                  cx="200"
+                  cy="200"
+                  r="50"
+                  stroke="black"
+                  strokeDasharray="10 10"
+                />
               </svg>
             </div>
 
-            <div className="w-full lg:w-[25%] space-y-8">
+            <div id="newsletter-email-col" className="w-full md:w-[35%] space-y-8">
               <div className="space-y-4">
                 <span className="badge-title text-[10px] font-bold tracking-[0.3em] text-gray-400 uppercase">
                   Duky Store
@@ -219,19 +259,19 @@ export const NewsSection = () => {
                   Ưu đãi dành riêng <br /> cho bạn
                 </h2>
                 <p className="content text-gray-500 text-sm md:text-base max-w-sm">
-                  Đăng ký nhận bản tin để không bỏ lỡ ưu đãi độc quyền và sản phẩm
-                  mới nhất.
+                  Đăng ký nhận bản tin để không bỏ lỡ ưu đãi độc quyền và sản
+                  phẩm mới nhất.
                 </p>
               </div>
 
               <div className="space-y-3">
-                <div className="max-w-[450px] flex flex-row sm:flex-row gap-3 p-1.5 bg-white/50 backdrop-blur-sm rounded-full border border-black/5 focus-within:bg-white focus-within:border-black/10 transition-all duration-300">
+                <div className="max-w-[450px] flex flex-row items-center gap-3 p-1.5 bg-white/50 backdrop-blur-sm rounded-full border border-black/5 focus-within:bg-white focus-within:border-black/10 transition-all duration-300">
                   <input
                     type="email"
                     placeholder="Nhập email của bạn"
                     className="content flex-1 bg-transparent px-6 py-4 text-sm focus:outline-none autofill:shadow-[inset_0_0_0px_1000px_white] autofill:text-fill-black"
                   />
-                  <button className="content bg-black text-white px-8 py-4 rounded-full text-xs font-bold hover:bg-neutral-800 transition-colors cursor-pointer">
+                  <button className="content bg-black text-white px-8 py-4 rounded-full text-xs font-bold hover:bg-neutral-800 transition-colors cursor-pointer whitespace-nowrap">
                     ĐĂNG KÝ
                   </button>
                 </div>
@@ -242,7 +282,7 @@ export const NewsSection = () => {
               </div>
             </div>
 
-            <div className="w-full lg:w-[75%] grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+            <div id="newsletter-cards-col" className="w-full md:w-[65%] grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
               {[
                 {
                   icon: <Gift size={38} strokeWidth={1} />,
@@ -286,6 +326,19 @@ export const NewsSection = () => {
             </div>
           </div>
         </div>
+        <style>{`
+          @media (min-width: 768px) {
+            #newsletter-flex-container {
+              flex-direction: row !important;
+            }
+            #newsletter-email-col {
+              width: 35% !important;
+            }
+            #newsletter-cards-col {
+              width: 65% !important;
+            }
+          }
+        `}</style>
       </div>
     </section>
   );

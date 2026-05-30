@@ -7,10 +7,10 @@ interface TrustBarProps {
 }
 
 /**
- * Fixed bottom trust bar displaying service features (shipping, warranty, etc.)
- * that persists across slide transitions without any animation changes.
+ * Bottom trust bar displaying service features (shipping, warranty, etc.)
+ * that persists across slide transitions.
  *
- * Reuses the glass-effect pill styling from the original HeroBanner trust bar.
+ * Hidden on mobile, styled exactly like the original glass-effect pill on desktop.
  */
 export function TrustBar({ items, className }: TrustBarProps) {
   if (items.length === 0) return null;
@@ -18,7 +18,7 @@ export function TrustBar({ items, className }: TrustBarProps) {
   return (
     <div
       className={cn(
-        "absolute bottom-8 left-0 right-0 z-20 px-6 flex justify-center hero-trust-bar",
+        "absolute left-0 right-0 z-20 px-6 hidden md:flex justify-center hero-trust-bar",
         className
       )}
     >

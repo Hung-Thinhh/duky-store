@@ -3,6 +3,7 @@ import { refreshToken as refreshTokenApi } from "./auth-api";
 // ─── localStorage keys ───────────────────────────────────────────────────────
 const ACCESS_TOKEN_KEY = "duky_access_token";
 const REFRESH_TOKEN_KEY = "duky_refresh_token";
+const CUSTOMER_KEY = "duky_customer";
 
 // ─── Refresh state (module-level singleton) ──────────────────────────────────
 let refreshPromise: Promise<string> | null = null;
@@ -30,12 +31,14 @@ function performTokenRefresh(): Promise<string> {
       // Update tokens in localStorage
       localStorage.setItem(ACCESS_TOKEN_KEY, response.accessToken);
       localStorage.setItem(REFRESH_TOKEN_KEY, response.refreshToken);
+      localStorage.setItem(CUSTOMER_KEY, JSON.stringify(response.customer));
 
       return response.accessToken;
     } catch {
       // Refresh failed — clear all tokens and redirect
       localStorage.removeItem(ACCESS_TOKEN_KEY);
       localStorage.removeItem(REFRESH_TOKEN_KEY);
+      localStorage.removeItem(CUSTOMER_KEY);
       window.location.href = "/login";
       throw new Error("Token refresh failed");
     }
@@ -80,6 +83,7 @@ export async function authFetch(
     // No refresh token available — clear and redirect
     localStorage.removeItem(ACCESS_TOKEN_KEY);
     localStorage.removeItem(REFRESH_TOKEN_KEY);
+    localStorage.removeItem(CUSTOMER_KEY);
     window.location.href = "/login";
     return response;
   }

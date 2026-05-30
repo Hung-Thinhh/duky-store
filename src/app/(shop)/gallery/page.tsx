@@ -86,15 +86,7 @@ export default function GalleryPage() {
       .catch(() => setLoading(false));
   }, [activeTab]);
 
-  // Split images into columns for masonry layout
-  const columns = 4;
-  const columnImages: GalleryImage[][] = Array.from(
-    { length: columns },
-    () => [],
-  );
-  images.forEach((img, idx) => {
-    columnImages[idx % columns].push(img);
-  });
+
 
   return (
     <>
@@ -110,30 +102,32 @@ export default function GalleryPage() {
           width={1920}
           height={1080}
           sizes="100vw"
-          className="w-full h-auto"
+          className="w-full h-[260px] sm:h-[320px] md:h-auto object-cover"
           priority
         />
         {/* Text overlay */}
         <div className="absolute inset-0 flex items-center">
-          <div className="px-12 md:px-16 lg:px-[100px] space-y-3">
-            <span className="inline-block text-xs font-medium tracking-widest text-gray-500 uppercase">
-              {banner.badge}
-            </span>
-            <h1 className="leading-[1.1] tracking-tighter text-gray-900">
-              <span className="block text-[36px] md:text-[52px] lg:text-[64px] font-semibold">
-                {banner.titleLine1}
+          <div className="w-full max-w-[1440px] mx-auto px-6 md:px-20">
+            <div className="space-y-2 md:space-y-3 max-w-sm sm:max-w-md">
+              <span className="inline-block text-[10px] md:text-xs font-medium tracking-widest text-gray-500 uppercase">
+                {banner.badge}
               </span>
-              <span className="block text-[30px] md:text-[44px] lg:text-[56px] font-medium italic -mt-1 md:-mt-2">
-                <span className="font-montserrat not-italic font-semibold tracking-wide bg-gradient-to-br from-zinc-500 via-zinc-300 to-zinc-700 bg-clip-text text-transparent inline-block ml-1 md:ml-2">
-                  {banner.titleLine2}
+              <h1 className="leading-[1.1] tracking-tighter text-gray-900">
+                <span className="block text-[24px] sm:text-[36px] md:text-[52px] lg:text-[64px] font-semibold">
+                  {banner.titleLine1}
                 </span>
-              </span>
-            </h1>
-            <div className="flex items-start gap-3 max-w-sm">
-              <div className="w-8 h-px bg-gray-900 mt-2.5 shrink-0" />
-              <p className="text-sm text-gray-500 leading-relaxed font-light">
-                {banner.description}
-              </p>
+                <span className="block text-[20px] sm:text-[30px] md:text-[44px] lg:text-[56px] font-medium italic -mt-1 md:-mt-2">
+                  <span className="font-montserrat not-italic font-semibold tracking-wide bg-gradient-to-br from-zinc-500 via-zinc-300 to-zinc-700 bg-clip-text text-transparent inline-block ml-1 md:ml-2">
+                    {banner.titleLine2}
+                  </span>
+                </span>
+              </h1>
+              <div className="flex items-start gap-2 md:gap-3 max-w-[170px] sm:max-w-sm">
+                <div className="w-6 sm:w-8 h-px bg-gray-900 mt-2 shrink-0" />
+                <p className="text-[11px] md:text-sm text-gray-500 leading-relaxed font-light line-clamp-3 sm:line-clamp-none">
+                  {banner.description}
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -178,29 +172,25 @@ export default function GalleryPage() {
         {/* Masonry Grid */}
         {!loading && images.length > 0 && (
           <div className="masonry-grid">
-            {columnImages.map((col, colIdx) => (
-              <div key={colIdx} className="masonry-column">
-                {col.map((img) => (
-                  <div
-                    key={img.id}
-                    className="masonry-item"
-                    onClick={() => setSelectedIndex(images.indexOf(img))}
-                  >
-                    <div className="masonry-img-wrap">
-                      <Image
-                        src={img.src}
-                        alt={img.alt}
-                        width={400}
-                        height={500}
-                        className="masonry-img"
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                      />
-                    </div>
-                    <div className="masonry-overlay">
-                      <span className="masonry-caption">{img.alt}</span>
-                    </div>
-                  </div>
-                ))}
+            {images.map((img, idx) => (
+              <div
+                key={img.id}
+                className="masonry-item"
+                onClick={() => setSelectedIndex(idx)}
+              >
+                <div className="masonry-img-wrap">
+                  <Image
+                    src={img.src}
+                    alt={img.alt}
+                    width={400}
+                    height={500}
+                    className="masonry-img"
+                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                  />
+                </div>
+                <div className="masonry-overlay">
+                  <span className="masonry-caption">{img.alt}</span>
+                </div>
               </div>
             ))}
           </div>
@@ -364,15 +354,9 @@ export default function GalleryPage() {
 
         /* Masonry */
         .masonry-grid {
-          display: flex;
-          gap: 16px;
-        }
-
-        .masonry-column {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          gap: 16px;
+          column-count: 4;
+          column-gap: 16px;
+          width: 100%;
         }
 
         .masonry-item {
@@ -381,6 +365,9 @@ export default function GalleryPage() {
           overflow: hidden;
           cursor: pointer;
           transition: var(--transition-fast);
+          break-inside: avoid;
+          margin-bottom: 16px;
+          display: block;
         }
 
         .masonry-item:hover {
@@ -632,21 +619,21 @@ export default function GalleryPage() {
         /* Responsive */
         @media (max-width: 1024px) {
           .masonry-grid {
-            gap: 12px;
+            column-count: 3;
+            column-gap: 12px;
+          }
+          .masonry-item {
+            margin-bottom: 12px;
           }
         }
 
         @media (max-width: 768px) {
           .masonry-grid {
-            flex-wrap: wrap;
+            column-count: 2;
+            column-gap: 12px;
           }
-
-          .masonry-column {
-            flex: 1 1 calc(50% - 8px);
-          }
-
-          .masonry-column:nth-child(n + 3) {
-            display: none;
+          .masonry-item {
+            margin-bottom: 12px;
           }
         }
 
@@ -654,13 +641,12 @@ export default function GalleryPage() {
           .gallery-page {
             padding: 24px 1rem 60px;
           }
-
-          .masonry-column {
-            flex: 1 1 100%;
+          .masonry-grid {
+            column-count: 2;
+            column-gap: 12px;
           }
-
-          .masonry-column:nth-child(n + 2) {
-            display: none;
+          .masonry-item {
+            margin-bottom: 12px;
           }
         }
       `}</style>

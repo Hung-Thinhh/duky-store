@@ -331,8 +331,7 @@ const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, varia
               <Image
                 src={product.images[selectedImage]}
                 alt={product.name}
-                width={600}
-                height={600}
+                fill
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
                 className="gallery-image"
                 priority
@@ -490,14 +489,13 @@ const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, varia
             <span className="validation-error">{validationErrors.find(e => e.field === 'stock')!.message}</span>
           )}
 
-          {/* Add cart & Quick Checkout */}
           <div className="info-actions-secondary">
             <button className="btn-quick-buy" onClick={handleQuickBuy} disabled={isOutOfStock}>
-              <CreditCard size={18} />
+              <CreditCard size={18} className="flex-shrink-0" />
               <span>THANH TOÁN NHANH</span>
             </button>
             <button className="btn-add-cart" onClick={handleAddToCart} disabled={isOutOfStock || isAddingToCart}>
-              <ShoppingCart size={18} />
+              <ShoppingCart size={18} className="flex-shrink-0" />
               <span>{isAddingToCart ? 'ĐANG THÊM...' : 'THÊM VÀO GIỎ HÀNG'}</span>
             </button>
           </div>
@@ -611,7 +609,7 @@ const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, varia
           background: var(--bg-card);
           border-radius: var(--radius-section);
           overflow: hidden;
-          aspect-ratio: 1 / 0.85;
+          aspect-ratio: 1 / 1;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -654,6 +652,7 @@ const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, varia
         }
 
         .gallery-image-wrapper {
+          position: relative;
           width: 100%;
           height: 100%;
           display: flex;
@@ -668,9 +667,9 @@ const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, varia
         }
 
         :global(.gallery-image) {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
+          width: 100% !important;
+          height: 100% !important;
+          object-fit: contain !important;
         }
 
         .gallery-nav {
@@ -1047,6 +1046,11 @@ const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, varia
           transform: translateY(-2px);
         }
 
+        .btn-quick-buy :global(svg),
+        .btn-add-cart :global(svg) {
+          flex-shrink: 0;
+        }
+
         /* ─── Validation Errors ─── */
         .validation-error {
           display: block;
@@ -1067,12 +1071,16 @@ const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, varia
         @media (max-width: 1024px) {
           .info-content {
             flex-direction: column;
+            align-items: stretch;
+            gap: 24px;
           }
           .info-gallery {
             max-width: 100%;
+            width: 100%;
           }
           .info-details-wrapper {
             max-width: 100%;
+            width: 100%;
           }
         }
 
@@ -1086,12 +1094,25 @@ const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, varia
           .info-price {
             font-size: 22px;
           }
+          .gallery-main {
+            aspect-ratio: 1 / 1 !important;
+          }
           .gallery-thumbnails {
             gap: 6px;
           }
           .thumbnail-item {
             width: 56px;
             height: 56px;
+          }
+          .info-actions-secondary {
+            flex-direction: column;
+            gap: 10px;
+          }
+          .btn-quick-buy,
+          .btn-add-cart {
+            width: 100%;
+            padding: 14px 20px;
+            font-size: 13px;
           }
         }
 

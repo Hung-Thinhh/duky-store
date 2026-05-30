@@ -20,6 +20,7 @@ interface HeroSliderProps {
   transitionDuration?: number; // ms, default 800
   trustItems?: TrustItem[];
   className?: string;
+  autoScroll?: boolean;
 }
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -45,6 +46,7 @@ export function HeroSlider({
   transitionDuration = DEFAULT_TRANSITION_DURATION,
   trustItems = [],
   className,
+  autoScroll = true,
 }: HeroSliderProps) {
   // ─── Validate & Clamp Props ──────────────────────────────────────────────
 
@@ -229,7 +231,7 @@ export function HeroSlider({
   // ─── Auto-Scroll Timer ───────────────────────────────────────────────────
 
   useEffect(() => {
-    if (isPaused || isTransitioning) return;
+    if (!autoScroll || isPaused || isTransitioning) return;
 
     autoScrollTimerRef.current = setTimeout(() => {
       const next = getNextSlideIndex(currentSlide, validSlides.length);
@@ -242,7 +244,7 @@ export function HeroSlider({
         autoScrollTimerRef.current = null;
       }
     };
-  }, [currentSlide, isPaused, isTransitioning, clampedInterval, validSlides.length, transitionToSlide]);
+  }, [autoScroll, currentSlide, isPaused, isTransitioning, clampedInterval, validSlides.length, transitionToSlide]);
 
   // ─── Hover Pause (Desktop Only) ─────────────────────────────────────────
 
@@ -336,7 +338,7 @@ export function HeroSlider({
       ref={sliderRef}
       id="hero"
       className={cn(
-        "group/slider relative overflow-hidden w-full h-screen",
+        "group/slider relative overflow-hidden w-full h-[100dvh] lg:h-screen",
         className
       )}
       onMouseEnter={handleMouseEnter}
@@ -423,7 +425,7 @@ export function HeroSlider({
 
       {/* Slide indicators */}
       {validSlides.length > 1 && (
-        <div className="absolute bottom-2 md:bottom-3 left-0 right-0 z-10 translate-y-3">
+        <div className="absolute bottom-4 md:bottom-6 left-0 right-0 z-10">
           <SlideIndicators
             total={validSlides.length}
             current={currentSlide}
@@ -434,7 +436,7 @@ export function HeroSlider({
       )}
 
       {/* Trust bar */}
-      <TrustBar items={trustItems} className="bottom-8 md:bottom-12" />
+      <TrustBar items={trustItems} className="bottom-12 md:bottom-16" />
     </section>
   );
 }

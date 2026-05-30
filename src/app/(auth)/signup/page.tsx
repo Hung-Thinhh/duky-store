@@ -16,6 +16,12 @@ export default function SignUpPage() {
           background-position: center;
           background-attachment: fixed;
         }
+
+        @media (max-width: 640px) {
+          main {
+            padding: 12px !important;
+          }
+        }
       `}</style>
     </main>
   );

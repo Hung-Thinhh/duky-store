@@ -17,6 +17,7 @@ export interface ValidationErrors {
   district?: string;
   ward?: string;
   addressLine?: string;
+  altAddress?: string;
 }
 
 /**
@@ -36,8 +37,10 @@ export function validateCheckoutForm(data: CheckoutFormData): ValidationErrors {
     errors.phone = "Số điện thoại phải từ 8 đến 20 ký tự";
   }
 
-  // email: optional, but if provided must be valid format
-  if (data.email && data.email.trim().length > 0) {
+  // email: required, must be valid format
+  if (!data.email || data.email.trim().length === 0) {
+    errors.email = "Vui lòng nhập địa chỉ email";
+  } else {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(data.email.trim())) {
       errors.email = "Email không hợp lệ";
@@ -49,10 +52,7 @@ export function validateCheckoutForm(data: CheckoutFormData): ValidationErrors {
     errors.province = "Vui lòng chọn tỉnh/thành phố";
   }
 
-  // district: required, non-empty
-  if (!data.district || data.district.trim().length === 0) {
-    errors.district = "Vui lòng chọn quận/huyện";
-  }
+
 
   // ward: required, non-empty
   if (!data.ward || data.ward.trim().length === 0) {

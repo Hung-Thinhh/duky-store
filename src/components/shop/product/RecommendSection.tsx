@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import React, { useRef } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { Product } from '@/types/product';
-import { ProductCard } from '@/components/shop/ProductCard';
-import { useProducts } from '@/hooks/useProducts';
+import React, { useRef } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Product } from "@/types/product";
+import { ProductCard } from "@/components/shop/ProductCard";
+import { useProducts } from "@/hooks/useProducts";
 
 // ─── Component ──────────────────────────────────────────────────────────────
 
@@ -15,67 +15,75 @@ interface RecommendSectionProps {
 
 const RecommendSection: React.FC<RecommendSectionProps> = ({
   products: propProducts,
-  title = 'SẢN PHẨM TƯƠNG TỰ',
+  title = "SẢN PHẨM TƯƠNG TỰ",
 }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const { products: fetchedProducts } = useProducts({ limit: 8, sort: "newest" });
+  const { products: fetchedProducts } = useProducts({
+    limit: 8,
+    sort: "newest",
+  });
 
   const products = propProducts ?? fetchedProducts;
 
-  const scroll = (direction: 'left' | 'right') => {
+  const scroll = (direction: "left" | "right") => {
     if (!scrollRef.current) return;
     const scrollAmount = 300;
     scrollRef.current.scrollBy({
-      left: direction === 'left' ? -scrollAmount : scrollAmount,
-      behavior: 'smooth',
+      left: direction === "left" ? -scrollAmount : scrollAmount,
+      behavior: "smooth",
     });
   };
 
   return (
-    <section className="recommend-section">
-      <div className="recommend-container">
-        {/* Header */}
-        <div className="recommend-header">
-          <h2 className="recommend-title">{title}</h2>
-        </div>
-
-        {/* Carousel */}
-        <div className="recommend-carousel-wrapper">
-          <button
-            className="recommend-nav recommend-nav-prev"
-            onClick={() => scroll('left')}
-            aria-label="Cuộn trái"
-          >
-            <ChevronLeft size={20} />
-          </button>
-
-          <div className="recommend-carousel" ref={scrollRef}>
-            {products.map((product) => (
-              <div key={product.id} className="recommend-card-slot">
-                <ProductCard
-                  product={product}
-                  href={`/products/${product.slug}`}
-                />
-              </div>
-            ))}
+    <section className="mt-8 recommend-section">
+      <div className="container-custom !px-1 md:!px-8">
+        <div className="recommend-container">
+          {/* Header */}
+          <div className="recommend-header">
+            <h2 className="recommend-title">{title}</h2>
           </div>
 
-          <button
-            className="recommend-nav recommend-nav-next"
-            onClick={() => scroll('right')}
-            aria-label="Cuộn phải"
-          >
-            <ChevronRight size={20} />
-          </button>
+          {/* Carousel */}
+          <div className="recommend-carousel-wrapper">
+            <button
+              className="recommend-nav recommend-nav-prev"
+              onClick={() => scroll("left")}
+              aria-label="Cuộn trái"
+            >
+              <ChevronLeft size={20} />
+            </button>
+
+            <div className="recommend-carousel" ref={scrollRef}>
+              {products.map((product) => (
+                <div key={product.id} className="recommend-card-slot">
+                  <ProductCard
+                    product={product}
+                    href={`/products/${product.slug}`}
+                  />
+                </div>
+              ))}
+            </div>
+
+            <button
+              className="recommend-nav recommend-nav-next"
+              onClick={() => scroll("right")}
+              aria-label="Cuộn phải"
+            >
+              <ChevronRight size={20} />
+            </button>
+          </div>
         </div>
       </div>
 
       <style jsx>{`
         .recommend-section {
           width: 100%;
-          max-width: 1440px;
-          margin: 0 auto;
-          padding: 0 2rem 60px;
+          padding: 0 0.5rem 60px;
+        }
+        @media (min-width: 768px) {
+          .recommend-section {
+            padding: 0 1.5rem 60px;
+          }
         }
 
         .recommend-container {
@@ -165,7 +173,7 @@ const RecommendSection: React.FC<RecommendSectionProps> = ({
         /* ─── Responsive ─── */
         @media (max-width: 768px) {
           .recommend-section {
-            padding: 0 1rem 40px;
+            padding: 0 0.5rem 40px;
           }
           .recommend-container {
             padding: 20px 16px;

@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useMemo } from 'react';
 import Link from 'next/link';
@@ -79,7 +79,7 @@ export const BootFemaleSection: React.FC = () => {
             </div>
 
             {/* Trust Badges */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
+            <div className="hidden sm:grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
               {trustBadges.map((badge, index) => (
                 <div
                   key={index}

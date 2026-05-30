@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import {
   Package,
@@ -17,16 +17,18 @@ import { formatCurrency } from "@/lib/utils";
 import { UserSidebar } from "@/components/auth/UserSidebar";
 import { getOrderHistory } from "@/lib/order-storage";
 import { orderLookupAPI, CheckoutOrder } from "@/lib/api";
+import { listCustomerOrders } from "@/lib/auth-api";
+import Pagination from "@/components/shop/Pagination";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
-type StatusFilter = "all" | "PENDING" | "CONFIRMED" | "PROCESSING" | "SHIPPING" | "DELIVERED" | "CANCELLED";
+type StatusFilter = "all" | "PENDING" | "CONFIRMED" | "PROCESSING" | "SHIPPING" | "DELIVERED" | "COMPLETED" | "CANCELLED";
 
 const TABS: { key: StatusFilter; label: string }[] = [
   { key: "all", label: "Tất cả" },
   { key: "PENDING", label: "Chờ xác nhận" },
   { key: "PROCESSING", label: "Đang xử lý" },
   { key: "SHIPPING", label: "Đang giao" },
-  { key: "DELIVERED", label: "Hoàn thành" },
+  { key: "COMPLETED", label: "Hoàn thành" },
   { key: "CANCELLED", label: "Đã hủy" },
 ];
 
@@ -36,7 +38,8 @@ function getStatusLabel(status: string): string {
     case "CONFIRMED": return "Đã xác nhận";
     case "PROCESSING": return "Đang xử lý";
     case "SHIPPING": return "Đang giao";
-    case "DELIVERED": return "Hoàn thành";
+    case "DELIVERED":
+    case "COMPLETED": return "Hoàn thành";
     case "CANCELLED": return "Đã hủy";
     default: return status;
   }
@@ -48,7 +51,8 @@ function getStatusColor(status: string): { color: string; bg: string } {
     case "CONFIRMED": return { color: "#3b82f6", bg: "#dbeafe" };
     case "PROCESSING": return { color: "#8b5cf6", bg: "#ede9fe" };
     case "SHIPPING": return { color: "#f59e0b", bg: "#fef3c7" };
-    case "DELIVERED": return { color: "#16a34a", bg: "#dcfce7" };
+    case "DELIVERED":
+    case "COMPLETED": return { color: "#16a34a", bg: "#dcfce7" };
     case "CANCELLED": return { color: "#ef4444", bg: "#fef2f2" };
     default: return { color: "#6b7280", bg: "#f3f4f6" };
   }
@@ -77,55 +81,121 @@ export default function OrderPage() {
   const [orders, setOrders] = useState<CheckoutOrder[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const [sortBy, setSortBy] = useState<"newest" | "oldest">("newest");
+  const [isSortOpen, setIsSortOpen] = useState(false);
+  const sortRef = React.useRef<HTMLDivElement>(null);
+  const tabsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (sortRef.current && !sortRef.current.contains(event.target as Node)) {
+        setIsSortOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  useEffect(() => {
+    const el = tabsRef.current;
+    if (!el) return;
+
+    let isDown = false;
+    let startX = 0;
+    let scrollLeft = 0;
+
+    const handleMouseDown = (e: MouseEvent) => {
+      isDown = true;
+      el.classList.add("dragging");
+      startX = e.pageX - el.offsetLeft;
+      scrollLeft = el.scrollLeft;
+    };
+
+    const handleMouseLeave = () => {
+      isDown = false;
+      el.classList.remove("dragging");
+    };
+
+    const handleMouseUp = () => {
+      isDown = false;
+      el.classList.remove("dragging");
+    };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - el.offsetLeft;
+      const walk = (x - startX) * 1.5;
+      el.scrollLeft = scrollLeft - walk;
+    };
+
+    el.addEventListener("mousedown", handleMouseDown);
+    el.addEventListener("mouseleave", handleMouseLeave);
+    el.addEventListener("mouseup", handleMouseUp);
+    el.addEventListener("mousemove", handleMouseMove);
+
+    return () => {
+      el.removeEventListener("mousedown", handleMouseDown);
+      el.removeEventListener("mouseleave", handleMouseLeave);
+      el.removeEventListener("mouseup", handleMouseUp);
+      el.removeEventListener("mousemove", handleMouseMove);
+    };
+  }, []);
 
   const fetchOrders = useCallback(async () => {
     setIsLoading(true);
     setError(null);
 
     try {
-      const storedOrders = getOrderHistory();
-
-      if (storedOrders.length === 0) {
-        setOrders([]);
-        setIsLoading(false);
-        return;
-      }
-
-      const results: CheckoutOrder[] = [];
-
-      for (const stored of storedOrders) {
-        try {
-          // Use phone from stored order data, fallback to auth context
-          const phone = stored.phone || customer?.phone || "";
-          if (!phone) continue;
-
-          const order = await orderLookupAPI(stored.code, phone);
-          results.push(order);
-        } catch {
-          // Skip individual order failures silently
-        }
-      }
-
-      setOrders(results);
-    } catch {
+      const customerOrders = await listCustomerOrders();
+      setOrders(customerOrders);
+    } catch (err: any) {
       setError("Không thể tải danh sách đơn hàng. Vui lòng thử lại.");
     } finally {
       setIsLoading(false);
     }
-  }, [customer?.phone]);
+  }, []);
 
   useEffect(() => {
     fetchOrders();
   }, [fetchOrders]);
 
-  // Client-side filtering
-  const filteredOrders = orders.filter((order) => {
-    const matchTab = activeTab === "all" || order.status === activeTab;
-    const matchSearch =
-      !searchQuery.trim() ||
-      order.code.toLowerCase().includes(searchQuery.trim().toLowerCase());
-    return matchTab && matchSearch;
-  });
+  const filteredOrders = orders
+    .filter((order) => {
+      let matchTab = activeTab === "all";
+      if (!matchTab) {
+        if (activeTab === "COMPLETED") {
+          matchTab = order.status === "COMPLETED" || order.status === "DELIVERED";
+        } else {
+          matchTab = order.status === activeTab;
+        }
+      }
+      const matchSearch =
+        !searchQuery.trim() ||
+        order.code.toLowerCase().includes(searchQuery.trim().toLowerCase());
+      return matchTab && matchSearch;
+    })
+    .sort((a, b) => {
+      const dateA = new Date(a.createdAt).getTime();
+      const dateB = new Date(b.createdAt).getTime();
+      return sortBy === "newest" ? dateB - dateA : dateA - dateB;
+    });
+
+  const ITEMS_PER_PAGE = 4;
+  const totalPages = Math.ceil(filteredOrders.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const paginatedOrders = filteredOrders.slice(
+    startIndex,
+    startIndex + ITEMS_PER_PAGE
+  );
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeTab, searchQuery, sortBy]);
 
   return (
     <>
@@ -141,15 +211,56 @@ export default function OrderPage() {
             {/* Title + Sort */}
             <div className="order-header">
               <h1 className="order-title">Đơn hàng</h1>
-              <button type="button" className="order-sort-btn">
-                <span>Mới nhất</span>
-                <ChevronDown size={16} />
-              </button>
+              <div className="order-sort-container" ref={sortRef}>
+                <button
+                  type="button"
+                  className="order-sort-btn"
+                  onClick={() => setIsSortOpen(!isSortOpen)}
+                >
+                  <span>{sortBy === "newest" ? "Mới nhất" : "Cũ nhất"}</span>
+                  <ChevronDown
+                    size={16}
+                    style={{
+                      transform: isSortOpen ? "rotate(180deg)" : "rotate(0deg)",
+                      transition: "transform 0.2s",
+                    }}
+                  />
+                </button>
+
+                {isSortOpen && (
+                  <div className="order-sort-dropdown">
+                    <button
+                      type="button"
+                      className={`order-sort-option ${
+                        sortBy === "newest" ? "active" : ""
+                      }`}
+                      onClick={() => {
+                        setSortBy("newest");
+                        setIsSortOpen(false);
+                      }}
+                    >
+                      Mới nhất
+                    </button>
+                    <button
+                      type="button"
+                      className={`order-sort-option ${
+                        sortBy === "oldest" ? "active" : ""
+                      }`}
+                      onClick={() => {
+                        setSortBy("oldest");
+                        setIsSortOpen(false);
+                      }}
+                    >
+                      Cũ nhất
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Tabs + Search */}
             <div className="order-tabs-row">
-              <div className="order-tabs">
+              <div className="order-tabs" ref={tabsRef}>
                 {TABS.map((tab) => (
                   <button
                     key={tab.key}
@@ -211,57 +322,66 @@ export default function OrderPage() {
                     </Link>
                   </div>
                 ) : (
-                  filteredOrders.map((order) => {
-                    const statusStyle = getStatusColor(order.status);
-                    return (
-                      <Link
-                        key={order.id}
-                        href={`/user/order/${order.code}`}
-                        className="order-card-link"
-                      >
-                        <div className="order-card">
-                          {/* Left: Info */}
-                          <div className="order-card-left">
-                            <div className="order-card-header">
-                              <span className="order-card-code">
-                                Đơn hàng #{order.code}
-                              </span>
-                              <span className="order-card-date">
-                                {formatOrderDate(order.createdAt)}
+                  <>
+                    {paginatedOrders.map((order) => {
+                      const statusStyle = getStatusColor(order.status);
+                      return (
+                        <Link
+                          key={order.id}
+                          href={`/user/order/${order.code}`}
+                          className="order-card-link"
+                        >
+                          <div className="order-card">
+                            {/* Left: Info */}
+                            <div className="order-card-left">
+                              <div className="order-card-header">
+                                <span className="order-card-code">
+                                  Đơn hàng #{order.code}
+                                </span>
+                                <span className="order-card-date">
+                                  {formatOrderDate(order.createdAt)}
+                                </span>
+                              </div>
+                              <span
+                                className="order-card-status"
+                                style={{
+                                  color: statusStyle.color,
+                                  background: statusStyle.bg,
+                                }}
+                              >
+                                {getStatusLabel(order.status)}
                               </span>
                             </div>
-                            <span
-                              className="order-card-status"
-                              style={{
-                                color: statusStyle.color,
-                                background: statusStyle.bg,
-                              }}
-                            >
-                              {getStatusLabel(order.status)}
-                            </span>
-                          </div>
 
-                          {/* Center: Item count */}
-                          <div className="order-card-center">
-                            <span className="order-card-item-count">
-                              {order.items.length} sản phẩm
-                            </span>
-                          </div>
+                            {/* Center: Item count */}
+                            <div className="order-card-center">
+                              <span className="order-card-item-count">
+                                {order.items.length} sản phẩm
+                              </span>
+                            </div>
 
-                          {/* Right: Total */}
-                          <div className="order-card-right">
-                            <span className="order-card-total-label">Tổng tiền</span>
-                            <span className="order-card-total">
-                              {formatCurrency(order.grandTotal)}
-                            </span>
-                            <span className="order-card-detail-arrow">
-                              Xem chi tiết →
-                            </span>
+                            {/* Right: Total */}
+                            <div className="order-card-right">
+                              <span className="order-card-total-label">Tổng tiền</span>
+                              <span className="order-card-total">
+                                {formatCurrency(order.grandTotal)}
+                              </span>
+                              <span className="order-card-detail-arrow">
+                                Xem chi tiết →
+                              </span>
+                            </div>
                           </div>
-                        </div>
-                      </Link>
-                    );
-                  })
+                        </Link>
+                      );
+                    })}
+
+                    {/* Pagination */}
+                    <Pagination
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      onPageChange={setCurrentPage}
+                    />
+                  </>
                 )}
               </div>
             )}
@@ -302,6 +422,10 @@ export default function OrderPage() {
           color: var(--text-main);
         }
 
+        .order-sort-container {
+          position: relative;
+        }
+
         .order-sort-btn {
           display: flex;
           align-items: center;
@@ -319,6 +443,45 @@ export default function OrderPage() {
 
         .order-sort-btn:hover { border-color: var(--text-main); }
 
+        .order-sort-dropdown {
+          position: absolute;
+          top: calc(100% + 6px);
+          right: 0;
+          background: var(--bg-card);
+          border: 1px solid var(--border-input);
+          border-radius: 10px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+          padding: 6px;
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+          min-width: 120px;
+          z-index: 100;
+        }
+
+        .order-sort-option {
+          background: transparent;
+          border: none;
+          padding: 8px 12px;
+          text-align: left;
+          font-size: 13px;
+          font-family: var(--font-main);
+          color: var(--text-main);
+          cursor: pointer;
+          border-radius: 6px;
+          transition: var(--transition-fast);
+        }
+
+        .order-sort-option:hover {
+          background: var(--bg-secondary);
+        }
+
+        .order-sort-option.active {
+          font-weight: 600;
+          background: var(--bg-secondary);
+          color: var(--text-main);
+        }
+
         /* ─── Tabs ─── */
         .order-tabs-row {
           display: flex;
@@ -331,6 +494,12 @@ export default function OrderPage() {
           display: flex;
           gap: 0;
           flex: 1;
+          cursor: grab;
+        }
+
+        .order-tabs.dragging {
+          cursor: grabbing;
+          user-select: none;
         }
 
         .order-search {
@@ -383,6 +552,8 @@ export default function OrderPage() {
           border-bottom: 2px solid transparent;
           cursor: pointer;
           transition: var(--transition-fast);
+          white-space: nowrap;
+          flex-shrink: 0;
         }
 
         .order-tab:hover { color: var(--text-main); }
@@ -577,12 +748,22 @@ export default function OrderPage() {
         /* ─── Responsive ─── */
         @media (max-width: 1024px) {
           .order-layout { grid-template-columns: 1fr; }
+          .order-main { min-width: 0; }
         }
 
         @media (max-width: 768px) {
           .order-card { flex-direction: column; align-items: flex-start; gap: 16px; }
           .order-card-right { align-items: flex-start; }
-          .order-tabs { overflow-x: auto; }
+          .order-tabs {
+            overflow-x: auto;
+            scrollbar-width: none; /* Firefox */
+            -webkit-overflow-scrolling: touch;
+            width: 100%;
+            max-width: 100%;
+          }
+          .order-tabs::-webkit-scrollbar {
+            display: none; /* Chrome/Safari */
+          }
           .order-tabs-row { flex-direction: column; align-items: stretch; gap: 12px; }
           .order-search { margin-bottom: 0; }
         }

@@ -1,28 +1,41 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import Image from 'next/image';
-import { motion, AnimatePresence } from 'motion/react';
-import Link from 'next/link';
-import { Search, User, ShoppingBag, Menu, X, Phone, MessageCircle, Mail, MapPin, Package, Settings, LogOut } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { SearchTool } from '@/components/shop/SeachTool';
-import { PopupTemplate } from '@/components/shop/PopupTemplate';
-import { useProducts } from '@/hooks/useProducts';
-import { useAuth } from '@/context/AuthContext';
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import Image from "next/image";
+import { motion, AnimatePresence } from "motion/react";
+import Link from "next/link";
+import {
+  Search,
+  User,
+  ShoppingBag,
+  Menu,
+  X,
+  Phone,
+  MessageCircle,
+  Mail,
+  MapPin,
+  Package,
+  Settings,
+  LogOut,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { SearchTool } from "@/components/shop/SeachTool";
+import { PopupTemplate } from "@/components/shop/PopupTemplate";
+import { useProducts } from "@/hooks/useProducts";
+import { useAuth } from "@/context/AuthContext";
 
 interface AvatarProps {
   fullName: string;
   avatarUrl?: string | null;
-  size: 'desktop' | 'mobile';
+  size: "desktop" | "mobile";
 }
 
 function Avatar({ fullName, avatarUrl, size }: AvatarProps) {
   const [showFallback, setShowFallback] = useState(!avatarUrl);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const dimension = size === 'desktop' ? 32 : 28;
-  const fontSize = size === 'desktop' ? 'text-sm' : 'text-xs';
+  const dimension = size === "desktop" ? 32 : 28;
+  const fontSize = size === "desktop" ? "text-sm" : "text-xs";
 
   useEffect(() => {
     if (!avatarUrl) {
@@ -60,20 +73,20 @@ function Avatar({ fullName, avatarUrl, size }: AvatarProps) {
     setShowFallback(true);
   }, []);
 
-  const initial = fullName ? fullName.charAt(0).toUpperCase() : '?';
+  const initial = fullName ? fullName.charAt(0).toUpperCase() : "?";
 
   if (showFallback || !avatarUrl) {
     return (
       <div
         className={cn(
-          'rounded-full flex items-center justify-center font-semibold select-none',
-          fontSize
+          "rounded-full flex items-center justify-center font-semibold select-none",
+          fontSize,
         )}
         style={{
           width: dimension,
           height: dimension,
-          backgroundColor: '#e5e7eb',
-          color: '#374151',
+          backgroundColor: "#e5e7eb",
+          color: "#374151",
         }}
         role="img"
         aria-label={fullName}
@@ -117,14 +130,17 @@ export const Header = ({ cartCount }: HeaderProps) => {
   // Close account menu when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (accountMenuRef.current && !accountMenuRef.current.contains(event.target as Node)) {
+      if (
+        accountMenuRef.current &&
+        !accountMenuRef.current.contains(event.target as Node)
+      ) {
         setIsAccountMenuOpen(false);
       }
     }
     if (isAccountMenuOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
     }
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isAccountMenuOpen]);
 
   const handleLogout = async () => {
@@ -142,31 +158,31 @@ export const Header = ({ cartCount }: HeaderProps) => {
   ];
 
   const navItems = [
-    { name: 'Boot Nam', href: '/collections/boot-nam' },
-    { name: 'Boot Nữ', href: '/collections/boot-nu' },
-    { name: 'Phụ kiện', href: '/collections/phu-kien' },
-    { name: 'Unisex', href: '/collections/unisex' },
-    { name: 'Kinh nghiệm', href: '/blog' },
-    { name: 'Liên hệ', href: '/contact' }
+    { name: "Boot Nam", href: "/collections/boot-nam" },
+    { name: "Boot Nữ", href: "/collections/boot-nu" },
+    { name: "Phụ kiện", href: "/collections/phu-kien" },
+    { name: "Unisex", href: "/collections/unisex" },
+    { name: "Kinh nghiệm", href: "/blog" },
+    { name: "Liên hệ", href: "/contact" },
   ];
 
   return (
     <header className="fixed top-1 left-0 right-0 z-50 px-6 md:px-10">
-      <div 
+      <div
         className={cn(
-          "max-w-[1440px] mx-auto glass-effect rounded-full shadow-2xl transition-all duration-500 flex items-center justify-between px-6 md:px-10 py-2 md:py-4 bg-white/70 backdrop-blur-lg !overflow-visible"
+          "max-w-[1440px] mx-auto glass-effect rounded-full shadow-2xl transition-all duration-500 flex items-center justify-between px-6 md:px-10 py-2 md:py-4 bg-white/70 backdrop-blur-lg !overflow-visible",
         )}
       >
         {/* Logo - Left */}
         <div className="flex-1 flex justify-start items-center">
-          <Link 
+          <Link
             href="/"
-            className="flex items-center gap-1 cursor-pointer group" 
+            className="flex items-center gap-1 cursor-pointer group"
           >
             <div className="relative w-10 h-10 md:w-14 md:h-14">
-              <Image 
-                src="/assets/logo_header.png" 
-                alt="Duky Store Logo" 
+              <Image
+                src="/assets/logo_header.png"
+                alt="Duky Store Logo"
                 fill
                 priority
                 sizes="(max-width: 768px) 40px, 56px"
@@ -196,7 +212,7 @@ export const Header = ({ cartCount }: HeaderProps) => {
         <div className="flex-1 flex justify-end items-center gap-4 md:gap-6 lg:gap-8">
           {/* Action Icons */}
           <div className="flex items-center gap-6 md:gap-6">
-            <button 
+            <button
               onClick={() => setIsSearchOpen(!isSearchOpen)}
               className="text-text-main hover:scale-110 transition-transform cursor-pointer"
             >
@@ -204,7 +220,7 @@ export const Header = ({ cartCount }: HeaderProps) => {
             </button>
             {isAuthenticated && customer ? (
               <div className="relative hidden sm:block" ref={accountMenuRef}>
-                <button 
+                <button
                   onClick={() => setIsAccountMenuOpen(!isAccountMenuOpen)}
                   className="hover:scale-110 transition-transform cursor-pointer"
                 >
@@ -223,8 +239,12 @@ export const Header = ({ cartCount }: HeaderProps) => {
                     >
                       {/* Part 1: User Info */}
                       <div className="px-4 py-4 bg-gray-50/60 rounded-t-2xl">
-                        <p className="font-semibold text-[15px] text-gray-900 truncate">{customer.fullName}</p>
-                        <p className="text-[13px] text-gray-400 mt-0.5">Thành viên</p>
+                        <p className="font-semibold text-[15px] text-gray-900 truncate">
+                          {customer.fullName}
+                        </p>
+                        <p className="text-[13px] text-gray-400 mt-0.5">
+                          Thành viên
+                        </p>
                       </div>
 
                       {/* Part 2: Navigation */}
@@ -234,7 +254,11 @@ export const Header = ({ cartCount }: HeaderProps) => {
                           onClick={() => setIsAccountMenuOpen(false)}
                           className="flex items-center gap-4 px-4 py-2 text-[14px] text-gray-600 hover:bg-gray-100 hover:text-black rounded-lg transition-all duration-200"
                         >
-                          <User size={18} strokeWidth={1.4} className="text-gray-400" />
+                          <User
+                            size={18}
+                            strokeWidth={1.4}
+                            className="text-gray-400"
+                          />
                           <span>Tài khoản của tôi</span>
                         </Link>
                         <Link
@@ -242,7 +266,11 @@ export const Header = ({ cartCount }: HeaderProps) => {
                           onClick={() => setIsAccountMenuOpen(false)}
                           className="flex items-center gap-4 px-4 py-2 text-[14px] text-gray-600 hover:bg-gray-100 hover:text-black rounded-lg transition-all duration-200"
                         >
-                          <Package size={18} strokeWidth={1.4} className="text-gray-400" />
+                          <Package
+                            size={18}
+                            strokeWidth={1.4}
+                            className="text-gray-400"
+                          />
                           <span>Đơn hàng</span>
                         </Link>
                         <Link
@@ -250,7 +278,11 @@ export const Header = ({ cartCount }: HeaderProps) => {
                           onClick={() => setIsAccountMenuOpen(false)}
                           className="flex items-center gap-4 px-4 py-2 text-[14px] text-gray-600 hover:bg-gray-100 hover:text-black rounded-lg transition-all duration-200"
                         >
-                          <MapPin size={18} strokeWidth={1.4} className="text-gray-400" />
+                          <MapPin
+                            size={18}
+                            strokeWidth={1.4}
+                            className="text-gray-400"
+                          />
                           <span>Địa chỉ</span>
                         </Link>
                         <Link
@@ -258,7 +290,11 @@ export const Header = ({ cartCount }: HeaderProps) => {
                           onClick={() => setIsAccountMenuOpen(false)}
                           className="flex items-center gap-4 px-4 py-2 text-[14px] text-gray-600 hover:bg-gray-100 hover:text-black rounded-lg transition-all duration-200"
                         >
-                          <Settings size={18} strokeWidth={1.4} className="text-gray-400" />
+                          <Settings
+                            size={18}
+                            strokeWidth={1.4}
+                            className="text-gray-400"
+                          />
                           <span>Cài đặt</span>
                         </Link>
                       </div>
@@ -269,7 +305,11 @@ export const Header = ({ cartCount }: HeaderProps) => {
                           onClick={handleLogout}
                           className="group flex items-center gap-4 px-4 py-2 text-[14px] text-gray-600 hover:bg-red-50 hover:text-red-600 rounded-lg transition-all duration-200 w-full text-left cursor-pointer"
                         >
-                          <LogOut size={18} strokeWidth={1.4} className="text-gray-400 group-hover:text-red-500" />
+                          <LogOut
+                            size={18}
+                            strokeWidth={1.4}
+                            className="text-gray-400 group-hover:text-red-500"
+                          />
                           <span>Đăng xuất</span>
                         </button>
                       </div>
@@ -278,18 +318,21 @@ export const Header = ({ cartCount }: HeaderProps) => {
                 </AnimatePresence>
               </div>
             ) : (
-              <Link href="/login" className="text-text-main hover:scale-110 transition-transform hidden sm:block cursor-pointer">
+              <Link
+                href="/login"
+                className="text-text-main hover:scale-110 transition-transform hidden sm:block cursor-pointer"
+              >
                 <User size={22} strokeWidth={2} />
               </Link>
             )}
-            <Link 
+            <Link
               href="/cart"
               className="text-text-main hover:scale-110 transition-transform relative cursor-pointer"
             >
               <ShoppingBag size={22} strokeWidth={2} />
               <AnimatePresence>
                 {cartCount > 0 && (
-                  <motion.span 
+                  <motion.span
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     key={cartCount}
@@ -306,19 +349,21 @@ export const Header = ({ cartCount }: HeaderProps) => {
           <div className="hidden lg:block w-px h-6 bg-black/10" />
 
           {/* Hotline */}
-          <button 
+          <button
             onClick={() => setIsContactOpen(true)}
             className="hidden lg:flex items-center gap-2 text-text-main hover:text-accent-gold transition-colors cursor-pointer group"
           >
             <div className="w-8 h-8 rounded-full bg-black/5 flex items-center justify-center group-hover:bg-black group-hover:text-white transition-all">
               <Phone size={14} strokeWidth={2.5} />
             </div>
-            <span className="text-[13px] font-medium tracking-wider">Hotline / Zalo</span>
+            <span className="text-[13px] font-medium tracking-wider">
+              Hotline / Zalo
+            </span>
           </button>
-          
+
           {/* Mobile Menu Toggle */}
-          <button 
-            onClick={() => setIsMenuOpen(!isMenuOpen)} 
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="lg:hidden p-1 text-text-main"
           >
             {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -330,22 +375,22 @@ export const Header = ({ cartCount }: HeaderProps) => {
       <AnimatePresence>
         {isMenuOpen && (
           <>
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsMenuOpen(false)}
               className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[-1]"
             />
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: -20, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -20, scale: 0.95 }}
               className="absolute top-full left-6 right-6 mt-4 glass-effect p-8 rounded-[2.5rem] flex flex-col gap-6 text-center shadow-2xl z-50 border-white/40"
             >
               {navItems.map((item) => (
-                <Link 
-                  key={item.name} 
+                <Link
+                  key={item.name}
                   href={item.href}
                   onClick={() => setIsMenuOpen(false)}
                   className="py-2 text-xs font-bold tracking-[0.2em] uppercase text-text-main hover:text-accent-gold transition-colors"
@@ -353,10 +398,19 @@ export const Header = ({ cartCount }: HeaderProps) => {
                   {item.name}
                 </Link>
               ))}
-              <div className="pt-6 border-t border-border-subtle flex justify-center gap-8">
-                <Search size={22} className="text-text-main" />
+              <div className="pt-6 border-t border-border-subtle flex justify-center gap-8 items-center">
+                <button
+                  onClick={() => {
+                    setIsSearchOpen(true);
+                    setIsMenuOpen(false);
+                  }}
+                  className="text-text-main cursor-pointer"
+                  aria-label="Tìm kiếm"
+                >
+                  <Search size={22} className="text-text-main" />
+                </button>
                 {isAuthenticated && customer ? (
-                  <Link href="/account" onClick={() => setIsMenuOpen(false)}>
+                  <Link href="/user" onClick={() => setIsMenuOpen(false)}>
                     <Avatar fullName={customer.fullName} size="mobile" />
                   </Link>
                 ) : (
@@ -364,10 +418,19 @@ export const Header = ({ cartCount }: HeaderProps) => {
                     <User size={22} className="text-text-main" />
                   </Link>
                 )}
-                <div className="flex items-center gap-2 text-text-main">
+                <button
+                  onClick={() => {
+                    setIsContactOpen(true);
+                    setIsMenuOpen(false);
+                  }}
+                  className="flex items-center gap-2 text-text-main cursor-pointer"
+                  aria-label="Hotline"
+                >
                   <Phone size={18} />
-                  <span className="text-[10px] font-bold uppercase">Hotline</span>
-                </div>
+                  <span className="text-[10px] font-bold uppercase">
+                    Hotline
+                  </span>
+                </button>
               </div>
             </motion.div>
           </>
@@ -396,8 +459,8 @@ export const Header = ({ cartCount }: HeaderProps) => {
           {/* Hotline - Copy số điện thoại */}
           <button
             onClick={() => {
-              navigator.clipboard.writeText('0939654574');
-              alert('Đã copy số điện thoại: 0939.654.574');
+              navigator.clipboard.writeText("0939654574");
+              alert("Đã copy số điện thoại: 0939.654.574");
             }}
             className="w-full flex items-center gap-4 p-4 rounded-xl border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-colors cursor-pointer text-left"
           >
@@ -408,7 +471,9 @@ export const Header = ({ cartCount }: HeaderProps) => {
               <p className="font-semibold text-sm text-black">Hotline</p>
               <p className="text-sm text-gray-600">0939.654.574</p>
             </div>
-            <span className="text-xs text-gray-400 hidden sm:block">Hỗ trợ 9:00 - 18:00 mỗi ngày</span>
+            <span className="text-xs text-gray-400 hidden sm:block">
+              Hỗ trợ 9:00 - 18:00 mỗi ngày
+            </span>
           </button>
 
           {/* Zalo - Mở Zalo chat */}
@@ -425,7 +490,9 @@ export const Header = ({ cartCount }: HeaderProps) => {
               <p className="font-semibold text-sm text-black">Zalo</p>
               <p className="text-sm text-gray-600">0939.654.574</p>
             </div>
-            <span className="text-xs text-gray-400 hidden sm:block">Nhắn tin nhanh chóng</span>
+            <span className="text-xs text-gray-400 hidden sm:block">
+              Nhắn tin nhanh chóng
+            </span>
           </a>
 
           {/* Email - Mở Gmail compose với địa chỉ nhận sẵn */}
@@ -442,7 +509,9 @@ export const Header = ({ cartCount }: HeaderProps) => {
               <p className="font-semibold text-sm text-black">Email</p>
               <p className="text-sm text-gray-600">dukystore.info@gmail.com</p>
             </div>
-            <span className="text-xs text-gray-400 hidden sm:block">Phản hồi trong 24h</span>
+            <span className="text-xs text-gray-400 hidden sm:block">
+              Phản hồi trong 24h
+            </span>
           </a>
 
           {/* Địa chỉ - Mở Google Maps */}
@@ -457,7 +526,11 @@ export const Header = ({ cartCount }: HeaderProps) => {
             </div>
             <div className="flex-1">
               <p className="font-semibold text-sm text-black">Địa chỉ</p>
-              <p className="text-sm text-gray-600">122 Nguyễn Hiến, KDC 91B,<br />P. Tân An, TP. Cần Thơ</p>
+              <p className="text-sm text-gray-600">
+                122 Nguyễn Hiến, KDC 91B,
+                <br />
+                P. Tân An, TP. Cần Thơ
+              </p>
             </div>
           </a>
         </div>
@@ -465,4 +538,3 @@ export const Header = ({ cartCount }: HeaderProps) => {
     </header>
   );
 };
-

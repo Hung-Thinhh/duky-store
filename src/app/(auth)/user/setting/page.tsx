@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   Eye,
@@ -16,13 +16,21 @@ import { Header, Footer } from "@/components/layout";
 import { UserSidebar } from "@/components/auth/UserSidebar";
 
 export default function SettingPage() {
-  const { customer } = useAuth();
+  const { customer, updateProfile, changePassword } = useAuth();
   const { cartCount } = useCart();
 
   // Profile form
   const [fullName, setFullName] = useState(customer?.fullName || "");
   const [email] = useState(customer?.email || "");
   const [phone, setPhone] = useState(customer?.phone || "");
+
+  // Sync profile details when customer object is loaded
+  useEffect(() => {
+    if (customer) {
+      setFullName(customer.fullName || "");
+      setPhone(customer.phone || "");
+    }
+  }, [customer]);
 
   // Password form
   const [currentPassword, setCurrentPassword] = useState("");
@@ -32,9 +40,76 @@ export default function SettingPage() {
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
+  // Msg banners
+  const [profileMsg, setProfileMsg] = useState<{ text: string; type: "success" | "error" } | null>(null);
+  const [passwordMsg, setPasswordMsg] = useState<{ text: string; type: "success" | "error" } | null>(null);
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
+  const [isSavingPassword, setIsSavingPassword] = useState(false);
+
   // Preferences
   const [emailNotif, setEmailNotif] = useState(true);
   const [promoNotif, setPromoNotif] = useState(true);
+
+  const isProfileUnchanged = fullName === (customer?.fullName || "") && (phone || "") === (customer?.phone || "");
+  const isPasswordEmpty = !currentPassword && !newPassword && !confirmPassword;
+
+  const handleSaveProfile = async () => {
+    setProfileMsg(null);
+    if (!fullName.trim()) {
+      setProfileMsg({ text: "Họ và tên không được để trống", type: "error" });
+      return;
+    }
+    setIsSavingProfile(true);
+    try {
+      await updateProfile(fullName, phone);
+      setProfileMsg({ text: "Cập nhật thông tin tài khoản thành công!", type: "success" });
+    } catch (err: any) {
+      setProfileMsg({ text: err.message || "Đã xảy ra lỗi khi cập nhật thông tin", type: "error" });
+    } finally {
+      setIsSavingProfile(false);
+    }
+  };
+
+  const handleUpdatePassword = async () => {
+    setPasswordMsg(null);
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      setPasswordMsg({ text: "Vui lòng nhập đầy đủ các trường mật khẩu", type: "error" });
+      return;
+    }
+    if (newPassword.length < 8) {
+      setPasswordMsg({ text: "Mật khẩu mới phải từ 8 ký tự trở lên", type: "error" });
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setPasswordMsg({ text: "Mật khẩu xác nhận không khớp", type: "error" });
+      return;
+    }
+    setIsSavingPassword(true);
+    try {
+      await changePassword(currentPassword, newPassword, confirmPassword);
+      setPasswordMsg({ text: "Cập nhật mật khẩu thành công!", type: "success" });
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (err: any) {
+      setPasswordMsg({ text: err.message || "Đã xảy ra lỗi khi cập nhật mật khẩu", type: "error" });
+    } finally {
+      setIsSavingPassword(false);
+    }
+  };
+
+  const handleCancelProfile = () => {
+    setProfileMsg(null);
+    setFullName(customer?.fullName || "");
+    setPhone(customer?.phone || "");
+  };
+
+  const handleCancelPassword = () => {
+    setPasswordMsg(null);
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+  };
 
   return (
     <>
@@ -55,6 +130,11 @@ export default function SettingPage() {
             {/* ─── Profile Section ─── */}
             <div className="setting-section">
               <h2 className="section-title">Thông tin tài khoản</h2>
+              {profileMsg && (
+                <div className={`alert-banner alert-banner--${profileMsg.type}`}>
+                  {profileMsg.text}
+                </div>
+              )}
               <div className="profile-content">
                 <div className="profile-form">
                   <div className="form-field">
@@ -67,7 +147,7 @@ export default function SettingPage() {
                   </div>
                   <div className="form-field">
                     <label className="form-label">Số điện thoại</label>
-                    <input type="tel" className="form-input" value={phone} onChange={(e) => setPhone(e.target.value)} />
+                    <input type="tel" className="form-input" value={phone || ""} onChange={(e) => setPhone(e.target.value)} placeholder="Chưa cập nhật số điện thoại" />
                   </div>
                 </div>
                 <div className="profile-avatar-section">
@@ -76,39 +156,62 @@ export default function SettingPage() {
                 </div>
               </div>
               <div className="section-actions">
-                <button type="button" className="save-btn">Lưu thay đổi</button>
+                <button type="button" className="cancel-btn" onClick={handleCancelProfile} disabled={isSavingProfile || isProfileUnchanged}>
+                  Hủy bỏ
+                </button>
+                <button type="button" className="save-btn" onClick={handleSaveProfile} disabled={isSavingProfile || isProfileUnchanged}>
+                  {isSavingProfile ? "Đang lưu..." : "Lưu thay đổi"}
+                </button>
               </div>
             </div>
 
             {/* ─── Password Section ─── */}
             <div className="setting-section">
               <h2 className="section-title">Đổi mật khẩu</h2>
-              <div className="password-grid">
-                <div className="form-field">
-                  <label className="form-label">Mật khẩu hiện tại</label>
-                  <div className="form-input-wrap">
-                    <input type={showCurrent ? "text" : "password"} className="form-input-inner" placeholder="Nhập mật khẩu hiện tại" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} />
-                    <button type="button" className="toggle-pw" onClick={() => setShowCurrent(!showCurrent)}>{showCurrent ? <EyeOff size={16} /> : <Eye size={16} />}</button>
+              {customer?.hasPassword ? (
+                <>
+                  {passwordMsg && (
+                    <div className={`alert-banner alert-banner--${passwordMsg.type}`}>
+                      {passwordMsg.text}
+                    </div>
+                  )}
+                  <div className="password-grid">
+                    <div className="form-field">
+                      <label className="form-label">Mật khẩu hiện tại</label>
+                      <div className="form-input-wrap">
+                        <input type={showCurrent ? "text" : "password"} className="form-input-inner" placeholder="Nhập mật khẩu hiện tại" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} />
+                        <button type="button" className="toggle-pw" onClick={() => setShowCurrent(!showCurrent)}>{showCurrent ? <EyeOff size={16} /> : <Eye size={16} />}</button>
+                      </div>
+                    </div>
+                    <div className="form-field">
+                      <label className="form-label">Mật khẩu mới</label>
+                      <div className="form-input-wrap">
+                        <input type={showNew ? "text" : "password"} className="form-input-inner" placeholder="Nhập mật khẩu mới" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+                        <button type="button" className="toggle-pw" onClick={() => setShowNew(!showNew)}>{showNew ? <EyeOff size={16} /> : <Eye size={16} />}</button>
+                      </div>
+                    </div>
+                    <div className="form-field">
+                      <label className="form-label">Xác nhận mật khẩu mới</label>
+                      <div className="form-input-wrap">
+                        <input type={showConfirm ? "text" : "password"} className="form-input-inner" placeholder="Nhập lại mật khẩu mới" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+                        <button type="button" className="toggle-pw" onClick={() => setShowConfirm(!showConfirm)}>{showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}</button>
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div className="form-field">
-                  <label className="form-label">Mật khẩu mới</label>
-                  <div className="form-input-wrap">
-                    <input type={showNew ? "text" : "password"} className="form-input-inner" placeholder="Nhập mật khẩu mới" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
-                    <button type="button" className="toggle-pw" onClick={() => setShowNew(!showNew)}>{showNew ? <EyeOff size={16} /> : <Eye size={16} />}</button>
+                  <div className="section-actions">
+                    <button type="button" className="cancel-btn" onClick={handleCancelPassword} disabled={isSavingPassword || isPasswordEmpty}>
+                      Hủy bỏ
+                    </button>
+                    <button type="button" className="save-btn" onClick={handleUpdatePassword} disabled={isSavingPassword || isPasswordEmpty}>
+                      {isSavingPassword ? "Đang cập nhật..." : "Cập nhật mật khẩu"}
+                    </button>
                   </div>
+                </>
+              ) : (
+                <div className="password-disabled-notice">
+                  <p>Tài khoản của bạn được liên kết qua Google. Tính năng đổi mật khẩu trực tiếp chỉ khả dụng cho tài khoản đăng ký bằng email thông thường.</p>
                 </div>
-                <div className="form-field">
-                  <label className="form-label">Xác nhận mật khẩu mới</label>
-                  <div className="form-input-wrap">
-                    <input type={showConfirm ? "text" : "password"} className="form-input-inner" placeholder="Nhập lại mật khẩu mới" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
-                    <button type="button" className="toggle-pw" onClick={() => setShowConfirm(!showConfirm)}>{showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}</button>
-                  </div>
-                </div>
-              </div>
-              <div className="section-actions">
-                <button type="button" className="save-btn">Cập nhật mật khẩu</button>
-              </div>
+              )}
             </div>
 
             {/* ─── Preferences Section ─── */}
@@ -196,9 +299,19 @@ export default function SettingPage() {
         .toggle-pw:hover { color: var(--text-main); }
 
         /* Section Actions */
-        .section-actions { display: flex; justify-content: flex-end; margin-top: 20px; }
+        .section-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px; }
+        .cancel-btn { padding: 10px 24px; border-radius: 999px; border: 1px solid var(--border-subtle); background: var(--bg-secondary); color: var(--text-main); font-size: 13px; font-weight: 600; cursor: pointer; transition: var(--transition-fast); }
+        .cancel-btn:hover { background: var(--border-subtle); transform: translateY(-2px); }
+        .cancel-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
         .save-btn { padding: 10px 24px; border-radius: 999px; border: none; background: linear-gradient(135deg, #1a1a1a, #3a3a3a); color: #fff; font-size: 13px; font-weight: 600; cursor: pointer; transition: var(--transition-fast); box-shadow: 0 4px 16px rgba(0,0,0,0.2); }
         .save-btn:hover { background: linear-gradient(135deg, #000, #2a2a2a); transform: translateY(-2px); box-shadow: 0 6px 24px rgba(0,0,0,0.3); }
+        .save-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        /* Alert Banners & Notices */
+        .alert-banner { padding: 12px 16px; border-radius: 8px; font-size: 13px; font-weight: 500; margin-bottom: 20px; width: 100%; box-sizing: border-box; }
+        .alert-banner--success { background: #dcfce7; color: #16a34a; border: 1px solid #bbf7d0; }
+        .alert-banner--error { background: #fee2e2; color: #ef4444; border: 1px solid #fecaca; }
+        .password-disabled-notice { padding: 24px; border-radius: 12px; background: var(--bg-secondary); border: 1px solid var(--border-subtle); text-align: center; color: var(--text-muted); font-size: 14px; line-height: 1.5; }
 
         /* Preferences */
         .pref-list { display: flex; flex-direction: column; gap: 16px; }
@@ -216,7 +329,7 @@ export default function SettingPage() {
         .toggle-switch--on .toggle-knob { transform: translateX(20px); }
 
         /* Responsive */
-        @media (max-width: 1024px) { .setting-layout { grid-template-columns: 1fr; } .setting-sidebar { position: static; } }
+        @media (max-width: 1024px) { .setting-layout { grid-template-columns: 1fr; } .setting-sidebar { position: static; } .setting-main { min-width: 0; } }
         @media (max-width: 768px) { .profile-content { flex-direction: column; } .password-grid { grid-template-columns: 1fr; } }
         @media (max-width: 640px) { .setting-page { padding: 24px 1rem 60px; } }
       `}</style>

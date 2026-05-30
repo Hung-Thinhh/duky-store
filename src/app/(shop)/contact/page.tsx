@@ -2,13 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import {
-  MapPin,
-  Phone,
-  Mail,
-  Clock,
-  MessageCircle,
-} from "lucide-react";
+import { MapPin, Phone, Mail, Clock, MessageCircle } from "lucide-react";
 import { Header, Footer } from "@/components/layout";
 import { Navpages } from "@/components/shop/Navpages";
 import { useCart } from "@/context/CartContext";
@@ -29,7 +23,8 @@ const CONTACT_BANNER: BannerContent = {
   badge: "CONTACT US",
   titleLine1: "LIÊN HỆ",
   titleLine2: "DUKY STORE",
-  description: "Bạn đang cần sự hỗ trợ? Hãy liên hệ với Duky Store — chúng tôi luôn sẵn sàng giúp đỡ bạn.",
+  description:
+    "Bạn đang cần sự hỗ trợ? Hãy liên hệ với Duky Store — chúng tôi luôn sẵn sàng giúp đỡ bạn.",
 };
 
 interface StorePhoto {
@@ -62,7 +57,8 @@ const STORE_PHOTOS: StorePhoto[] = [
 
 const STORE_SECTION_HEADER = {
   title: "Cửa hàng DUKY STORE",
-  subtitle: "Ghé thăm cửa hàng của chúng tôi để trải nghiệm không gian mua sắm hiện đại, sang trọng và nhận sự tư vấn tận tình nhất từ đội ngũ nhân viên chuyên nghiệp.",
+  subtitle:
+    "Ghé thăm cửa hàng của chúng tôi để trải nghiệm không gian mua sắm hiện đại, sang trọng và nhận sự tư vấn tận tình nhất từ đội ngũ nhân viên chuyên nghiệp.",
 };
 
 export default function ContactPage() {
@@ -76,7 +72,11 @@ export default function ContactPage() {
   });
   const [submitted, setSubmitted] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
@@ -102,30 +102,32 @@ export default function ContactPage() {
           width={1920}
           height={1080}
           sizes="100vw"
-          className="w-full h-auto"
+          className="w-full h-[260px] sm:h-[320px] md:h-auto object-cover"
           priority
         />
         {/* Text overlay */}
         <div className="absolute inset-0 flex items-center">
-          <div className="px-12 md:px-16 lg:px-[100px] space-y-3">
-            <span className="inline-block text-xs font-medium tracking-widest text-zinc-400 uppercase">
-              {CONTACT_BANNER.badge}
-            </span>
-            <h1 className="leading-[1.1] tracking-tighter text-white">
-              <span className="block text-[36px] md:text-[52px] lg:text-[64px] font-semibold">
-                {CONTACT_BANNER.titleLine1}
+          <div className="w-full max-w-[1440px] mx-auto px-6 md:px-20">
+            <div className="space-y-2 md:space-y-3 max-w-sm sm:max-w-md">
+              <span className="inline-block text-[10px] md:text-xs font-medium tracking-widest text-zinc-400 uppercase">
+                {CONTACT_BANNER.badge}
               </span>
-              <span className="block text-[30px] md:text-[44px] lg:text-[56px] font-medium italic -mt-1 md:-mt-2">
-                <span className="font-montserrat not-italic font-semibold tracking-wide text-white inline-block ml-1 md:ml-2">
-                  {CONTACT_BANNER.titleLine2}
+              <h1 className="leading-[1.1] tracking-tighter text-white">
+                <span className="block text-[24px] sm:text-[36px] md:text-[52px] lg:text-[64px] font-semibold">
+                  {CONTACT_BANNER.titleLine1}
                 </span>
-              </span>
-            </h1>
-            <div className="flex items-start gap-3 max-w-sm">
-              <div className="w-8 h-px bg-white mt-2.5 shrink-0" />
-              <p className="text-sm text-zinc-300 leading-relaxed font-light">
-                {CONTACT_BANNER.description}
-              </p>
+                <span className="block text-[20px] sm:text-[30px] md:text-[44px] lg:text-[56px] font-medium italic -mt-1 md:-mt-2">
+                  <span className="font-montserrat not-italic font-semibold tracking-wide text-white inline-block ml-1 md:ml-2">
+                    {CONTACT_BANNER.titleLine2}
+                  </span>
+                </span>
+              </h1>
+              <div className="flex items-start gap-2 md:gap-3 max-w-[170px] sm:max-w-sm">
+                <div className="w-6 sm:w-8 h-px bg-white mt-2 shrink-0" />
+                <p className="text-[11px] md:text-sm text-zinc-300 leading-relaxed font-light line-clamp-3 sm:line-clamp-none">
+                  {CONTACT_BANNER.description}
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -133,16 +135,15 @@ export default function ContactPage() {
 
       <section className="contact-page">
         <Navpages
-          items={[
-            { label: "Trang chủ", href: "/" },
-            { label: "Liên hệ" },
-          ]}
+          items={[{ label: "Trang chủ", href: "/" }, { label: "Liên hệ" }]}
         />
 
         {/* Company Store Section */}
         <div className="store-section">
           <div className="store-header">
-            <h2 className="text-4xl md:text-5xl lg:text-[40px] font-semibold text-black leading-tight tracking-tight py-2">{STORE_SECTION_HEADER.title}</h2>
+            <h2 className="text-4xl md:text-5xl lg:text-[40px] font-semibold text-black leading-tight tracking-tight py-2">
+              {STORE_SECTION_HEADER.title}
+            </h2>
             <p className="store-subtitle">{STORE_SECTION_HEADER.subtitle}</p>
           </div>
 
@@ -193,10 +194,13 @@ export default function ContactPage() {
           <div className="contact-info">
             <div className="info-card">
               <div className="info-card-header">
-                <h2 className="text-4xl md:text-5xl lg:text-[40px] font-semibold text-black leading-tight tracking-tight">Thông tin liên hệ</h2>
+                <h2 className="text-4xl md:text-5xl lg:text-[40px] font-semibold text-black leading-tight tracking-tight">
+                  Thông tin liên hệ
+                </h2>
               </div>
               <p className="info-card-desc">
-                Liên hệ với chúng tôi qua các kênh dưới đây hoặc gửi tin nhắn trực tiếp.
+                Liên hệ với chúng tôi qua các kênh dưới đây hoặc gửi tin nhắn
+                trực tiếp.
               </p>
 
               <div className="info-list">
@@ -206,7 +210,9 @@ export default function ContactPage() {
                   </div>
                   <div className="info-content">
                     <span className="info-label">Địa chỉ</span>
-                    <span className="info-value">122 Nguyễn Hiền, KDC 91B, P. Tân An, TP. Cần Thơ</span>
+                    <span className="info-value">
+                      122 Nguyễn Hiền, KDC 91B, P. Tân An, TP. Cần Thơ
+                    </span>
                   </div>
                 </div>
 
@@ -236,21 +242,56 @@ export default function ContactPage() {
                   </div>
                   <div className="info-content">
                     <span className="info-label">Giờ làm việc</span>
-                    <span className="info-value">9:00 - 18:00 (Thứ 2 - Thứ 7)</span>
+                    <span className="info-value">
+                      9:00 - 18:00 (Thứ 2 - Thứ 7)
+                    </span>
                   </div>
                 </div>
               </div>
 
               {/* Social Links */}
               <div className="social-links">
-                <a href="https://zalo.me/0939654574" target="_blank" rel="noopener noreferrer" className="social-btn social-btn--zalo" aria-label="Zalo">
-                  <Image src="/assets/icons/Zalo.png" alt="Zalo" width={22} height={22} />
+                <a
+                  href="https://zalo.me/0939654574"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="social-btn social-btn--zalo"
+                  aria-label="Zalo"
+                >
+                  <Image
+                    src="/assets/icons/Zalo.png"
+                    alt="Zalo"
+                    width={22}
+                    height={22}
+                  />
                 </a>
-                <a href="https://www.instagram.com/duky.store" target="_blank" rel="noopener noreferrer" className="social-btn social-btn--instagram" aria-label="Instagram">
-                  <Image src="/assets/icons/Instagram.png" alt="Instagram" width={22} height={22} />
+                <a
+                  href="https://www.instagram.com/duky.store"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="social-btn social-btn--instagram"
+                  aria-label="Instagram"
+                >
+                  <Image
+                    src="/assets/icons/Instagram.png"
+                    alt="Instagram"
+                    width={22}
+                    height={22}
+                  />
                 </a>
-                <a href="https://www.tiktok.com/@duky.store" target="_blank" rel="noopener noreferrer" className="social-btn social-btn--tiktok" aria-label="TikTok">
-                  <Image src="/assets/icons/Tiktok.png" alt="TikTok" width={22} height={22} />
+                <a
+                  href="https://www.tiktok.com/@duky.store"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="social-btn social-btn--tiktok"
+                  aria-label="TikTok"
+                >
+                  <Image
+                    src="/assets/icons/Tiktok.png"
+                    alt="TikTok"
+                    width={22}
+                    height={22}
+                  />
                 </a>
               </div>
             </div>
@@ -270,10 +311,10 @@ export default function ContactPage() {
             </div>
           </div>
         </div>
-      </section>
 
-      {/* FAQ Section - same style as homepage */}
-      <FAQOnly />
+        {/* FAQ Section */}
+        <FAQOnly className="contact-faq" />
+      </section>
 
       <Footer />
 
@@ -282,6 +323,17 @@ export default function ContactPage() {
           max-width: 1440px;
           margin: 0 auto;
           padding: 32px 2rem 56px;
+        }
+
+        .contact-faq {
+          padding-left: 0 !important;
+          padding-right: 0 !important;
+          margin-bottom: 0 !important;
+        }
+        .contact-faq :global(.container-custom) {
+          padding-left: 0 !important;
+          padding-right: 0 !important;
+          max-width: 100% !important;
         }
 
         .contact-header {
@@ -307,7 +359,7 @@ export default function ContactPage() {
         /* ─── Store Section ─── */
         .store-section {
           max-width: 1200px;
-          margin: 0 auto 56px;
+          margin: 0 auto 32px;
         }
 
         .store-header {
@@ -351,7 +403,9 @@ export default function ContactPage() {
           border-radius: 20px;
           overflow: hidden;
           box-shadow: var(--card-shadow);
-          transition: transform 0.3s ease, box-shadow 0.3s ease;
+          transition:
+            transform 0.3s ease,
+            box-shadow 0.3s ease;
         }
 
         .store-card:hover {

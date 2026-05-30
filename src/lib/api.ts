@@ -281,6 +281,7 @@ export async function fetchBlogCategories(): Promise<{ data: BlogCategoryType[] 
 // ─── Checkout API ────────────────────────────────────────────────────────────
 export interface CheckoutPayload {
   sessionId: string;
+  customerId?: string;
   customerName: string;
   customerPhone: string;
   customerEmail?: string;

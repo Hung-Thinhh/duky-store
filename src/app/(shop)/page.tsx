@@ -85,26 +85,28 @@ export default async function ShopPage() {
       {/* Above-fold: rendered synchronously for fast LCP */}
       <HomeHeader />
       <HomeHeroBanner initialSlides={slides} />
-      <CategorySection />
-      {/* Below-fold: lazy-loaded with Suspense boundaries */}
-      <Suspense fallback={<SectionSkeleton />}>
-        <LazyBootMaleSection />
-      </Suspense>
-      <Suspense fallback={<SectionSkeleton />}>
-        <LazyBootFemaleSection />
-      </Suspense>
-      <Suspense fallback={<SectionSkeleton />}>
-        <LazyGuideSection />
-      </Suspense>
-      <Suspense fallback={<SectionSkeleton />}>
-        <LazyNewsSection />
-      </Suspense>
-      <Suspense fallback={<SectionSkeleton />}>
-        <LazyFAQSection />
-      </Suspense>
-      <Suspense fallback={<SectionSkeleton />}>
-        <LazyPreFooter />
-      </Suspense>
+      <div className="home-page-sections">
+        <CategorySection />
+        {/* Below-fold: lazy-loaded with Suspense boundaries */}
+        <Suspense fallback={<SectionSkeleton />}>
+          <LazyBootMaleSection />
+        </Suspense>
+        <Suspense fallback={<SectionSkeleton />}>
+          <LazyBootFemaleSection />
+        </Suspense>
+        <Suspense fallback={<SectionSkeleton />}>
+          <LazyGuideSection />
+        </Suspense>
+        <Suspense fallback={<SectionSkeleton />}>
+          <LazyNewsSection />
+        </Suspense>
+        <Suspense fallback={<SectionSkeleton />}>
+          <LazyFAQSection />
+        </Suspense>
+        <Suspense fallback={<SectionSkeleton />}>
+          <LazyPreFooter />
+        </Suspense>
+      </div>
       <Footer />
       <HomeCartToast />
     </>

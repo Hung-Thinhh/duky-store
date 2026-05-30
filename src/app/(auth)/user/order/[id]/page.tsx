@@ -17,6 +17,7 @@ import { UserSidebar } from "@/components/auth/UserSidebar";
 import { formatCurrency } from "@/lib/utils";
 import { orderLookupAPI, CheckoutOrder } from "@/lib/api";
 import { getOrderHistory } from "@/lib/order-storage";
+import { getCustomerOrderByCode } from "@/lib/auth-api";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 function getStatusLabel(status: string): string {
@@ -94,18 +95,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
     setError(null);
 
     try {
-      // Get phone from stored order history or auth context
-      const storedOrders = getOrderHistory();
-      const storedOrder = storedOrders.find((o) => o.code === id);
-      const phone = storedOrder?.phone || customer?.phone || "";
-
-      if (!phone) {
-        setError("Không tìm thấy thông tin số điện thoại để tra cứu đơn hàng.");
-        setIsLoading(false);
-        return;
-      }
-
-      const data = await orderLookupAPI(id, phone);
+      const data = await getCustomerOrderByCode(id);
       setOrder(data);
     } catch (err) {
       const message = err instanceof Error ? err.message : "Không thể tải thông tin đơn hàng.";
@@ -113,7 +103,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
     } finally {
       setIsLoading(false);
     }
-  }, [id, customer?.phone]);
+  }, [id]);
 
   useEffect(() => {
     fetchOrder();

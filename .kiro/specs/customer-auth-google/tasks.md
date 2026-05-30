@@ -46,7 +46,7 @@ This plan implements customer registration and login (email/password + Google OA
     - Wrap responses in the standard `{ EC, EM, DT }` envelope format
     - _Requirements: 1.1, 2.1_
 
-  - [ ]* 1.5 Write unit tests for register and loginWithEmail
+  - [ ]\* 1.5 Write unit tests for register and loginWithEmail
     - Test valid registration returns tokens and customer profile
     - Test duplicate email returns error without revealing account type
     - Test password validation (too short, too long, mismatch)
@@ -92,7 +92,7 @@ This plan implements customer registration and login (email/password + Google OA
     - Export `useAuth()` hook for consuming components
     - _Requirements: 6.1, 6.2, 6.3, 6.7_
 
-  - [ ]* 3.4 Write unit tests for auth-api and AuthContext
+  - [ ]\* 3.4 Write unit tests for auth-api and AuthContext
     - Test auth-api functions make correct fetch calls with proper payloads
     - Test AuthContext state transitions (unauthenticated → authenticated → logout)
     - Test token refresh on expired access token
@@ -141,7 +141,7 @@ This plan implements customer registration and login (email/password + Google OA
     - When authenticated: replace the `<User>` icon link with a circular avatar image (32×32 desktop, 28×28 mobile)
     - Use customer's Google avatar URL if available, otherwise show fallback
     - Fallback: circular div with first character of fullName (uppercase) on neutral background
-    - Avatar links to `/account` page
+    - Avatar links to `/user` page
     - Add `alt` attribute with customer's fullName for accessibility
     - Handle image load error with 3-second timeout → show fallback
     - When unauthenticated: keep existing `<User>` icon linking to `/login`

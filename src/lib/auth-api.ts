@@ -1,3 +1,5 @@
+import { CheckoutOrder } from "./api";
+
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api/v1";
 
@@ -17,6 +19,23 @@ export interface CustomerProfile {
   status: "ACTIVE" | "BLOCKED";
   type: "NEW" | "REGULAR" | "VIP" | "WHOLESALE";
   emailVerifiedAt: string | null;
+  hasPassword: boolean;
+}
+
+export interface CustomerAddress {
+  id: string;
+  customerId: string;
+  fullName: string;
+  phone: string;
+  addressLine: string;
+  ward: string | null;
+  district: string | null;
+  province: string | null;
+  country: string;
+  isDefault: boolean;
+  note: string | null;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface AuthResponse {
@@ -137,5 +156,131 @@ export async function getProfile(accessToken: string): Promise<CustomerProfile> 
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },
+  });
+}
+
+/**
+ * Helper to perform authenticated API calls using authFetch.
+ * Uses dynamic import to avoid circular dependencies.
+ */
+async function authFetchJson<T>(
+  endpoint: string,
+  options: RequestInit
+): Promise<T> {
+  const { authFetch } = await import("./auth-fetch");
+  const res = await authFetch(`${API_URL}${endpoint}`, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
+
+  const json: ApiResponse<T> = await res.json();
+
+  if (json.EC !== 0) {
+    const error: AuthError & Error = Object.assign(new Error(json.EM), {
+      EC: json.EC,
+      EM: json.EM,
+    });
+    throw error;
+  }
+
+  return json.DT;
+}
+
+/**
+ * Update current customer's profile.
+ * PATCH /api/v1/customer/auth/profile
+ */
+export async function updateProfile(
+  fullName: string,
+  phone: string | null
+): Promise<CustomerProfile> {
+  return authFetchJson<CustomerProfile>("/customer/auth/profile", {
+    method: "PATCH",
+    body: JSON.stringify({ fullName, phone }),
+  });
+}
+
+/**
+ * Change current customer's password.
+ * PUT /api/v1/customer/auth/password
+ */
+export async function changePassword(
+  currentPassword: string,
+  newPassword: string,
+  confirmPassword: string
+): Promise<{ success: boolean }> {
+  return authFetchJson<{ success: boolean }>("/customer/auth/password", {
+    method: "PUT",
+    body: JSON.stringify({ currentPassword, newPassword, confirmPassword }),
+  });
+}
+
+/**
+ * List customer addresses.
+ * GET /api/v1/customer/auth/addresses
+ */
+export async function listAddresses(): Promise<CustomerAddress[]> {
+  return authFetchJson<CustomerAddress[]>("/customer/auth/addresses", {
+    method: "GET",
+  });
+}
+
+/**
+ * Create customer address.
+ * POST /api/v1/customer/auth/addresses
+ */
+export async function createAddress(
+  data: Partial<Omit<CustomerAddress, "id" | "customerId">>
+): Promise<CustomerAddress> {
+  return authFetchJson<CustomerAddress>("/customer/auth/addresses", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+/**
+ * Update customer address.
+ * PATCH /api/v1/customer/auth/addresses/:id
+ */
+export async function updateAddress(
+  id: string,
+  data: Partial<Omit<CustomerAddress, "id" | "customerId">>
+): Promise<CustomerAddress> {
+  return authFetchJson<CustomerAddress>(`/customer/auth/addresses/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(data),
+  });
+}
+
+/**
+ * Delete customer address.
+ * DELETE /api/v1/customer/auth/addresses/:id
+ */
+export async function deleteAddress(id: string): Promise<{ success: boolean }> {
+  return authFetchJson<{ success: boolean }>(`/customer/auth/addresses/${id}`, {
+    method: "DELETE",
+  });
+}
+
+/**
+ * List customer orders.
+ * GET /api/v1/customer/auth/orders
+ */
+export async function listCustomerOrders(): Promise<CheckoutOrder[]> {
+  return authFetchJson<CheckoutOrder[]>("/customer/auth/orders", {
+    method: "GET",
+  });
+}
+
+/**
+ * Get customer order by code.
+ * GET /api/v1/customer/auth/orders/:code
+ */
+export async function getCustomerOrderByCode(code: string): Promise<CheckoutOrder> {
+  return authFetchJson<CheckoutOrder>(`/customer/auth/orders/${code}`, {
+    method: "GET",
   });
 }

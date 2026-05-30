@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  Truck,
-  RotateCcw,
-  Headphones,
-  ShieldCheck,
-} from "lucide-react";
+import { Truck, RotateCcw, Headphones, ShieldCheck } from "lucide-react";
 import { HeroSlider } from "@/components/shop/home/HeroSlider";
 import { HERO_SLIDES } from "@/data/heroSlider";
 import type { TrustItem, SlideConfig } from "@/types/heroSlider";
@@ -38,11 +33,16 @@ const trustItems: TrustItem[] = [
  * Trust items contain React elements (icons) which are not serializable
  * across the server/client boundary, so they must be defined in a client component.
  */
-export function HomeHeroBanner({ initialSlides }: { initialSlides?: SlideConfig[] }) {
+export function HomeHeroBanner({
+  initialSlides,
+}: {
+  initialSlides?: SlideConfig[];
+}) {
   return (
     <HeroSlider
       slides={initialSlides ?? HERO_SLIDES}
       trustItems={trustItems}
+      autoScroll={false} // Đổi thành false nếu bạn muốn tắt tự động cuộn (auto-scroll) banner
     />
   );
 }

@@ -7,12 +7,15 @@ import {
   googleLogin as googleLoginApi,
   refreshToken as refreshTokenApi,
   logout as logoutApi,
+  updateProfile as updateProfileApi,
+  changePassword as changePasswordApi,
   CustomerProfile,
 } from "@/lib/auth-api";
 
 // ─── localStorage keys ───────────────────────────────────────────────────────
 const ACCESS_TOKEN_KEY = "duky_access_token";
 const REFRESH_TOKEN_KEY = "duky_refresh_token";
+const CUSTOMER_KEY = "duky_customer";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 export interface AuthState {
@@ -27,6 +30,8 @@ export interface AuthContextValue extends AuthState {
   googleLogin: (idToken: string) => Promise<void>;
   logout: () => Promise<void>;
   refresh: () => Promise<void>;
+  updateProfile: (fullName: string, phone: string | null) => Promise<void>;
+  changePassword: (currentPassword: string, newPassword: string, confirmPassword: string) => Promise<void>;
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -80,6 +85,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     async function initializeAuth() {
       const accessToken = localStorage.getItem(ACCESS_TOKEN_KEY);
       const storedRefreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
+      const storedCustomer = localStorage.getItem(CUSTOMER_KEY);
 
       // No tokens at all — unauthenticated
       if (!accessToken && !storedRefreshToken) {
@@ -90,13 +96,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Access token exists and is not expired — restore state
       if (accessToken && !isTokenExpired(accessToken)) {
         const payload = decodeJwtPayload(accessToken);
-        if (payload && payload.customer) {
-          setCustomer(payload.customer as CustomerProfile);
-          setIsAuthenticated(true);
-          setIsLoading(false);
-          return;
+        if (payload) {
+          if (storedCustomer) {
+            try {
+              setCustomer(JSON.parse(storedCustomer) as CustomerProfile);
+              setIsAuthenticated(true);
+              setIsLoading(false);
+              return;
+            } catch {
+              // If storedCustomer is malformed, try to refresh
+            }
+          }
         }
-        // If payload doesn't contain customer info, try refresh to get profile
       }
 
       // Access token expired or missing but refresh token exists — attempt refresh
@@ -105,18 +116,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           const response = await refreshTokenApi(storedRefreshToken);
           localStorage.setItem(ACCESS_TOKEN_KEY, response.accessToken);
           localStorage.setItem(REFRESH_TOKEN_KEY, response.refreshToken);
+          localStorage.setItem(CUSTOMER_KEY, JSON.stringify(response.customer));
           setCustomer(response.customer);
           setIsAuthenticated(true);
         } catch {
           // Refresh failed — clear everything
           localStorage.removeItem(ACCESS_TOKEN_KEY);
           localStorage.removeItem(REFRESH_TOKEN_KEY);
+          localStorage.removeItem(CUSTOMER_KEY);
           setCustomer(null);
           setIsAuthenticated(false);
         }
       } else {
         // No refresh token — clear stale access token
         localStorage.removeItem(ACCESS_TOKEN_KEY);
+        localStorage.removeItem(CUSTOMER_KEY);
       }
 
       setIsLoading(false);
@@ -131,6 +145,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const response = await loginWithEmail(email, password);
     localStorage.setItem(ACCESS_TOKEN_KEY, response.accessToken);
     localStorage.setItem(REFRESH_TOKEN_KEY, response.refreshToken);
+    localStorage.setItem(CUSTOMER_KEY, JSON.stringify(response.customer));
     setCustomer(response.customer);
     setIsAuthenticated(true);
   }, []);
@@ -140,6 +155,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const response = await registerApi(email, password, passwordConfirmation);
       localStorage.setItem(ACCESS_TOKEN_KEY, response.accessToken);
       localStorage.setItem(REFRESH_TOKEN_KEY, response.refreshToken);
+      localStorage.setItem(CUSTOMER_KEY, JSON.stringify(response.customer));
       setCustomer(response.customer);
       setIsAuthenticated(true);
     },
@@ -150,6 +166,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const response = await googleLoginApi(idToken);
     localStorage.setItem(ACCESS_TOKEN_KEY, response.accessToken);
     localStorage.setItem(REFRESH_TOKEN_KEY, response.refreshToken);
+    localStorage.setItem(CUSTOMER_KEY, JSON.stringify(response.customer));
     setCustomer(response.customer);
     setIsAuthenticated(true);
   }, []);
@@ -160,8 +177,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Always clear local state regardless of API call result
     localStorage.removeItem(ACCESS_TOKEN_KEY);
     localStorage.removeItem(REFRESH_TOKEN_KEY);
+    localStorage.removeItem(CUSTOMER_KEY);
+    localStorage.removeItem("duky_cart_session");
     setCustomer(null);
     setIsAuthenticated(false);
+
+    // Redirect to home page only if currently on a user-specific page
+    if (typeof window !== "undefined" && window.location.pathname.startsWith("/user")) {
+      window.location.href = "/";
+    }
 
     // Call logout API but ignore errors (Requirements 5.3, 5.4)
     if (storedRefreshToken) {
@@ -182,8 +206,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const response = await refreshTokenApi(storedRefreshToken);
     localStorage.setItem(ACCESS_TOKEN_KEY, response.accessToken);
     localStorage.setItem(REFRESH_TOKEN_KEY, response.refreshToken);
+    localStorage.setItem(CUSTOMER_KEY, JSON.stringify(response.customer));
     setCustomer(response.customer);
     setIsAuthenticated(true);
+  }, []);
+
+  const updateProfile = useCallback(async (fullName: string, phone: string | null) => {
+    const updatedCustomer = await updateProfileApi(fullName, phone);
+    localStorage.setItem(CUSTOMER_KEY, JSON.stringify(updatedCustomer));
+    setCustomer(updatedCustomer);
+  }, []);
+
+  const changePassword = useCallback(async (currentPassword: string, newPassword: string, confirmPassword: string) => {
+    await changePasswordApi(currentPassword, newPassword, confirmPassword);
   }, []);
 
   return (
@@ -197,6 +232,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         googleLogin,
         logout,
         refresh,
+        updateProfile,
+        changePassword,
       }}
     >
       {children}

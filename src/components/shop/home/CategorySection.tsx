@@ -65,11 +65,39 @@ export const CategorySection = () => {
 
   return (
     <section 
-      className="pt-24 pb-8 px-6 overflow-hidden"
+      className="pt-24 pb-8 overflow-hidden category-section-container"
     >
-      <div className="container-custom">
+      <style dangerouslySetInnerHTML={{ __html: `
+        .category-section-container {
+          padding-left: 0.5rem;
+          padding-right: 0.5rem;
+        }
+        .category-container-custom {
+          padding-left: 0 !important;
+          padding-right: 0 !important;
+        }
+        .category-header-container {
+          padding-left: 0.5rem;
+          padding-right: 0.5rem;
+        }
+        @media (min-width: 768px) {
+          .category-section-container {
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+          }
+          .category-container-custom {
+            padding-left: 2rem !important;
+            padding-right: 2rem !important;
+          }
+          .category-header-container {
+            padding-left: 0;
+            padding-right: 0;
+          }
+        }
+      `}} />
+      <div className="container-custom category-container-custom">
         {/* Header */}
-        <div className="mt-8">
+        <div className="mt-8 category-header-container">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -86,7 +114,7 @@ export const CategorySection = () => {
         </div>
 
         {/* Categories Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 lg:gap-8">
           {CATEGORIES_DATA.map((cat, i) => (
             <motion.div
               key={cat.title}
