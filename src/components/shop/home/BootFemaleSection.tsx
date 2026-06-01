@@ -39,8 +39,8 @@ function getSlideDescription(product: Product): string {
   return 'Thiết kế tôn dáng, chất liệu cao cấp và linh hoạt cho nhiều phong cách.';
 }
 
-export const BootFemaleSection: React.FC = () => {
-  const { products, loading } = useProductsByCategories('boot-nu', 12);
+export const BootFemaleSection: React.FC<{ initialProducts?: Product[] }> = ({ initialProducts }) => {
+  const { products, loading } = useProductsByCategories('boot-nu', 12, initialProducts);
 
   const femaleSlides = useMemo<Slide[]>(() => {
     return products

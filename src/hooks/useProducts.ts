@@ -1,6 +1,4 @@
-"use client";
-
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Product } from "@/types/product";
 import { fetchProducts, ProductListParams } from "@/lib/api";
 
@@ -18,19 +16,28 @@ interface UseProductsResult {
 
 type UseProductsOptions = {
   enabled?: boolean;
+  initialData?: Product[];
 };
 
 export function useProducts(
   params?: ProductListParams,
   options?: UseProductsOptions,
 ): UseProductsResult {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  const initialData = options?.initialData;
+  const [products, setProducts] = useState<Product[]>(initialData || []);
+  const [loading, setLoading] = useState(!initialData || initialData.length === 0);
   const [error, setError] = useState<string | null>(null);
   const [pagination, setPagination] = useState<UseProductsResult["pagination"]>(null);
   const enabled = options?.enabled ?? true;
 
+  const hasLoadedInitial = useRef(Boolean(initialData && initialData.length > 0));
+
   useEffect(() => {
+    if (hasLoadedInitial.current) {
+      hasLoadedInitial.current = false;
+      return;
+    }
+
     let cancelled = false;
 
     async function load() {

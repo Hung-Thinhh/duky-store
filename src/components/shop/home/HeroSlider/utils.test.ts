@@ -12,9 +12,7 @@ import type { SlideConfig, LayerConfig } from "@/types/heroSlider";
 function makeValidSlide(overrides: Partial<SlideConfig> = {}): SlideConfig {
   return {
     id: "test-slide",
-    layers: [
-      { src: "/assets/slider_1/background.png", alt: "bg", zIndex: 0 },
-    ],
+    layers: [{ src: "/assets/slider_1/background.png", alt: "bg", zIndex: 0 }],
     text: {
       badge: "TEST",
       title: "Test Title",
@@ -76,15 +74,13 @@ describe("validateSlides", () => {
   });
 
   it("returns empty array when all slides are invalid", () => {
-    const slides = [
-      makeValidSlide({ id: "bad", layers: [] }),
-    ];
+    const slides = [makeValidSlide({ id: "bad", layers: [] })];
     expect(validateSlides(slides)).toEqual([]);
   });
 
   it("caps at 10 slides maximum", () => {
     const slides = Array.from({ length: 12 }, (_, i) =>
-      makeValidSlide({ id: `s${i}` })
+      makeValidSlide({ id: `s${i}` }),
     );
     const result = validateSlides(slides);
     expect(result).toHaveLength(10);

@@ -13,51 +13,17 @@ import {
   ShieldCheck,
   Lock,
 } from "lucide-react";
-import { fetchBlogPosts } from "@/lib/api";
-import type { BlogPost } from "@/types/blog";
+import { fetchBlogPosts, NewsItem, mapBlogPostToNewsItem } from "@/lib/api";
 import { NewsCard } from "../NewsCard";
 
-type NewsItem = {
-  id: string;
-  image: string;
-  date: {
-    day: string;
-    month: string;
-  };
-  category: string;
-  title: string;
-  slug: string;
-  publishedAtMs: number;
-};
-
-function mapBlogPostToNewsItem(post: BlogPost): NewsItem {
-  const dateSource = post.publishedAt || post.createdAt;
-  const date = new Date(dateSource);
-  const validDate = Number.isNaN(date.getTime()) ? null : date;
-
-  return {
-    id: post.id,
-    image:
-      post.coverMedia?.secureUrl ||
-      post.coverMedia?.url ||
-      "/assets/placeholder.jpg",
-    date: {
-      day: validDate ? String(validDate.getDate()).padStart(2, "0") : "--",
-      month: validDate ? `TH ${validDate.getMonth() + 1}` : "TH ?",
-    },
-    category: (post.categories?.[0]?.name || "TIN TUC").toUpperCase(),
-    title: post.title,
-    slug: post.slug,
-    publishedAtMs: validDate ? validDate.getTime() : 0,
-  };
-}
-
-export const NewsSection = () => {
+export const NewsSection = ({ initialNewsItems }: { initialNewsItems?: NewsItem[] }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [newsItems, setNewsItems] = useState<NewsItem[]>(initialNewsItems || []);
+  const [loading, setLoading] = useState(!initialNewsItems || initialNewsItems.length === 0);
   const [visibleItems, setVisibleItems] = useState(3);
   const [isPaused, setIsPaused] = useState(false);
+
+  const hasLoadedInitial = React.useRef(Boolean(initialNewsItems && initialNewsItems.length > 0));
 
   useEffect(() => {
     const handleResize = () => {
@@ -76,6 +42,11 @@ export const NewsSection = () => {
   }, []);
 
   useEffect(() => {
+    if (hasLoadedInitial.current) {
+      hasLoadedInitial.current = false;
+      return;
+    }
+
     let cancelled = false;
 
     async function loadNews() {

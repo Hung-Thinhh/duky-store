@@ -1,37 +1,20 @@
-'use client';
+import React, { Suspense } from "react";
+import type { Metadata } from "next";
+import { buildMetadata } from "@/lib/metadata";
+import { LoginClient } from "./LoginClient";
 
-import React from 'react';
-import LoginSection from '@/components/shop/login/LoginSection';
-import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
+export async function generateMetadata(): Promise<Metadata> {
+  return buildMetadata({
+    title: "Đăng nhập",
+    description: "Đăng nhập tài khoản Duky Store để quản lý đơn hàng và nhận các ưu đãi hấp dẫn.",
+    path: "/login",
+  });
+}
 
 export default function LoginPage() {
   return (
-    <main className="min-h-screen w-full flex items-center justify-center relative p-6">
-      {/* Login Section Container */}
-      <LoginSection />
-
-      <style jsx>{`
-        main {
-          background-image: url('/assets/background.png');
-          background-size: cover;
-          background-position: center;
-          background-attachment: fixed;
-        }
-
-        @media (max-width: 640px) {
-          main {
-            padding: 12px !important;
-          }
-        }
-
-        .glass-effect {
-          background: rgba(255, 255, 255, 0.7);
-          backdrop-filter: blur(10px);
-          border: 1px solid rgba(255, 255, 255, 0.4);
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        }
-      `}</style>
-    </main>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Đang tải...</div>}>
+      <LoginClient />
+    </Suspense>
   );
 }

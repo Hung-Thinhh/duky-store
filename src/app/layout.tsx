@@ -19,9 +19,9 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: "Duky Store - Premium Women's Boots",
+  title: "Duky Store - Giày Boot Nam Nữ Cao Cấp & Thời Trang",
   description:
-    "Premium e-commerce landing page for high-end women's boots, featuring a blend of minimalism, glassmorphism, and neumorphism.",
+    "Duky Store chuyên cung cấp các dòng giày boot nam, boot nữ cao cấp, phụ kiện thời trang và phong cách unisex hiện đại, giao hàng toàn quốc.",
   icons: {
     icon: "/assets/logo_header.png",
     shortcut: "/assets/logo_header.png",

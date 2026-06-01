@@ -265,7 +265,7 @@ export const GuideSection = () => {
               href="/gallery"
               className="content flex items-center gap-2 text-sm md:text-base font-medium text-gray-500 hover:text-black transition-colors group"
             >
-              Xem lookbook
+              Xem thêm
               <ArrowRight
                 size={18}
                 className="group-hover:translate-x-1 transition-transform"

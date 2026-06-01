@@ -32,9 +32,14 @@ export function validateCheckoutForm(data: CheckoutFormData): ValidationErrors {
     errors.fullName = "Vui lòng nhập họ và tên";
   }
 
-  // phone: required, length between 8 and 20 characters
-  if (!data.phone || data.phone.length < 8 || data.phone.length > 20) {
-    errors.phone = "Số điện thoại phải từ 8 đến 20 ký tự";
+  // phone: required, must be exactly 10 digits
+  if (!data.phone) {
+    errors.phone = "Vui lòng nhập số điện thoại";
+  } else {
+    const phoneRegex = /^\d{10}$/;
+    if (!phoneRegex.test(data.phone)) {
+      errors.phone = "Số điện thoại phải bao gồm đúng 10 chữ số";
+    }
   }
 
   // email: required, must be valid format

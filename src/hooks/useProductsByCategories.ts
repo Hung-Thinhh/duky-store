@@ -42,15 +42,23 @@ async function getCategoriesCached(): Promise<CategoryItem[]> {
  */
 export function useProductsByCategories(
   parentSlug: string | string[],
-  limit: number = 12
+  limit: number = 12,
+  initialData?: Product[]
 ): { products: Product[]; loading: boolean } {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState<Product[]>(initialData || []);
+  const [loading, setLoading] = useState(!initialData || initialData.length === 0);
 
   const slugs = Array.isArray(parentSlug) ? parentSlug : [parentSlug];
   const slugsKey = slugs.join(",");
 
+  const hasLoadedInitial = useRef(Boolean(initialData && initialData.length > 0));
+
   useEffect(() => {
+    if (hasLoadedInitial.current) {
+      hasLoadedInitial.current = false;
+      return;
+    }
+
     let cancelled = false;
 
     async function load() {
@@ -110,3 +118,4 @@ export function useProductsByCategories(
 
   return { products, loading };
 }
+

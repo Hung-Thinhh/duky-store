@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useMemo,
+} from "react";
 import { gsap } from "gsap";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -52,7 +58,7 @@ export function HeroSlider({
 
   const clampedInterval = Math.min(
     Math.max(autoScrollInterval, MIN_AUTO_SCROLL_INTERVAL),
-    MAX_AUTO_SCROLL_INTERVAL
+    MAX_AUTO_SCROLL_INTERVAL,
   );
 
   // ─── Validate Slides ─────────────────────────────────────────────────────
@@ -89,40 +95,40 @@ export function HeroSlider({
       const tl = gsap.timeline();
 
       if (bg) {
-        gsap.set(bg, { opacity: 0, scale: 1.08 });
+        // Keep background visible at opacity: 1 immediately to optimize LCP
+        gsap.set(bg, { opacity: 1, scale: 1.02 });
         tl.to(bg, {
-          opacity: 1,
           scale: 1,
-          duration: 1.2,
+          duration: 0.6,
           ease: "power2.out",
         });
       }
 
       if (model) {
-        gsap.set(model, { opacity: 0, x: 50 });
+        gsap.set(model, { opacity: 0, x: 20 });
         tl.to(
           model,
           {
             opacity: 1,
             x: 0,
-            duration: 1.2,
+            duration: 0.6,
             ease: "power2.out",
           },
-          "-=0.9"
+          "-=0.4",
         );
       }
 
       if (boot) {
-        gsap.set(boot, { opacity: 0, x: 80 });
+        gsap.set(boot, { opacity: 0, x: 30 });
         tl.to(
           boot,
           {
             opacity: 1,
             x: 0,
-            duration: 1.2,
+            duration: 0.6,
             ease: "power2.out",
           },
-          "-=0.9"
+          "-=0.4",
         );
       }
     }
@@ -192,7 +198,7 @@ export function HeroSlider({
           duration: durationSec * 0.6,
           ease: "power2.out",
         },
-        `-=${durationSec * 0.25}` // Start zoom as current fades out
+        `-=${durationSec * 0.25}`, // Start zoom as current fades out
       );
 
       // Animate model sliding in from right
@@ -205,7 +211,7 @@ export function HeroSlider({
             duration: durationSec * 0.6,
             ease: "power2.out",
           },
-          `-=${durationSec * 0.45}`
+          `-=${durationSec * 0.45}`,
         );
       }
 
@@ -219,13 +225,13 @@ export function HeroSlider({
             duration: durationSec * 0.6,
             ease: "power2.out",
           },
-          `-=${durationSec * 0.45}`
+          `-=${durationSec * 0.45}`,
         );
       }
 
       transitionTimelineRef.current = tl;
     },
-    [currentSlide, isTransitioning, transitionDuration]
+    [currentSlide, isTransitioning, transitionDuration],
   );
 
   // ─── Auto-Scroll Timer ───────────────────────────────────────────────────
@@ -244,12 +250,23 @@ export function HeroSlider({
         autoScrollTimerRef.current = null;
       }
     };
-  }, [autoScroll, currentSlide, isPaused, isTransitioning, clampedInterval, validSlides.length, transitionToSlide]);
+  }, [
+    autoScroll,
+    currentSlide,
+    isPaused,
+    isTransitioning,
+    clampedInterval,
+    validSlides.length,
+    transitionToSlide,
+  ]);
 
   // ─── Hover Pause (Desktop Only) ─────────────────────────────────────────
 
   const handleMouseEnter = useCallback(() => {
-    if (typeof window !== "undefined" && window.innerWidth >= DESKTOP_BREAKPOINT) {
+    if (
+      typeof window !== "undefined" &&
+      window.innerWidth >= DESKTOP_BREAKPOINT
+    ) {
       setIsPaused(true);
     }
   }, []);
@@ -268,7 +285,7 @@ export function HeroSlider({
       // Reset timer by triggering transition (timer resets via useEffect deps)
       transitionToSlide(index);
     },
-    [isTransitioning, currentSlide, transitionToSlide]
+    [isTransitioning, currentSlide, transitionToSlide],
   );
 
   const handlePrevSlide = useCallback(() => {
@@ -353,7 +370,7 @@ export function HeroSlider({
         slideContainersRef.current.delete(index);
       }
     },
-    []
+    [],
   );
 
   // ─── Render ──────────────────────────────────────────────────────────────
@@ -366,7 +383,7 @@ export function HeroSlider({
       id="hero"
       className={cn(
         "group/slider relative overflow-hidden w-full h-[100dvh] lg:h-screen",
-        className
+        className,
       )}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -414,6 +431,7 @@ export function HeroSlider({
                     }
                   }
                   isActive={isActive}
+                  priority={index === 0 && layer.zIndex === 0}
                 />
               );
             })}

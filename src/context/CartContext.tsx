@@ -38,6 +38,7 @@ interface CartContextType {
   refreshCart: () => Promise<void>;
   updateQuantity: (itemId: string, quantity: number) => Promise<void>;
   removeFromCart: (itemId: string) => Promise<void>;
+  removeMultipleFromCart: (itemIds: string[]) => Promise<void>;
   clearCart: () => void;
   openCart: () => void;
   closeCart: () => void;
@@ -257,6 +258,39 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     [showToast]
   );
 
+  // ─── removeMultipleFromCart ──────────────────────────────────────────────────
+  const removeMultipleFromCart = useCallback(
+    async (itemIds: string[]): Promise<void> => {
+      const sid = sessionIdRef.current;
+      // Optimistic update: remove from UI immediately
+      setCart((prev) => prev.filter((item) => !itemIds.includes(item.id)));
+
+      try {
+        await Promise.all(itemIds.map((itemId) => removeCartItemAPI(itemId, sid)));
+        if (sid) {
+          const response = await getCartAPI(sid);
+          setCart(response.items);
+        }
+      } catch (error: unknown) {
+        // On error, refresh cart to restore correct state
+        if (sid) {
+          try {
+            const response = await getCartAPI(sid);
+            setCart(response.items);
+          } catch {
+            // ignore
+          }
+        }
+        const message =
+          error instanceof Error
+            ? error.message
+            : "Lỗi kết nối, vui lòng thử lại";
+        showToast(message, "error");
+      }
+    },
+    [showToast]
+  );
+
   // ─── Cart drawer ─────────────────────────────────────────────────────────────
   const openCart = useCallback(() => setIsCartOpen(true), []);
   const closeCart = useCallback(() => setIsCartOpen(false), []);
@@ -273,6 +307,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         refreshCart,
         updateQuantity,
         removeFromCart,
+        removeMultipleFromCart,
         clearCart,
         openCart,
         closeCart,

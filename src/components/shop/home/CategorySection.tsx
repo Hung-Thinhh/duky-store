@@ -6,6 +6,7 @@ import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import gsap from "gsap";
 import { CategoryCard, ProductCard } from "@/components/shop";
 import { useProducts } from "@/hooks/useProducts";
+import { Product } from "@/types/product";
 
 const CATEGORIES_DATA = [
   { title: "Boot nam", imageSrc: "/assets/boot_nam.png", href: "/collections/boot-nam" },
@@ -14,9 +15,12 @@ const CATEGORIES_DATA = [
   { title: "Phụ kiện", imageSrc: "/assets/phu_kien.png", href: "/collections/phu-kien" },
 ];
 
-export const CategorySection = () => {
+export const CategorySection = ({ initialProducts }: { initialProducts?: Product[] }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const { products, loading } = useProducts({ isBestSeller: true, limit: 12 });
+  const { products, loading } = useProducts(
+    { isBestSeller: true, limit: 12 },
+    { initialData: initialProducts }
+  );
 
   const handleScroll = (direction: "left" | "right") => {
     if (scrollRef.current) {

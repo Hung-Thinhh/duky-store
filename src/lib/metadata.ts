@@ -14,16 +14,23 @@ export interface PageMetadataInput {
  */
 export function buildMetadata(input: PageMetadataInput): Metadata {
   const siteUrl =
-    process.env.NEXT_PUBLIC_SITE_URL || "https://dukystore.vn";
+    process.env.NEXT_PUBLIC_SITE_URL || "https://dukystore.com";
 
-  const fullTitle = `${input.title} | Duky Store`;
+  const fullTitle =
+    input.path === "/" || input.title.includes("Duky Store")
+      ? input.title
+      : `${input.title} | Duky Store`;
   const canonicalUrl = `${siteUrl}${input.path}`;
+
+  const defaultImage = "/assets/logo_header.png";
+  const ogImage = input.image || defaultImage;
 
   // Next.js openGraph.type only supports standard OG types (website, article, etc.)
   // For "product" pages, we use "website" as the OG type
   const ogType = input.type === "product" ? "website" : (input.type || "website");
 
   return {
+    metadataBase: new URL(siteUrl),
     title: fullTitle,
     description: input.description,
     alternates: { canonical: canonicalUrl },
@@ -32,14 +39,15 @@ export function buildMetadata(input: PageMetadataInput): Metadata {
       description: input.description,
       url: canonicalUrl,
       type: ogType,
-      images: input.image ? [{ url: input.image }] : undefined,
+      locale: "vi_VN",
+      images: [{ url: ogImage }],
       siteName: "Duky Store",
     },
     twitter: {
-      card: input.image ? "summary_large_image" : "summary",
+      card: "summary_large_image",
       title: fullTitle,
       description: input.description,
-      images: input.image ? [input.image] : undefined,
+      images: [ogImage],
     },
   };
 }

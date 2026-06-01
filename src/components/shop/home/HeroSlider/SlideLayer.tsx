@@ -16,6 +16,7 @@ export interface SlideLayerProps {
   onError?: () => void;
   className?: string;
   layout?: LayerLayout;
+  priority?: boolean;
 }
 
 /**
@@ -31,6 +32,7 @@ export function SlideLayer({
   onError,
   className,
   layout,
+  priority,
 }: SlideLayerProps) {
   const layerRef = useRef<HTMLDivElement>(null);
   const tweenRef = useRef<gsap.core.Tween | null>(null);
@@ -41,8 +43,7 @@ export function SlideLayer({
 
     if (isActive) {
       // Determine displacement with mobile cap
-      const isMobile =
-        typeof window !== "undefined" && window.innerWidth < 768;
+      const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
       const displacement = isMobile
         ? Math.min(floatConfig.displacement, 10)
         : floatConfig.displacement;
@@ -129,7 +130,7 @@ export function SlideLayer({
         sizes="100vw"
         className="hero-slide-layer__image"
         onError={handleImageError}
-        priority={zIndex === 0}
+        priority={priority ?? zIndex === 0}
       />
     </div>
   );

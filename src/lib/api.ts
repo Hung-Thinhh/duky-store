@@ -1,6 +1,7 @@
 import { Product } from "@/types/product";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api/v1";
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api/v1";
 
 // ─── API Response types ──────────────────────────────────────────────────────
 interface ApiResponse<T> {
@@ -35,7 +36,10 @@ export interface ProductListParams {
 }
 
 // ─── Fetch helpers ───────────────────────────────────────────────────────────
-async function apiFetch<T>(endpoint: string, params?: Record<string, string | number | boolean | undefined>): Promise<T> {
+async function apiFetch<T>(
+  endpoint: string,
+  params?: Record<string, string | number | boolean | undefined>,
+): Promise<T> {
   const url = new URL(`${API_URL}${endpoint}`);
 
   if (params) {
@@ -64,8 +68,13 @@ async function apiFetch<T>(endpoint: string, params?: Record<string, string | nu
 }
 
 // ─── Product API ─────────────────────────────────────────────────────────────
-export async function fetchProducts(params?: ProductListParams): Promise<PaginatedData<Product>> {
-  return apiFetch<PaginatedData<Product>>("/products", params as Record<string, string | number | boolean | undefined>);
+export async function fetchProducts(
+  params?: ProductListParams,
+): Promise<PaginatedData<Product>> {
+  return apiFetch<PaginatedData<Product>>(
+    "/products",
+    params as Record<string, string | number | boolean | undefined>,
+  );
 }
 
 export async function fetchProductBySlug(slug: string): Promise<Product> {
@@ -101,7 +110,9 @@ export interface ProductVariant {
   } | null;
 }
 
-export async function fetchProductVariants(slug: string): Promise<{ data: ProductVariant[] }> {
+export async function fetchProductVariants(
+  slug: string,
+): Promise<{ data: ProductVariant[] }> {
   return apiFetch<{ data: ProductVariant[] }>(`/products/${slug}/variants`);
 }
 
@@ -121,7 +132,12 @@ export interface CartItemResponse {
     name: string;
     slug: string;
     status: string;
-    thumbnailMedia: { id: string; url: string; secureUrl: string | null; altText: string | null } | null;
+    thumbnailMedia: {
+      id: string;
+      url: string;
+      secureUrl: string | null;
+      altText: string | null;
+    } | null;
   };
   variant: {
     id: string;
@@ -165,7 +181,8 @@ export async function getCartAPI(sessionId: string): Promise<CartResponse> {
 
   if (!res.ok) {
     const errorJson = await res.json().catch(() => null);
-    const message = errorJson?.EM || `API error: ${res.status} ${res.statusText}`;
+    const message =
+      errorJson?.EM || `API error: ${res.status} ${res.statusText}`;
     throw new Error(message);
   }
 
@@ -178,7 +195,9 @@ export async function getCartAPI(sessionId: string): Promise<CartResponse> {
   return json.DT;
 }
 
-export async function addToCartAPI(payload: AddToCartPayload): Promise<CartResponse> {
+export async function addToCartAPI(
+  payload: AddToCartPayload,
+): Promise<CartResponse> {
   const url = `${API_URL}/cart/items`;
 
   const res = await fetch(url, {
@@ -190,7 +209,8 @@ export async function addToCartAPI(payload: AddToCartPayload): Promise<CartRespo
 
   if (!res.ok) {
     const errorJson = await res.json().catch(() => null);
-    const message = errorJson?.EM || `API error: ${res.status} ${res.statusText}`;
+    const message =
+      errorJson?.EM || `API error: ${res.status} ${res.statusText}`;
     throw new Error(message);
   }
 
@@ -203,8 +223,16 @@ export async function addToCartAPI(payload: AddToCartPayload): Promise<CartRespo
   return json.DT;
 }
 
-export async function updateCartItemAPI(itemId: string, quantity: number, sessionId?: string): Promise<CartResponse> {
-  const sid = sessionId || (typeof window !== 'undefined' ? localStorage.getItem('duky_cart_session') || '' : '');
+export async function updateCartItemAPI(
+  itemId: string,
+  quantity: number,
+  sessionId?: string,
+): Promise<CartResponse> {
+  const sid =
+    sessionId ||
+    (typeof window !== "undefined"
+      ? localStorage.getItem("duky_cart_session") || ""
+      : "");
   const url = `${API_URL}/cart/items/${itemId}`;
 
   const res = await fetch(url, {
@@ -216,7 +244,8 @@ export async function updateCartItemAPI(itemId: string, quantity: number, sessio
 
   if (!res.ok) {
     const errorJson = await res.json().catch(() => null);
-    const message = errorJson?.EM || `API error: ${res.status} ${res.statusText}`;
+    const message =
+      errorJson?.EM || `API error: ${res.status} ${res.statusText}`;
     throw new Error(message);
   }
 
@@ -229,8 +258,15 @@ export async function updateCartItemAPI(itemId: string, quantity: number, sessio
   return json.DT;
 }
 
-export async function removeCartItemAPI(itemId: string, sessionId?: string): Promise<CartResponse> {
-  const sid = sessionId || (typeof window !== 'undefined' ? localStorage.getItem('duky_cart_session') || '' : '');
+export async function removeCartItemAPI(
+  itemId: string,
+  sessionId?: string,
+): Promise<CartResponse> {
+  const sid =
+    sessionId ||
+    (typeof window !== "undefined"
+      ? localStorage.getItem("duky_cart_session") || ""
+      : "");
   const url = `${API_URL}/cart/items/${itemId}?sessionId=${encodeURIComponent(sid)}`;
 
   const res = await fetch(url, {
@@ -240,7 +276,8 @@ export async function removeCartItemAPI(itemId: string, sessionId?: string): Pro
 
   if (!res.ok) {
     const errorJson = await res.json().catch(() => null);
-    const message = errorJson?.EM || `API error: ${res.status} ${res.statusText}`;
+    const message =
+      errorJson?.EM || `API error: ${res.status} ${res.statusText}`;
     throw new Error(message);
   }
 
@@ -254,7 +291,11 @@ export async function removeCartItemAPI(itemId: string, sessionId?: string): Pro
 }
 
 // ─── Blog API ────────────────────────────────────────────────────────────────
-import { BlogPost, BlogCategory as BlogCategoryType, BlogListParams } from "@/types/blog";
+import {
+  BlogPost,
+  BlogCategory as BlogCategoryType,
+  BlogListParams,
+} from "@/types/blog";
 
 interface PaginatedBlogData {
   data: BlogPost[];
@@ -266,15 +307,22 @@ interface PaginatedBlogData {
   };
 }
 
-export async function fetchBlogPosts(params?: BlogListParams): Promise<PaginatedBlogData> {
-  return apiFetch<PaginatedBlogData>("/blog", params as Record<string, string | number | boolean | undefined>);
+export async function fetchBlogPosts(
+  params?: BlogListParams,
+): Promise<PaginatedBlogData> {
+  return apiFetch<PaginatedBlogData>(
+    "/blog",
+    params as Record<string, string | number | boolean | undefined>,
+  );
 }
 
 export async function fetchBlogPostBySlug(slug: string): Promise<BlogPost> {
   return apiFetch<BlogPost>(`/blog/${slug}`);
 }
 
-export async function fetchBlogCategories(): Promise<{ data: BlogCategoryType[] }> {
+export async function fetchBlogCategories(): Promise<{
+  data: BlogCategoryType[];
+}> {
   return apiFetch<{ data: BlogCategoryType[] }>("/blog/categories");
 }
 
@@ -355,14 +403,18 @@ export interface CheckoutOrder {
   }>;
 }
 
-export async function orderLookupAPI(code: string, phone: string): Promise<CheckoutOrder> {
+export async function orderLookupAPI(
+  code: string,
+  phone: string,
+): Promise<CheckoutOrder> {
   const url = `${API_URL}/orders/${code}?phone=${encodeURIComponent(phone)}`;
 
   const res = await fetch(url, { cache: "no-store" });
 
   if (!res.ok) {
     const errorJson = await res.json().catch(() => null);
-    const message = errorJson?.EM || `API error: ${res.status} ${res.statusText}`;
+    const message =
+      errorJson?.EM || `API error: ${res.status} ${res.statusText}`;
     throw new Error(message);
   }
 
@@ -375,7 +427,9 @@ export async function orderLookupAPI(code: string, phone: string): Promise<Check
   return json.DT;
 }
 
-export async function checkoutAPI(payload: CheckoutPayload): Promise<CheckoutOrder> {
+export async function checkoutAPI(
+  payload: CheckoutPayload,
+): Promise<CheckoutOrder> {
   const url = `${API_URL}/checkout`;
 
   const res = await fetch(url, {
@@ -387,7 +441,8 @@ export async function checkoutAPI(payload: CheckoutPayload): Promise<CheckoutOrd
 
   if (!res.ok) {
     const errorJson = await res.json().catch(() => null);
-    const message = errorJson?.EM || `API error: ${res.status} ${res.statusText}`;
+    const message =
+      errorJson?.EM || `API error: ${res.status} ${res.statusText}`;
     throw new Error(message);
   }
 
@@ -408,7 +463,9 @@ export interface GalleryImage {
   forMale?: boolean | null;
 }
 
-export async function fetchGalleryImages(forMale?: boolean): Promise<GalleryImage[]> {
+export async function fetchGalleryImages(
+  forMale?: boolean,
+): Promise<GalleryImage[]> {
   try {
     const params: Record<string, string | number | boolean | undefined> = {};
     if (forMale !== undefined) {
@@ -417,12 +474,113 @@ export async function fetchGalleryImages(forMale?: boolean): Promise<GalleryImag
     return await apiFetch<GalleryImage[]>("/gallery", params);
   } catch (error) {
     // Fallback to local Next.js API route /api/gallery
-    const baseUrl = typeof window !== "undefined" ? "" : "http://localhost:3000";
+    const baseUrl =
+      typeof window !== "undefined" ? "" : "http://localhost:3000";
     const query = forMale !== undefined ? `?forMale=${forMale}` : "";
     const res = await fetch(`${baseUrl}/api/gallery${query}`);
     if (!res.ok) {
-      throw new Error("Failed to fetch gallery from both backend and local fallback");
+      throw new Error(
+        "Failed to fetch gallery from both backend and local fallback",
+      );
     }
     return res.json();
   }
+}
+
+export interface CategoryItem {
+  id: string;
+  slug: string;
+  parentId: string | null;
+}
+
+export async function fetchProductsByCategories(
+  parentSlug: string | string[],
+  limit: number = 12,
+): Promise<Product[]> {
+  try {
+    const slugs = Array.isArray(parentSlug) ? parentSlug : [parentSlug];
+
+    // Fetch categories
+    const categoriesResult = await apiFetch<{ data: CategoryItem[] }>(
+      "/categories",
+    );
+    const categories = categoriesResult?.data || [];
+
+    // Resolve all slugs + their children
+    const allSlugsToFetch = new Set<string>();
+    for (const slug of slugs) {
+      allSlugsToFetch.add(slug);
+      const parentCat = categories.find((c) => c.slug === slug);
+      if (parentCat) {
+        for (const child of categories.filter(
+          (c) => c.parentId === parentCat.id,
+        )) {
+          allSlugsToFetch.add(child.slug);
+        }
+      }
+    }
+
+    // Fetch products from all slugs in parallel
+    const results = await Promise.all(
+      Array.from(allSlugsToFetch).map((slug) =>
+        fetchProducts({ categorySlug: slug, limit, sort: "newest" }).catch(
+          () => ({ data: [], pagination: null }),
+        ),
+      ),
+    );
+
+    // Merge results
+    const seen = new Set<string>();
+    const merged: Product[] = [];
+    for (const result of results) {
+      if (result && Array.isArray(result.data)) {
+        for (const product of result.data) {
+          if (!seen.has(product.id)) {
+            seen.add(product.id);
+            merged.push(product);
+          }
+        }
+      }
+    }
+
+    return merged.slice(0, limit);
+  } catch (error) {
+    console.error("Error in fetchProductsByCategories:", error);
+    return [];
+  }
+}
+
+export interface NewsItem {
+  id: string;
+  image: string;
+  date: {
+    day: string;
+    month: string;
+  };
+  category: string;
+  title: string;
+  slug: string;
+  publishedAtMs: number;
+}
+
+export function mapBlogPostToNewsItem(post: BlogPost): NewsItem {
+  const dateSource = post.publishedAt || post.createdAt;
+  const date = new Date(dateSource);
+  const validDate = Number.isNaN(date.getTime()) ? null : date;
+
+  return {
+    id: post.id,
+    image:
+      post.coverMedia?.secureUrl ||
+      post.coverMedia?.url ||
+      "/assets/placeholder.jpg",
+    date: {
+      day: validDate ? String(validDate.getDate()).padStart(2, "0") : "--",
+      month: validDate ? `TH ${validDate.getMonth() + 1}` : "TH ?",
+    },
+    category: (post.categories?.[0]?.name || "TIN TUC").toUpperCase(),
+    title: post.title,
+    slug: post.slug,
+    publishedAtMs: validDate ? validDate.getTime() : 0,
+  };
 }

@@ -5,7 +5,7 @@ import { BlogPost } from "@/types/blog";
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api/v1";
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://dukystore.vn";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://dukystore.com";
 
 // ─── Fetch helpers (with graceful error handling) ────────────────────────────
 

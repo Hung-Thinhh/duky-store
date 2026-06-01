@@ -1,7 +1,7 @@
-'use client';
-
-import { useState } from 'react';
-import { Header, Footer } from '@/components/layout';
+import React from "react";
+import type { Metadata } from "next";
+import { buildMetadata } from "@/lib/metadata";
+import { PolicyClient } from "./PolicyClient";
 
 // ─── Mock Data ──────────────────────────────────────────────────────────────
 
@@ -12,64 +12,68 @@ interface PolicySection {
 }
 
 const POLICY_DATA: { title: string; intro: string; sections: PolicySection[] } = {
-  title: 'QUY ĐỊNH SỬ DỤNG WEBSITE DUKY STORE',
+  title: "QUY ĐỊNH SỬ DỤNG WEBSITE DUKY STORE",
   intro:
-    'Chào mừng quý khách đến với website https://dukystore.com/. Việc quý khách truy cập và sử dụng website này đồng nghĩa với việc quý khách đã chấp nhận và đồng ý với các Quy định và Điều kiện dưới đây. Vui lòng đọc kỹ toàn bộ quy định trước khi sử dụng dịch vụ.',
+    "Chào mừng quý khách đến với website https://dukystore.com/. Việc quý khách truy cập và sử dụng website này đồng nghĩa với việc quý khách đã chấp nhận và đồng ý với các Quy định và Điều kiện dưới đây. Vui lòng đọc kỹ toàn bộ quy định trước khi sử dụng dịch vụ.",
   sections: [
     {
-      title: '1. Định Nghĩa',
+      title: "1. Định Nghĩa",
       items: [
-        'Duky Store: Là Công ty TNHH Duky Store, chủ sở hữu và vận hành website.',
-        'Website: Là trang điện tử https://dukystore.com/.',
-        'Người dùng/Khách hàng: Là cá nhân, tổ chức truy cập, đăng ký và/hoặc mua sắm trên Website.',
+        "Duky Store: Là Công ty TNHH Duky Store, chủ sở hữu và vận hành website.",
+        "Website: Là trang điện tử https://dukystore.com/.",
+        "Người dùng/Khách hàng: Là cá nhân, tổ chức truy cập, đăng ký và/hoặc mua sắm trên Website.",
       ],
     },
     {
-      title: '2. Quy Định Về Tài Khoản',
+      title: "2. Quy Định Về Tài Khoản",
       items: [
-        'Khi đăng ký tài khoản, Người dùng cam kết cung cấp thông tin cá nhân chính xác, đầy đủ và hợp pháp.',
-        'Người dùng có trách nhiệm tự bảo mật tài khoản và mật khẩu của mình. Duky Store không chịu trách nhiệm đối với bất kỳ thiệt hại nào phát sinh do Người dùng không tuân thủ quy định này.',
-        'Duky Store có quyền khóa hoặc chấm dứt tài khoản của Người dùng nếu phát hiện có sự vi phạm các quy định này.',
+        "Khi đăng ký tài khoản, Người dùng cam kết cung cấp thông tin cá nhân chính xác, đầy đủ và hợp pháp.",
+        "Người dùng có trách nhiệm tự bảo mật tài khoản và mật khẩu của mình. Duky Store không chịu trách nhiệm đối với bất kỳ thiệt hại nào phát sinh do Người dùng không tuân thủ quy định này.",
+        "Duky Store có quyền khóa hoặc chấm dứt tài khoản của Người dùng nếu phát hiện có sự vi phạm các quy định này.",
       ],
     },
     {
-      title: '3. Quy Định Về Mua Hàng và Thanh Toán',
+      title: "3. Quy Định Về Mua Hàng và Thanh Toán",
       items: [
-        'Việc đặt hàng trên Website được coi là lời đề nghị mua hàng từ phía Người dùng. Duky Store chỉ chính thức xác nhận đơn hàng sau khi liên hệ và xác nhận thông tin đơn hàng với Người dùng.',
-        'Người dùng cam kết tuân thủ Chính sách Thanh toán và Chính sách Vận chuyển đã được công bố trên Website.',
-        'Duky Store có quyền từ chối hoặc hủy đơn hàng của Người dùng trong các trường hợp: sản phẩm hết hàng, thông tin thanh toán không hợp lệ, hoặc nghi ngờ có hành vi gian lận.',
+        "Việc đặt hàng trên Website được coi là lời đề nghị mua hàng từ phía Người dùng. Duky Store chỉ chính thức xác nhận đơn hàng sau khi liên hệ và xác nhận thông tin đơn hàng với Người dùng.",
+        "Người dùng cam kết tuân thủ Chính sách Thanh toán và Chính sách Vận chuyển đã được công bố trên Website.",
+        "Duky Store có quyền từ chối hoặc hủy đơn hàng của Người dùng trong các trường hợp: sản phẩm hết hàng, thông tin thanh toán không hợp lệ, hoặc nghi ngờ có hành vi gian lận.",
       ],
     },
     {
-      title: '4. Quyền Sở Hữu Trí Tuệ',
+      title: "4. Quyền Sở Hữu Trí Tuệ",
       items: [
-        'Tất cả nội dung trên Website, bao gồm hình ảnh sản phẩm, thiết kế, logo, văn bản và các nội dung khác, đều là tài sản thuộc sở hữu của Duky Store và được bảo hộ bởi luật sở hữu trí tuệ Việt Nam.',
-        'Nghiêm cấm sao chép, sử dụng, phát hành hoặc phân phối bất kỳ nội dung nào từ Website mà không có sự đồng ý bằng văn bản của Duky Store.',
+        "Tất cả nội dung trên Website, bao gồm hình ảnh sản phẩm, thiết kế, logo, văn bản và các nội dung khác, đều là tài sản thuộc sở hữu của Duky Store và được bảo hộ bởi luật sở hữu trí tuệ Việt Nam.",
+        "Nghiêm cấm sao chép, sử dụng, phát hành hoặc phân phối bất kỳ nội dung nào từ Website mà không có sự đồng ý bằng văn bản của Duky Store.",
       ],
     },
     {
-      title: '5. Miễn Trừ Trách Nhiệm',
+      title: "5. Miễn Trừ Trách Nhiệm",
       items: [
-        'Duky Store không đảm bảo Website sẽ hoạt động liên tục, không lỗi hoặc không có virus.',
-        'Duky Store không chịu trách nhiệm đối với bất kỳ thiệt hại trực tiếp hoặc gián tiếp nào phát sinh từ việc sử dụng hoặc không thể sử dụng Website hoặc các sản phẩm được mua từ Website.',
+        "Duky Store không đảm bảo Website sẽ hoạt động liên tục, không lỗi hoặc không có virus.",
+        "Duky Store không chịu trách nhiệm đối với bất kỳ thiệt hại trực tiếp hoặc gián tiếp nào phát sinh từ việc sử dụng hoặc không thể sử dụng Website hoặc các sản phẩm được mua từ Website.",
       ],
     },
     {
-      title: '6. Thay Đổi Quy Định',
+      title: "6. Thay Đổi Quy Định",
       content:
-        'Duky Store có quyền thay đổi, chỉnh sửa hoặc cập nhật các Quy định này bất cứ lúc nào mà không cần báo trước. Các thay đổi sẽ có hiệu lực ngay khi được đăng tải trên Website.',
+        "Duky Store có quyền thay đổi, chỉnh sửa hoặc cập nhật các Quy định này bất cứ lúc nào mà không cần báo trước. Các thay đổi sẽ có hiệu lực ngay khi được đăng tải trên Website.",
     },
   ],
 };
 
-// ─── Component ──────────────────────────────────────────────────────────────
+export async function generateMetadata(): Promise<Metadata> {
+  return buildMetadata({
+    title: "Chính sách & Quy định",
+    description:
+      "Quy định, chính sách bảo mật và điều khoản sử dụng website Duky Store. Vui lòng đọc kỹ thông tin trước khi sử dụng dịch vụ.",
+    path: "/policy",
+  });
+}
 
 export default function PolicyPage() {
-  const [cartCount] = useState(0);
-
   return (
-    <>
-      <Header cartCount={cartCount} />
+    <PolicyClient>
       <main className="policy-page">
         <div className="policy-container">
           <h1 className="policy-title">{POLICY_DATA.title}</h1>
@@ -84,7 +88,9 @@ export default function PolicyPage() {
               {section.items && (
                 <ul className="policy-list">
                   {section.items.map((item, i) => (
-                    <li key={i} className="policy-list-item">{item}</li>
+                    <li key={i} className="policy-list-item">
+                      {item}
+                    </li>
                   ))}
                 </ul>
               )}
@@ -92,89 +98,6 @@ export default function PolicyPage() {
           ))}
         </div>
       </main>
-      <Footer />
-
-      <style jsx>{`
-        .policy-page {
-          margin-top: 80px;
-          padding: 40px 2rem 60px;
-        }
-
-        .policy-container {
-          max-width: 1000px;
-          margin: 0 auto;
-          background: var(--bg-card);
-          border-radius: var(--radius-section);
-          padding: 48px 56px;
-          border: 1px solid var(--border-card);
-          box-shadow: var(--card-shadow);
-        }
-
-        .policy-title {
-          font-family: var(--font-accent);
-          font-size: 28px;
-          font-weight: 800;
-          color: var(--text-main);
-          margin-bottom: 16px;
-          letter-spacing: -0.02em;
-        }
-
-        .policy-intro {
-          font-family: var(--font-main);
-          font-size: 13px;
-          color: var(--text-muted);
-          line-height: 1.8;
-          margin-bottom: 32px;
-          font-style: italic;
-        }
-
-        .policy-section {
-          margin-bottom: 28px;
-        }
-
-        .policy-section-title {
-          font-family: var(--font-accent);
-          font-size: 20px;
-          font-weight: 700;
-          color: #000000ff;
-          margin-bottom: 12px;
-          letter-spacing: -0.01em;
-        }
-
-        .policy-section-content {
-          font-family: var(--font-main);
-          font-size: 14px;
-          color: var(--text-main);
-          line-height: 1.8;
-        }
-
-        .policy-list {
-          list-style: disc;
-          padding-left: 24px;
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-        }
-
-        .policy-list-item {
-          font-family: var(--font-main);
-          font-size: 14px;
-          color: var(--text-main);
-          line-height: 1.7;
-        }
-
-        @media (max-width: 768px) {
-          .policy-container {
-            padding: 28px 20px;
-          }
-          .policy-title {
-            font-size: 22px;
-          }
-          .policy-section-title {
-            font-size: 17px;
-          }
-        }
-      `}</style>
-    </>
+    </PolicyClient>
   );
 }

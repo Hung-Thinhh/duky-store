@@ -133,7 +133,7 @@ body {
   font-family: var(--font-main);
   color: var(--text-main);
   background-color: var(--bg-primary);
-  background-image: url("/assets/background.png");
+  background-image: url("/assets/background-01.png");
   background-size: cover;
   background-attachment: fixed;
   background-position: center;
@@ -1194,7 +1194,6 @@ img {
       var(--layer-height-md, var(--layer-height, 100%))
     );
   }
-
 
   .hero-slide-layer__image {
     object-fit: var(
