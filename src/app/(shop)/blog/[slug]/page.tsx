@@ -8,6 +8,7 @@ import {
 } from "@/lib/api";
 import { blogText, sanitizeBlogHtml } from "@/lib/blog-content";
 import { buildMetadata } from "@/lib/metadata";
+import { truncateMeta } from "@/lib/seo";
 import {
   buildArticleJsonLd,
   buildBreadcrumbJsonLd,
