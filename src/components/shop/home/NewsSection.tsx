@@ -168,33 +168,23 @@ export const NewsSection = ({ initialNewsItems }: { initialNewsItems?: NewsItem[
                     ))}
                   </motion.div>
 
-                  <AnimatePresence>
-                    {currentIndex > 0 && (
-                      <motion.button
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -10 }}
-                        onClick={() => setCurrentIndex((prev) => prev - 1)}
-                        className="hidden lg:flex absolute left-2 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/95 backdrop-blur-md border border-gray-100 shadow-[0_4px_12px_rgba(0,0,0,0.12)] items-center justify-center text-black opacity-100 lg:!opacity-0 lg:group-hover/slider:opacity-100 lg:group-hover/slider:translate-x-2 transition-all duration-300 hover:bg-gray-100 hover:scale-110 active:scale-95 z-40 cursor-pointer"
-                      >
-                        <ChevronLeft size={22} strokeWidth={2.5} />
-                      </motion.button>
-                    )}
-                  </AnimatePresence>
+                  {currentIndex > 0 && (
+                    <button
+                      onClick={() => setCurrentIndex((prev) => prev - 1)}
+                      className="hidden lg:flex absolute left-2 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/95 backdrop-blur-md border border-gray-100 shadow-[0_4px_12px_rgba(0,0,0,0.12)] items-center justify-center text-black opacity-100 lg:opacity-0 lg:group-hover/slider:opacity-100 lg:group-hover/slider:translate-x-2 transition-all duration-300 hover:bg-gray-100 hover:scale-110 active:scale-95 z-40 cursor-pointer"
+                    >
+                      <ChevronLeft size={22} strokeWidth={2.5} />
+                    </button>
+                  )}
 
-                  <AnimatePresence>
-                    {currentIndex < maxIndex && (
-                      <motion.button
-                        initial={{ opacity: 0, x: 10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: 10 }}
-                        onClick={() => setCurrentIndex((prev) => prev + 1)}
-                        className="hidden lg:flex absolute right-2 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/95 backdrop-blur-md border border-gray-100 shadow-[0_4px_12px_rgba(0,0,0,0.12)] items-center justify-center text-black opacity-100 lg:!opacity-0 lg:group-hover/slider:opacity-100 lg:group-hover/slider:-translate-x-2 transition-all duration-300 hover:bg-gray-100 hover:scale-110 active:scale-95 z-40 cursor-pointer"
-                      >
-                        <ChevronRight size={22} strokeWidth={2.5} />
-                      </motion.button>
-                    )}
-                  </AnimatePresence>
+                  {currentIndex < maxIndex && (
+                    <button
+                      onClick={() => setCurrentIndex((prev) => prev + 1)}
+                      className="hidden lg:flex absolute right-2 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/95 backdrop-blur-md border border-gray-100 shadow-[0_4px_12px_rgba(0,0,0,0.12)] items-center justify-center text-black opacity-100 lg:opacity-0 lg:group-hover/slider:opacity-100 lg:group-hover/slider:-translate-x-2 transition-all duration-300 hover:bg-gray-100 hover:scale-110 active:scale-95 z-40 cursor-pointer"
+                    >
+                      <ChevronRight size={22} strokeWidth={2.5} />
+                    </button>
+                  )}
                 </>
               )}
             </div>

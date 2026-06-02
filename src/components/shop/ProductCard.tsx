@@ -39,7 +39,7 @@ export const ProductCard = ({
   const price = getDisplayPrice(product);
   const priceText = formatCurrency(price);
   const imageUrl = getProductImageUrl(product);
-  const productHref = href || `/products/${product.slug}`;
+  const productHref = href || `/san-pham/${product.slug}`;
 
   const handleAddToCart: React.MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault();

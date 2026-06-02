@@ -28,11 +28,11 @@ describe("robots", () => {
 
     expect(allCrawlerRule).toBeDefined();
     expect(allCrawlerRule!.disallow).toEqual([
-      "/login",
-      "/signup",
-      "/user",
-      "/cart",
-      "/checkout",
+      "/dang-nhap",
+      "/dang-ky",
+      "/tai-khoan",
+      "/gio-hang",
+      "/thanh-toan",
     ]);
   });
 

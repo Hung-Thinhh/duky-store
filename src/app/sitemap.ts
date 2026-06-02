@@ -1,122 +1,128 @@
-import { MetadataRoute } from "next";
-import { Product } from "@/types/product";
-import { BlogPost } from "@/types/blog";
+import type { MetadataRoute } from "next";
+import { fetchBlogPosts, fetchProducts } from "@/lib/api";
+import { COLLECTION_SLUGS } from "@/lib/collection-seo";
+import type { BlogPost } from "@/types/blog";
+import type { Product } from "@/types/product";
 
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api/v1";
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://dukystore.com";
+export const revalidate = 3600;
 
-// ─── Fetch helpers (with graceful error handling) ────────────────────────────
-
-interface ApiResponse<T> {
-  EC: number;
-  EM: string;
-  DT: T;
+function siteUrl() {
+  return (process.env.NEXT_PUBLIC_SITE_URL || "https://dukystore.com").replace(
+    /\/+$/,
+    "",
+  );
 }
 
-interface PaginatedData<T> {
-  data: T[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
+function absoluteUrl(path: string) {
+  return new URL(path, siteUrl()).toString();
 }
 
-async function fetchAllProducts(): Promise<Product[]> {
-  try {
-    const res = await fetch(`${API_URL}/products?limit=1000`, {
-      next: { revalidate: 3600 },
-    });
-    if (!res.ok) return [];
-    const json: ApiResponse<PaginatedData<Product>> = await res.json();
-    if (json.EC !== 0) return [];
-    return json.DT.data;
-  } catch {
-    return [];
+function toDate(value?: string | null) {
+  return value ? new Date(value) : new Date();
+}
+
+async function fetchAllProducts() {
+  const limit = 100;
+  const firstPage = await fetchProducts({ limit, page: 1, sort: "newest" });
+  const products: Product[] = [...firstPage.data];
+
+  for (let page = 2; page <= firstPage.pagination.totalPages; page += 1) {
+    const nextPage = await fetchProducts({ limit, page, sort: "newest" });
+    products.push(...nextPage.data);
   }
+
+  return products;
 }
 
-async function fetchAllBlogPosts(): Promise<BlogPost[]> {
-  try {
-    const res = await fetch(`${API_URL}/blog?limit=1000`, {
-      next: { revalidate: 3600 },
-    });
-    if (!res.ok) return [];
-    const json: ApiResponse<PaginatedData<BlogPost>> = await res.json();
-    if (json.EC !== 0) return [];
-    return json.DT.data;
-  } catch {
-    return [];
+async function fetchAllBlogPosts() {
+  const limit = 100;
+  const firstPage = await fetchBlogPosts({ limit, page: 1, sort: "newest" });
+  const posts: BlogPost[] = [...firstPage.data];
+
+  for (let page = 2; page <= firstPage.pagination.totalPages; page += 1) {
+    const nextPage = await fetchBlogPosts({ limit, page, sort: "newest" });
+    posts.push(...nextPage.data);
   }
-}
 
-// ─── Sitemap generator ───────────────────────────────────────────────────────
+  return posts;
+}
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [products, blogPosts] = await Promise.all([
+  const now = new Date();
+  const staticRoutes: MetadataRoute.Sitemap = [
+    {
+      url: absoluteUrl("/"),
+      lastModified: now,
+      changeFrequency: "daily",
+      priority: 1,
+    },
+    {
+      url: absoluteUrl("/san-pham"),
+      lastModified: now,
+      changeFrequency: "daily",
+      priority: 0.9,
+    },
+    ...COLLECTION_SLUGS.map((slug) => ({
+      url: absoluteUrl(`/${slug}`),
+      lastModified: now,
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
+    })),
+    {
+      url: absoluteUrl("/blog"),
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
+    {
+      url: absoluteUrl("/thu-vien"),
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.5,
+    },
+    {
+      url: absoluteUrl("/lien-he"),
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.5,
+    },
+    {
+      url: absoluteUrl("/chinh-sach"),
+      lastModified: now,
+      changeFrequency: "yearly",
+      priority: 0.3,
+    },
+  ];
+
+  const [productsResult, blogPostsResult] = await Promise.allSettled([
     fetchAllProducts(),
     fetchAllBlogPosts(),
   ]);
 
-  // Static pages
-  const staticPages: MetadataRoute.Sitemap = [
-    {
-      url: SITE_URL,
-      lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 1.0,
-    },
-    {
-      url: `${SITE_URL}/contact`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.5,
-    },
-    {
-      url: `${SITE_URL}/policy`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.4,
-    },
-    {
-      url: `${SITE_URL}/gallery`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.5,
-    },
-  ];
+  const productRoutes: MetadataRoute.Sitemap =
+    productsResult.status === "fulfilled"
+      ? productsResult.value
+          .filter((product) => Boolean(product.slug))
+          .filter((product) => !product.seo?.noIndex)
+          .map((product) => ({
+            url: absoluteUrl(`/san-pham/${product.slug}`),
+            lastModified: toDate(product.updatedAt || product.publishedAt),
+            changeFrequency: "weekly" as const,
+            priority: 0.8,
+          }))
+      : [];
 
-  // Collection pages
-  const collectionSlugs = ["boot-nam", "boot-nu", "phu-kien", "unisex"];
-  const collectionPages: MetadataRoute.Sitemap = collectionSlugs.map(
-    (slug) => ({
-      url: `${SITE_URL}/collections/${slug}`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.9,
-    })
-  );
+  const blogRoutes: MetadataRoute.Sitemap =
+    blogPostsResult.status === "fulfilled"
+      ? blogPostsResult.value
+          .filter((post) => !post.seo?.noIndex)
+          .map((post) => ({
+            url: absoluteUrl(`/blog/${post.slug}`),
+            lastModified: toDate(post.updatedAt || post.publishedAt),
+            changeFrequency: "monthly" as const,
+            priority: 0.6,
+          }))
+      : [];
 
-  // Product pages
-  const productPages: MetadataRoute.Sitemap = products.map((product) => ({
-    url: `${SITE_URL}/products/${product.slug}`,
-    lastModified: product.updatedAt
-      ? new Date(product.updatedAt)
-      : new Date(),
-    changeFrequency: "weekly",
-    priority: 0.8,
-  }));
-
-  // Blog post pages
-  const blogPages: MetadataRoute.Sitemap = blogPosts.map((post) => ({
-    url: `${SITE_URL}/blog/${post.slug}`,
-    lastModified: post.updatedAt ? new Date(post.updatedAt) : new Date(),
-    changeFrequency: "weekly",
-    priority: 0.6,
-  }));
-
-  return [...staticPages, ...collectionPages, ...productPages, ...blogPages];
+  return [...staticRoutes, ...productRoutes, ...blogRoutes];
 }

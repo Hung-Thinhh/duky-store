@@ -1,9 +1,54 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "standalone",
-  /* Allow builds in restricted environments */
-  typescript: {
-    ignoreBuildErrors: true,
+  async redirects() {
+    return [
+      {
+        source: "/products",
+        destination: "/san-pham",
+        permanent: true,
+      },
+      {
+        source: "/products/:slug",
+        destination: "/san-pham/:slug",
+        permanent: true,
+      },
+      {
+        source: "/tu-khoa-san-pham/:path*",
+        destination: "/",
+        permanent: true,
+      },
+      {
+        source: "/bst/:slug",
+        destination: "/:slug",
+        permanent: true,
+      },
+      {
+        source: "/collections/:slug",
+        destination: "/:slug",
+        permanent: true,
+      },
+      {
+        source: "/login",
+        destination: "/dang-nhap",
+        permanent: true,
+      },
+      {
+        source: "/signup",
+        destination: "/dang-ky",
+        permanent: true,
+      },
+      {
+        source: "/user",
+        destination: "/tai-khoan",
+        permanent: true,
+      },
+      {
+        source: "/user/:path*",
+        destination: "/tai-khoan/:path*",
+        permanent: true,
+      },
+    ];
   },
   images: {
     remotePatterns: [
@@ -21,25 +66,6 @@ const nextConfig = {
         hostname: "**",
       },
     ],
-  },
-  async redirects() {
-    return [
-      {
-        source: "/tu-khoa-san-pham/:path*",
-        destination: "/",
-        permanent: true,
-      },
-      {
-        source: "/danh-muc-san-pham/:path*",
-        destination: "/",
-        permanent: true,
-      },
-      {
-        source: "/san-pham/:path*",
-        destination: "/",
-        permanent: true,
-      },
-    ];
   },
 };
 

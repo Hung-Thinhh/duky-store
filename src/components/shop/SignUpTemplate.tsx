@@ -170,7 +170,7 @@ const SignUpTemplate: React.FC = () => {
       {/* Footer */}
       <div className="signup-footer">
         <p>
-          Đã có tài khoản? <Link href="/login" className="login-link" replace>Đăng nhập</Link>
+          Đã có tài khoản? <Link href="/dang-nhap" className="login-link" replace>Đăng nhập</Link>
         </p>
       </div>
 

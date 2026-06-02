@@ -1,10 +1,19 @@
 import type { Metadata } from "next";
-import { cache } from "react";
 import { notFound } from "next/navigation";
-import { fetchBlogPostBySlug } from "@/lib/api";
+import { cache } from "react";
+import {
+  fetchBlogCategories,
+  fetchBlogPostBySlug,
+  fetchBlogPosts,
+} from "@/lib/api";
+import { blogText, sanitizeBlogHtml } from "@/lib/blog-content";
 import { buildMetadata } from "@/lib/metadata";
-import { buildArticleJsonLd } from "@/lib/structured-data";
+import {
+  buildArticleJsonLd,
+  buildBreadcrumbJsonLd,
+} from "@/lib/structured-data";
 import { JsonLd } from "@/components/seo/JsonLd";
+import type { BlogCategory, BlogPost } from "@/types/blog";
 import { BlogDetailPageClient } from "./BlogDetailPageClient";
 
 export const revalidate = 300;
@@ -15,13 +24,26 @@ interface BlogDetailPageProps {
 
 const getBlogPostBySlug = cache(fetchBlogPostBySlug);
 
+function truncateMeta(value?: string | null, maxLength = 160) {
+  const text = blogText(value);
+
+  if (text.length <= maxLength) {
+    return text || undefined;
+  }
+
+  const clipped = text.slice(0, maxLength - 1);
+  const lastSpace = clipped.lastIndexOf(" ");
+
+  return `${clipped.slice(0, lastSpace > 80 ? lastSpace : clipped.length)}...`;
+}
+
 function absoluteUrl(pathOrUrl?: string | null) {
   if (!pathOrUrl) return undefined;
   if (pathOrUrl.startsWith("http://") || pathOrUrl.startsWith("https://")) {
     return pathOrUrl;
   }
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://dukystore.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://dukystore.vn";
   return new URL(pathOrUrl, siteUrl).toString();
 }
 
@@ -33,18 +55,18 @@ export async function generateMetadata({
   try {
     const post = await getBlogPostBySlug(slug);
     const seo = post.seo;
-    const coverUrl = absoluteUrl(
-      post.coverMedia?.secureUrl || post.coverMedia?.url,
-    );
+    const coverUrl =
+      post.coverMedia?.secureUrl || post.coverMedia?.url || undefined;
     const title = seo?.metaTitle || post.title;
     const description =
-      seo?.metaDescription || post.excerpt || "Bài viết từ Duky Store";
+      truncateMeta(seo?.metaDescription || post.excerpt || post.content) ||
+      "Bai viet Duky Store";
 
     return {
       ...buildMetadata({
         title,
         description,
-        path: `/blog/${post.slug}`,
+        path: seo?.canonicalUrl || `/blog/${post.slug}`,
         image: coverUrl,
         type: "article",
       }),
@@ -54,39 +76,79 @@ export async function generateMetadata({
       },
     };
   } catch {
-    return buildMetadata({
-      title: "Blog",
-      description: "Bài viết Duky Store",
-      path: `/blog/${slug}`,
-      type: "article",
-    });
+    return {
+      ...buildMetadata({
+        title: "Blog",
+        description: "Bai viet Duky Store",
+        path: `/blog/${slug}`,
+        type: "article",
+      }),
+      robots: {
+        index: false,
+        follow: false,
+      },
+    };
   }
+}
+
+async function getBlogPageData(slug: string) {
+  const post = await getBlogPostBySlug(slug);
+  const [categoriesResult, recentPostsResult] = await Promise.allSettled([
+    fetchBlogCategories(),
+    fetchBlogPosts({ limit: 5, sort: "newest" }),
+  ]);
+
+  const categories: BlogCategory[] =
+    categoriesResult.status === "fulfilled" ? categoriesResult.value.data : [];
+  const recentPosts: BlogPost[] =
+    recentPostsResult.status === "fulfilled"
+      ? recentPostsResult.value.data
+      : [];
+
+  return { post, categories, recentPosts };
 }
 
 export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
   const { slug } = await params;
+  let data: Awaited<ReturnType<typeof getBlogPageData>>;
 
-  let post;
   try {
-    post = await getBlogPostBySlug(slug);
+    data = await getBlogPageData(slug);
   } catch {
     notFound();
   }
 
-  const articleJsonLd = buildArticleJsonLd({
-    title: post.title,
-    slug: post.slug,
-    excerpt: post.excerpt,
-    content: post.content,
-    publishedAt: post.publishedAt,
-    updatedAt: post.updatedAt,
-    coverMedia: post.coverMedia,
-  });
+  const articleJsonLd = {
+    ...buildArticleJsonLd({
+      title: data.post.title,
+      slug: data.post.slug,
+      excerpt: data.post.excerpt,
+      content: data.post.content,
+      publishedAt: data.post.publishedAt,
+      updatedAt: data.post.updatedAt,
+      coverMedia: data.post.coverMedia,
+    }),
+    ...(data.post.seo?.schemaJson || {}),
+  };
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+    { name: "Trang chu", url: "/" },
+    { name: "Blog", url: "/blog" },
+    { name: data.post.title, url: `/blog/${data.post.slug}` },
+  ]);
 
   return (
     <>
       <JsonLd data={articleJsonLd} />
-      <BlogDetailPageClient slug={slug} />
+      <JsonLd data={breadcrumbJsonLd} />
+      <BlogDetailPageClient
+        slug={slug}
+        initialPost={{
+          ...data.post,
+          content: sanitizeBlogHtml(data.post.content),
+        }}
+        initialCategories={data.categories}
+        initialRecentPosts={data.recentPosts}
+      />
     </>
   );
 }

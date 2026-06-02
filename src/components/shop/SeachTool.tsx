@@ -315,18 +315,18 @@ export function SearchTool({
     if (e.key === "Escape") {
       onClose();
     } else if (e.key === "Enter" && query.trim()) {
-      router.push(`/search?q=${encodeURIComponent(query.trim())}`);
+      router.push(`/tim-kiem?q=${encodeURIComponent(query.trim())}`);
       onClose();
     }
   };
 
   const handleProductClick = (product: Product) => {
-    router.push(`/products/${product.slug}`);
+    router.push(`/san-pham/${product.slug}`);
     onClose();
   };
 
   const handleViewAll = () => {
-    router.push(`/search?q=${encodeURIComponent(query.trim())}`);
+    router.push(`/tim-kiem?q=${encodeURIComponent(query.trim())}`);
     onClose();
   };
 

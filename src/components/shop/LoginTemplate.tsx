@@ -129,7 +129,7 @@ const LoginTemplate: React.FC<LoginTemplateProps> = ({ onSwitchToSignup }) => {
       {/* Footer */}
       <div className="login-footer">
         <span>Chưa có tài khoản?</span>
-        <Link href="/signup" className="register-link" replace>Đăng ký ngay</Link>
+        <Link href="/dang-ky" className="register-link" replace>Đăng ký ngay</Link>
       </div>
 
       <style jsx>{`

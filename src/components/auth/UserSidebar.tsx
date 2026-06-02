@@ -13,10 +13,10 @@ import {
 import { useAuth } from "@/context/AuthContext";
 
 const NAV_ITEMS = [
-  { icon: User, label: "Tài khoản của tôi", href: "/user" },
-  { icon: Package, label: "Đơn hàng", href: "/user/order" },
-  { icon: MapPin, label: "Địa chỉ", href: "/user/address" },
-  { icon: Settings, label: "Cài đặt", href: "/user/setting" },
+  { icon: User, label: "Tài khoản của tôi", href: "/tai-khoan" },
+  { icon: Package, label: "Đơn hàng", href: "/tai-khoan/don-hang" },
+  { icon: MapPin, label: "Địa chỉ", href: "/tai-khoan/dia-chi" },
+  { icon: Settings, label: "Cài đặt", href: "/tai-khoan/cai-dat" },
 ];
 
 export function UserSidebar() {

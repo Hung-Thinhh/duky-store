@@ -1,4 +1,3 @@
-// ─── Media type from backend ─────────────────────────────────────────────────
 export interface ProductMedia {
   id: string;
   url: string;
@@ -10,7 +9,6 @@ export interface ProductMedia {
   height: number | null;
 }
 
-// ─── Product from API (list endpoint) ────────────────────────────────────────
 export interface Product {
   id: string;
   name: string;
@@ -46,9 +44,21 @@ export interface Product {
   publishedAt?: string | null;
   createdAt?: string;
   updatedAt?: string;
+  metaTitle?: string | null;
+  metaDescription?: string | null;
+  canonicalUrl?: string | null;
+  seo?: {
+    metaTitle?: string | null;
+    metaDescription?: string | null;
+    canonicalUrl?: string | null;
+    ogTitle?: string | null;
+    ogDescription?: string | null;
+    noIndex?: boolean | null;
+    noFollow?: boolean | null;
+    schemaJson?: Record<string, unknown> | null;
+  } | null;
   variants?: any[];
 
-  // ─── Legacy mock data properties (used by static data files) ─────────────
   desc?: string;
   price?: number;
   formattedPrice?: string;
@@ -62,8 +72,6 @@ export interface Product {
   gender?: string;
 }
 
-// ─── Computed helpers for UI compatibility ───────────────────────────────────
-/** Get the best available image URL for a product */
 export function getProductImageUrl(product: Product): string {
   return (
     product.thumbnailMedia?.secureUrl ||
@@ -75,11 +83,9 @@ export function getProductImageUrl(product: Product): string {
   );
 }
 
-/** Get all image URLs for a product (detail page) */
 export function getAllProductImageUrls(product: Product): string[] {
   const urls: string[] = [];
 
-  // Add all images from the images array (detail endpoint)
   if (product.images && product.images.length > 0) {
     for (const img of product.images) {
       const url = img.media?.secureUrl || img.media?.url;
@@ -87,27 +93,22 @@ export function getAllProductImageUrls(product: Product): string[] {
     }
   }
 
-  // If no images from array, try thumbnail and single image
   if (urls.length === 0) {
-    const fallback = getProductImageUrl(product);
-    urls.push(fallback);
+    urls.push(getProductImageUrl(product));
   }
 
   return urls;
 }
 
-/** Get the display price (sale price if available, otherwise original) */
 export function getDisplayPrice(product: Product): number {
   return product.salePrice ?? product.originalPrice ?? product.price ?? 0;
 }
 
-/** Check if product has a discount */
 export function hasDiscount(product: Product): boolean {
   const original = product.originalPrice ?? product.price ?? 0;
   return product.salePrice != null && product.salePrice < original;
 }
 
-// ─── Cart item ───────────────────────────────────────────────────────────────
 export interface CartItem extends Product {
   quantity: number;
 }

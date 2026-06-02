@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     if (path) {
       revalidatePath(path);
       // Cascade: if product path, also revalidate collections
-      if (path.startsWith("/products/")) {
+      if (path.startsWith("/san-pham")) {
         revalidateTag("collections", "max");
       }
     }

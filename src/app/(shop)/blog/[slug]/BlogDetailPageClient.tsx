@@ -11,11 +11,15 @@ import { BlogCard } from "@/components/shop/blog";
 import { useCart } from "@/context/CartContext";
 import { BlogPost, BlogCategory } from "@/types/blog";
 import { fetchBlogPostBySlug, fetchBlogCategories, fetchBlogPosts } from "@/lib/api";
+import { sanitizeBlogHtml } from "@/lib/blog-content";
 import { MOCK_BLOG_POSTS, MOCK_BLOG_CATEGORIES } from "@/data/blog";
 import { Calendar, User, ArrowLeft, Tag } from "lucide-react";
 
 interface BlogDetailPageClientProps {
   slug: string;
+  initialPost?: BlogPost | null;
+  initialCategories?: BlogCategory[];
+  initialRecentPosts?: BlogPost[];
 }
 
 function formatDate(dateStr: string | null): string {
@@ -28,16 +32,32 @@ function formatDate(dateStr: string | null): string {
   });
 }
 
-export function BlogDetailPageClient({ slug }: BlogDetailPageClientProps) {
+export function BlogDetailPageClient({
+  slug,
+  initialPost = null,
+  initialCategories = [],
+  initialRecentPosts = [],
+}: BlogDetailPageClientProps) {
   const { cartCount } = useCart();
 
-  const [post, setPost] = useState<BlogPost | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [post, setPost] = useState<BlogPost | null>(initialPost);
+  const [loading, setLoading] = useState(!initialPost);
   const [error, setError] = useState(false);
-  const [categories, setCategories] = useState<BlogCategory[]>([]);
-  const [recentPosts, setRecentPosts] = useState<BlogPost[]>([]);
+  const [categories, setCategories] = useState<BlogCategory[]>(
+    initialCategories.length > 0 ? initialCategories : [],
+  );
+  const [recentPosts, setRecentPosts] = useState<BlogPost[]>(
+    initialRecentPosts.length > 0 ? initialRecentPosts : [],
+  );
 
   useEffect(() => {
+    if (initialPost?.slug === slug) {
+      setPost(initialPost);
+      setLoading(false);
+      setError(false);
+      return;
+    }
+
     let cancelled = false;
 
     async function load() {
@@ -63,9 +83,21 @@ export function BlogDetailPageClient({ slug }: BlogDetailPageClientProps) {
 
     load();
     return () => { cancelled = true; };
-  }, [slug]);
+  }, [initialPost, slug]);
 
   useEffect(() => {
+    if (initialCategories.length > 0) {
+      setCategories(initialCategories);
+    }
+
+    if (initialRecentPosts.length > 0) {
+      setRecentPosts(initialRecentPosts);
+    }
+
+    if (initialCategories.length > 0 && initialRecentPosts.length > 0) {
+      return;
+    }
+
     fetchBlogCategories()
       .then((res) => {
         const cats = res.data;
@@ -76,7 +108,7 @@ export function BlogDetailPageClient({ slug }: BlogDetailPageClientProps) {
     fetchBlogPosts({ limit: 5, sort: "newest" })
       .then((res) => setRecentPosts(res.data.length > 0 ? res.data : MOCK_BLOG_POSTS.slice(0, 5)))
       .catch(() => setRecentPosts(MOCK_BLOG_POSTS.slice(0, 5)));
-  }, []);
+  }, [initialCategories, initialRecentPosts]);
 
   if (error && !loading) {
     notFound();
@@ -167,7 +199,7 @@ export function BlogDetailPageClient({ slug }: BlogDetailPageClientProps) {
                 {/* Content */}
                 <div
                   className="blog-content prose prose-lg max-w-none"
-                  dangerouslySetInnerHTML={{ __html: post.content }}
+                  dangerouslySetInnerHTML={{ __html: sanitizeBlogHtml(post.content) }}
                 />
 
                 {/* Tags */}
