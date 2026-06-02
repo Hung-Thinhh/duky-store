@@ -172,12 +172,12 @@
         "buttons": [
           {
             "label": "Khám phá ngay",
-            "link": "/collections/boot-nu",
+            "link": "/boot-nu",
             "variant": "primary"
           },
           {
             "label": "XEM BỘ SƯU TẬP",
-            "link": "/collections/boot-nu",
+            "link": "/boot-nu",
             "variant": "secondary"
           }
         ]
@@ -357,12 +357,12 @@
         "buttons": [
           {
             "label": "Khám phá ngay",
-            "link": "/collections/boot-nam",
+            "link": "/boot-nam",
             "variant": "primary"
           },
           {
             "label": "XEM BỘ SƯU TẬP",
-            "link": "/collections/boot-nam",
+            "link": "/boot-nam",
             "variant": "secondary"
           }
         ]
@@ -513,12 +513,12 @@
         "buttons": [
           {
             "label": "Khám phá ngay",
-            "link": "/collections/phu-kien",
+            "link": "/phu-kien",
             "variant": "primary"
           },
           {
             "label": "XEM BỘ SƯU TẬP",
-            "link": "/collections/phu-kien",
+            "link": "/phu-kien",
             "variant": "secondary"
           }
         ]

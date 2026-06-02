@@ -19,7 +19,7 @@ export function buildProductJsonLd(product: Product) {
   const description = product.desc || product.name;
   const originalPrice = product.originalPrice ?? product.price ?? 0;
   const salePrice = product.salePrice;
-  const url = `${SITE_URL}/products/${product.slug || product.id}`;
+  const url = `${SITE_URL}/san-pham/${product.slug || product.id}`;
 
   // Build offers: include both prices when sale price exists and is less than original
   const offers: object[] = [];
@@ -92,7 +92,7 @@ export function buildWebsiteJsonLd() {
       "@type": "SearchAction",
       target: {
         "@type": "EntryPoint",
-        urlTemplate: `${SITE_URL}/products?search={search_term_string}`,
+        urlTemplate: `${SITE_URL}/tim-kiem?q={search_term_string}`,
       },
       "query-input": "required name=search_term_string",
     },

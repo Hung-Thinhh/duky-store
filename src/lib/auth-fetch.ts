@@ -39,7 +39,7 @@ function performTokenRefresh(): Promise<string> {
       localStorage.removeItem(ACCESS_TOKEN_KEY);
       localStorage.removeItem(REFRESH_TOKEN_KEY);
       localStorage.removeItem(CUSTOMER_KEY);
-      window.location.href = "/login";
+      window.location.href = "/dang-nhap";
       throw new Error("Token refresh failed");
     }
   })().finally(() => {
@@ -84,7 +84,7 @@ export async function authFetch(
     localStorage.removeItem(ACCESS_TOKEN_KEY);
     localStorage.removeItem(REFRESH_TOKEN_KEY);
     localStorage.removeItem(CUSTOMER_KEY);
-    window.location.href = "/login";
+    window.location.href = "/dang-nhap";
     return response;
   }
 

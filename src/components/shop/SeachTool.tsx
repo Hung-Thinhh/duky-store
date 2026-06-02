@@ -315,7 +315,7 @@ export function SearchTool({
     if (e.key === "Escape") {
       onClose();
     } else if (e.key === "Enter" && query.trim()) {
-      router.push(`/search?q=${encodeURIComponent(query.trim())}`);
+      router.push(`/tim-kiem?q=${encodeURIComponent(query.trim())}`);
       onClose();
     }
   };
@@ -326,7 +326,7 @@ export function SearchTool({
   };
 
   const handleViewAll = () => {
-    router.push(`/search?q=${encodeURIComponent(query.trim())}`);
+    router.push(`/tim-kiem?q=${encodeURIComponent(query.trim())}`);
     onClose();
   };
 

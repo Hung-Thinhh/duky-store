@@ -186,7 +186,7 @@ export default function ProductDetailPageClient({
       variantLabel,
     });
 
-    router.push(`/checkout?${params.toString()}`);
+    router.push(`/thanh-toan?${params.toString()}`);
   };
 
   return (

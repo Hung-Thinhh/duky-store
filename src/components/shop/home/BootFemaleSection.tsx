@@ -53,7 +53,7 @@ export const BootFemaleSection: React.FC<{ initialProducts?: Product[] }> = ({ i
         description: getSlideDescription(product),
         image: getProductImageUrl(product),
         ctaText: 'Khám phá chi tiết',
-        ctaHref: `/products/${product.slug}`,
+        ctaHref: `/san-pham/${product.slug}`,
       }));
   }, [products]);
 
@@ -139,7 +139,7 @@ export const BootFemaleSection: React.FC<{ initialProducts?: Product[] }> = ({ i
         {/* button */}
         <div className="mt-8 justify-center items-center flex">
           <Link
-            href="/collections/boot-nu"
+            href="/boot-nu"
             className="group glass-effect text-black px-10 py-4 btn text-sm font-semibold flex items-center gap-3 hover:bg-neutral-900 transition-all duration-300 shadow-xl shadow-black/10 hover:shadow-black/20 hover:-translate-y-1 active:scale-95"
           >
             Xem thêm

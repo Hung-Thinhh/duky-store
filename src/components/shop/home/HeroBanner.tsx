@@ -30,15 +30,18 @@ export const HeroBanner = ({
   title,
   description,
   backgroundImage = "/assets/banner_hero.png",
-  primaryBtn = { text: "KHÁM PHÁ NGAY", link: "/products" },
-  secondaryBtn = { text: "XEM LOOKBOOK", link: "/gallery" },
+  primaryBtn = { text: "KHÁM PHÁ NGAY", link: "/san-pham" },
+  secondaryBtn = { text: "XEM LOOKBOOK", link: "/thu-vien" },
   trustItems = [],
   className,
 }: HeroBannerProps) => {
   return (
-    <section 
-      id="hero" 
-      className={cn("relative overflow-hidden min-h-[85vh] lg:h-screen flex flex-col justify-center", className)}
+    <section
+      id="hero"
+      className={cn(
+        "relative overflow-hidden min-h-[85vh] lg:h-screen flex flex-col justify-center",
+        className,
+      )}
     >
       {/* Background image */}
       <div className="absolute inset-0 -z-10">
@@ -70,9 +73,14 @@ export const HeroBanner = ({
             <h1 className="leading-[1.1] tracking-tighter text-text-main">
               {title || (
                 <>
-                  <span className="block text-[56px] md:text-[80px] lg:text-[100px] font-semibold">BOOT</span>
+                  <span className="block text-[56px] md:text-[80px] lg:text-[100px] font-semibold">
+                    BOOT
+                  </span>
                   <span className="block text-[48px] md:text-[70px] lg:text-[90px] font-medium italic -mt-4 md:-mt-6">
-                    MÙA HÈ <span className="font-montserrat not-italic font-semibold tracking-wide bg-linear-to-br from-zinc-500 via-zinc-300 to-zinc-700 bg-clip-text text-transparent inline-block ml-2 md:ml-4">2026</span>
+                    MÙA HÈ{" "}
+                    <span className="font-montserrat not-italic font-semibold tracking-wide bg-linear-to-br from-zinc-500 via-zinc-300 to-zinc-700 bg-clip-text text-transparent inline-block ml-2 md:ml-4">
+                      2026
+                    </span>
                   </span>
                 </>
               )}
@@ -82,7 +90,8 @@ export const HeroBanner = ({
             <div className="flex items-start gap-4 max-w-md">
               <div className="w-10 h-px bg-text-main mt-3 shrink-0" />
               <p className="text-base md:text-base text-text-muted leading-relaxed font-light">
-                {description || "Bứt phá phong cách – Khẳng định chất riêng cùng những thiết kế boot hiện đại nhất."}
+                {description ||
+                  "Bứt phá phong cách – Khẳng định chất riêng cùng những thiết kế boot hiện đại nhất."}
               </p>
             </div>
 
@@ -94,7 +103,10 @@ export const HeroBanner = ({
                   className="px-10 py-4 text-[11px] font-black tracking-widest group"
                 >
                   {primaryBtn.text}
-                  <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
+                  <ArrowRight
+                    size={18}
+                    className="transition-transform group-hover:translate-x-1"
+                  />
                 </Button>
               </Link>
               <Link href={secondaryBtn.link}>
@@ -114,7 +126,7 @@ export const HeroBanner = ({
       {trustItems.length > 0 && (
         <div className="absolute bottom-8 left-0 right-0 z-10 px-6 flex justify-center">
           <div className="max-w-fit">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.8 }}
@@ -122,8 +134,8 @@ export const HeroBanner = ({
             >
               <div className="flex flex-row items-center justify-center divide-x divide-black/5 overflow-x-auto no-scrollbar py-2 md:py-4">
                 {trustItems.map((item, i) => (
-                  <div 
-                    key={i} 
+                  <div
+                    key={i}
                     className="flex-shrink-0 flex items-center gap-4 px-6 md:px-10 first:pl-8 last:pr-8"
                   >
                     <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/50 flex items-center justify-center text-text-main shrink-0 shadow-sm">

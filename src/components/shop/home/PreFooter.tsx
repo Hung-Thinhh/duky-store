@@ -11,7 +11,6 @@ export const PreFooter = () => {
     <section className="pb-2 px-6 overflow-hidden">
       <div className="container-custom">
         <div className="glass-effect relative overflow-hidden rounded-[40px] md:rounded-[60px] shadow-2xl mt-8">
-
           <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-12 lg:gap-0 p-8 md:p-16 lg:p-24 relative z-10">
             {/* Left Content */}
             <motion.div
@@ -27,30 +26,34 @@ export const PreFooter = () => {
                   hợp phong cách của bạn?
                 </h2>
                 <p className="content text-base md:text-lg text-gray-500 max-w-md">
-                  Khám phá các mẫu boot da nam nữ đang có sẵn tại Duky Store Cần Thơ.
+                  Khám phá các mẫu boot da nam nữ đang có sẵn tại Duky Store Cần
+                  Thơ.
                 </p>
               </div>
 
               <div className="flex flex-wrap gap-4">
                 <Link
-                  href="/products"
+                  href="/san-pham"
                   className="group bg-black content text-white px-8 py-4 rounded-full text-sm font-bold flex items-center gap-3 hover:bg-neutral-900 transition-all duration-300 shadow-xl shadow-black/10 hover:shadow-black/20 hover:-translate-y-1 active:scale-95"
                 >
                   Mua ngay
-                  <ArrowRight size={18} className="transition-transform duration-300 group-hover:translate-x-1" />
+                  <ArrowRight
+                    size={18}
+                    className="transition-transform duration-300 group-hover:translate-x-1"
+                  />
                 </Link>
                 <Link
                   href="https://zalo.me/0939654574"
                   target="_blank"
-                  rel='noopener noreferrer'
+                  rel="noopener noreferrer"
                   className="group content bg-white/50 backdrop-blur-md border border-black/10 text-black px-8 py-4 rounded-full text-sm font-bold flex items-center gap-3 hover:bg-gray-100 hover:border-black/20 transition-all duration-300 hover:-translate-y-1 active:scale-95"
                 >
                   <div className="w-7 h-7 rounded-full flex items-center justify-center overflow-hidden shrink-0">
-                    <Image 
-                      src="/assets/icons/Zalo.png" 
-                      alt="Zalo" 
-                      width={28} 
-                      height={28} 
+                    <Image
+                      src="/assets/icons/Zalo.png"
+                      alt="Zalo"
+                      width={28}
+                      height={28}
                       className="object-contain"
                     />
                   </div>

@@ -63,7 +63,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     },
     ...COLLECTION_SLUGS.map((slug) => ({
-      url: absoluteUrl(`/collections/${slug}`),
+      url: absoluteUrl(`/${slug}`),
       lastModified: now,
       changeFrequency: "weekly" as const,
       priority: 0.8,
@@ -87,7 +87,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.5,
     },
     {
-      url: absoluteUrl("/policy"),
+      url: absoluteUrl("/chinh-sach"),
       lastModified: now,
       changeFrequency: "yearly",
       priority: 0.3,

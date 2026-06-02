@@ -6,7 +6,7 @@ export const metadata: Metadata = buildPageMetadata({
   title: "Tat Ca San Pham Giay Boot Va Phu Kien",
   description:
     "Mua giay boot nam, giay boot nu, ao khoac da va phu kien thoi trang cao cap tai Duky Store.",
-  path: "/products",
+  path: "/san-pham",
   image: "/assets/banner_sample.png",
 });
 

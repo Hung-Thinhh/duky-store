@@ -2,7 +2,7 @@ import React, { Suspense } from "react";
 import Image from "next/image";
 import type { Metadata } from "next";
 import { buildMetadata } from "@/lib/metadata";
-import { ProductsClient } from "../products/ProductsClient";
+import { ProductsClient } from "./ProductsClient";
 
 interface BannerContent {
   image: string;
@@ -27,7 +27,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return buildMetadata({
     title: "Tất cả sản phẩm",
     description: "Khám phá bộ sưu tập giày boot nam nữ cao cấp, phụ kiện thời trang và phong cách độc đáo tại Duky Store.",
-    path: "/products",
+    path: "/san-pham",
   });
 }
 

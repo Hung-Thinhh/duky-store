@@ -78,6 +78,23 @@ export async function generateMetadata({
   }
 }
 
+async function getBlogPageData(slug: string) {
+  const post = await getBlogPostBySlug(slug);
+  const [categoriesResult, recentPostsResult] = await Promise.allSettled([
+    fetchBlogCategories(),
+    fetchBlogPosts({ limit: 5, sort: "newest" }),
+  ]);
+
+  const categories: BlogCategory[] =
+    categoriesResult.status === "fulfilled" ? categoriesResult.value.data : [];
+  const recentPosts: BlogPost[] =
+    recentPostsResult.status === "fulfilled"
+      ? recentPostsResult.value.data
+      : [];
+
+  return { post, categories, recentPosts };
+}
+
 export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
   const { slug } = await params;
   let data: Awaited<ReturnType<typeof getBlogPageData>>;

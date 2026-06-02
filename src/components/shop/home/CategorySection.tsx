@@ -9,26 +9,44 @@ import { useProducts } from "@/hooks/useProducts";
 import { Product } from "@/types/product";
 
 const CATEGORIES_DATA = [
-  { title: "Boot nam", imageSrc: "/assets/boot_nam.png", href: "/collections/boot-nam" },
-  { title: "Boot nữ", imageSrc: "/assets/boot_nu.png", href: "/collections/boot-nu" },
-  { title: "Unisex", imageSrc: "/assets/out_fit.png", href: "/collections/unisex" },
-  { title: "Phụ kiện", imageSrc: "/assets/phu_kien.png", href: "/collections/phu-kien" },
+  {
+    title: "Boot nam",
+    imageSrc: "/assets/boot_nam.png",
+    href: "/boot-nam",
+  },
+  { title: "Boot nữ", imageSrc: "/assets/boot_nu.png", href: "/boot-nu" },
+  { title: "Unisex", imageSrc: "/assets/out_fit.png", href: "/unisex" },
+  {
+    title: "Phụ kiện",
+    imageSrc: "/assets/phu_kien.png",
+    href: "/phu-kien",
+  },
 ];
 
-export const CategorySection = ({ initialProducts }: { initialProducts?: Product[] }) => {
+export const CategorySection = ({
+  initialProducts,
+}: {
+  initialProducts?: Product[];
+}) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const { products, loading } = useProducts(
     { isBestSeller: true, limit: 12 },
-    { initialData: initialProducts }
+    { initialData: initialProducts },
   );
 
   const handleScroll = (direction: "left" | "right") => {
     if (scrollRef.current) {
       const { scrollLeft, clientWidth, scrollWidth } = scrollRef.current;
-      const scrollAmount = clientWidth * 0.8; 
-      let targetScroll = direction === "right" ? scrollLeft + scrollAmount : scrollLeft - scrollAmount;
+      const scrollAmount = clientWidth * 0.8;
+      let targetScroll =
+        direction === "right"
+          ? scrollLeft + scrollAmount
+          : scrollLeft - scrollAmount;
 
-      if (direction === "right" && scrollLeft + clientWidth >= scrollWidth - 20) {
+      if (
+        direction === "right" &&
+        scrollLeft + clientWidth >= scrollWidth - 20
+      ) {
         targetScroll = 0;
       } else if (direction === "left" && scrollLeft <= 0) {
         targetScroll = scrollWidth - clientWidth;
@@ -38,7 +56,7 @@ export const CategorySection = ({ initialProducts }: { initialProducts?: Product
         scrollLeft: targetScroll,
         duration: 1.2,
         ease: "power2.inOut",
-        overwrite: true
+        overwrite: true,
       });
     }
   };
@@ -48,8 +66,12 @@ export const CategorySection = ({ initialProducts }: { initialProducts?: Product
     if (!container) return;
 
     let isHovered = false;
-    const handleMouseEnter = () => { isHovered = true; };
-    const handleMouseLeave = () => { isHovered = false; };
+    const handleMouseEnter = () => {
+      isHovered = true;
+    };
+    const handleMouseLeave = () => {
+      isHovered = false;
+    };
 
     container.addEventListener("mouseenter", handleMouseEnter);
     container.addEventListener("mouseleave", handleMouseLeave);
@@ -68,10 +90,10 @@ export const CategorySection = ({ initialProducts }: { initialProducts?: Product
   }, []);
 
   return (
-    <section 
-      className="pt-24 pb-8 overflow-hidden category-section-container"
-    >
-      <style dangerouslySetInnerHTML={{ __html: `
+    <section className="pt-24 pb-8 overflow-hidden category-section-container">
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
         .category-section-container {
           padding-left: 0.5rem;
           padding-right: 0.5rem;
@@ -98,7 +120,9 @@ export const CategorySection = ({ initialProducts }: { initialProducts?: Product
             padding-right: 0;
           }
         }
-      `}} />
+      `,
+        }}
+      />
       <div className="container-custom category-container-custom">
         {/* Header */}
         <div className="mt-8 category-header-container">
@@ -138,7 +162,7 @@ export const CategorySection = ({ initialProducts }: { initialProducts?: Product
         </div>
 
         {/* Best Sellers Section */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -150,15 +174,21 @@ export const CategorySection = ({ initialProducts }: { initialProducts?: Product
             <h3 className="text-2xl md:text-2xl lg:text-[40px] font-semibold text-text-main leading-tight tracking-tight">
               Sản phẩm bán chạy
             </h3>
-            <a href="/products?isBestSeller=true" className="group flex items-center gap-1.5 text-sm md:text-base font-medium text-gray-500 hover:text-black transition-colors">
-              Xem tất cả 
-              <ArrowRight size={18} className="transition-transform duration-300 group-hover:translate-x-1" />
+            <a
+              href="/san-pham?isBestSeller=true"
+              className="group flex items-center gap-1.5 text-sm md:text-base font-medium text-gray-500 hover:text-black transition-colors"
+            >
+              Xem tất cả
+              <ArrowRight
+                size={18}
+                className="transition-transform duration-300 group-hover:translate-x-1"
+              />
             </a>
           </div>
 
           <div className="relative group/slider">
             {/* Navigation Buttons */}
-            <button 
+            <button
               onClick={() => handleScroll("left")}
               className="hidden lg:flex absolute -left-2 md:-left-4 top-1/2 -translate-y-1/2 z-30 w-11 h-11 bg-white/95 backdrop-blur-md rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.12)] border border-gray-100 items-center justify-center text-black opacity-100 lg:opacity-0 lg:group-hover/slider:opacity-100 lg:group-hover/slider:translate-x-2 transition-all duration-300 hover:bg-gray-100 hover:scale-110 active:scale-95 cursor-pointer"
               aria-label="Previous products"
@@ -167,38 +197,39 @@ export const CategorySection = ({ initialProducts }: { initialProducts?: Product
             </button>
 
             {/* Danh sách sản phẩm */}
-            <div 
+            <div
               ref={scrollRef}
               className="flex overflow-x-auto gap-6 md:gap-6 pb-6 pt-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] -mx-2 px-2"
             >
-              {loading ? (
-                // Skeleton loading
-                Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i} className="w-[220px] md:w-[240px] snap-start flex-shrink-0">
-                    <div className="animate-pulse bg-gray-100 rounded-2xl p-3">
-                      <div className="aspect-square rounded-xl bg-gray-200 mb-3" />
-                      <div className="h-4 bg-gray-200 rounded w-3/4 mb-2" />
-                      <div className="h-4 bg-gray-200 rounded w-1/2" />
+              {loading
+                ? // Skeleton loading
+                  Array.from({ length: 6 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className="w-[220px] md:w-[240px] snap-start flex-shrink-0"
+                    >
+                      <div className="animate-pulse bg-gray-100 rounded-2xl p-3">
+                        <div className="aspect-square rounded-xl bg-gray-200 mb-3" />
+                        <div className="h-4 bg-gray-200 rounded w-3/4 mb-2" />
+                        <div className="h-4 bg-gray-200 rounded w-1/2" />
+                      </div>
                     </div>
-                  </div>
-                ))
-              ) : (
-                products.map((product) => (
-                  <div 
-                    key={product.id} 
-                    className="w-[220px] md:w-[240px] snap-start flex-shrink-0"
-                  >
-                    <ProductCard 
-                      product={product} 
-                      variant="bestSeller"
-                      priority={false}
-                    />
-                  </div>
-                ))
-              )}
+                  ))
+                : products.map((product) => (
+                    <div
+                      key={product.id}
+                      className="w-[220px] md:w-[240px] snap-start flex-shrink-0"
+                    >
+                      <ProductCard
+                        product={product}
+                        variant="bestSeller"
+                        priority={false}
+                      />
+                    </div>
+                  ))}
             </div>
 
-            <button 
+            <button
               onClick={() => handleScroll("right")}
               className="hidden lg:flex absolute -right-2 md:-right-4 top-1/2 -translate-y-1/2 z-30 w-11 h-11 bg-white/95 backdrop-blur-md rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.12)] border border-gray-100 items-center justify-center text-black opacity-100 lg:opacity-0 lg:group-hover/slider:opacity-100 lg:group-hover/slider:-translate-x-2 transition-all duration-300 hover:bg-gray-100 hover:scale-110 active:scale-95 cursor-pointer"
               aria-label="Next products"

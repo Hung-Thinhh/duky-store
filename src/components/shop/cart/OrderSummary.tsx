@@ -112,7 +112,7 @@ export function OrderSummary({
         </button>
       ) : (
         <Link
-          href="/checkout"
+          href="/thanh-toan"
           className="w-full py-3.5 min-h-[44px] rounded-full text-sm font-bold uppercase tracking-wider text-white bg-black hover:bg-gray-800 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2"
         >
           <ShoppingCart size={16} />

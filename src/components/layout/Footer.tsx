@@ -1,14 +1,26 @@
 "use client";
-import React from 'react';
-import { MapPin, Phone, Mail, Facebook, Instagram, ChevronRight, MessageCircle, UserPlus, Diamond } from 'lucide-react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { BannerPage } from './BannerPage';
+import React from "react";
+import {
+  MapPin,
+  Phone,
+  Mail,
+  Facebook,
+  Instagram,
+  ChevronRight,
+  MessageCircle,
+  UserPlus,
+  Diamond,
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { BannerPage } from "./BannerPage";
 
 export const Footer = () => {
   return (
     <>
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
         .custom-footer-row {
           display: flex;
           flex-direction: column;
@@ -117,21 +129,20 @@ export const Footer = () => {
             display: inline;
           }
         }
-      `}} />
+      `,
+        }}
+      />
       <footer id="footer" className="w-full">
-        
         {/* Top Section - Light Gray */}
         <div className="bg-black pt-4 text-white py-16 px-4 md:px-8">
           <div className="container-custom mx-auto">
             <div className="custom-footer-row">
-              
               {/* Left Block - 5 columns */}
               <div className="custom-footer-left">
-                
                 {/* Col 1: Logo */}
                 <div className="custom-footer-col1">
                   <div className="custom-footer-logo-wrapper">
-                    <Image 
+                    <Image
                       src="/assets/logo_footer.png"
                       alt="Duky Store"
                       width={110}
@@ -142,7 +153,10 @@ export const Footer = () => {
 
                   {/* Thông tin */}
                   <p className="content text-[13px] text-white font-medium leading-relaxed max-w-[350px] py-1.5">
-                    Duky Store là điểm đến lý tưởng cho những tín đồ thời trang yêu thích phong cách mạnh mẽ, cá tính với các mẫu giày boot da nam nữ độc đáo và trendy. Mua sắm an tâm với chính sách bảo hành 12 tháng và đổi trả linh hoạt.
+                    Duky Store là điểm đến lý tưởng cho những tín đồ thời trang
+                    yêu thích phong cách mạnh mẽ, cá tính với các mẫu giày boot
+                    da nam nữ độc đáo và trendy. Mua sắm an tâm với chính sách
+                    bảo hành 12 tháng và đổi trả linh hoạt.
                   </p>
 
                   {/* Liên hệ  */}
@@ -150,8 +164,13 @@ export const Footer = () => {
                     <ul className="space-y-2">
                       <li>
                         <div className="flex content text-[13px] items-start gap-4 py-1.5 text-[12px] text-white leading-snug">
-                          <MapPin size={14} className="shrink-0 mt-0.5 text-white" />
-                          <span>122 Nguyễn Hiền, KDC 91B, P. Tân An, TP. Cần Thơ</span>
+                          <MapPin
+                            size={14}
+                            className="shrink-0 mt-0.5 text-white"
+                          />
+                          <span>
+                            122 Nguyễn Hiền, KDC 91B, P. Tân An, TP. Cần Thơ
+                          </span>
                         </div>
                       </li>
                       <li>
@@ -171,30 +190,45 @@ export const Footer = () => {
 
                   {/* Social Icons */}
                   <div className="custom-footer-col1-socials">
-                    <Link href="https://zalo.me/0939654574" target='_blank' rel='noopener noreferrer' className="w-8 h-8 rounded-full bg-white flex items-center justify-center hover:bg-gray-300 hover:-translate-y-1 transition-all duration-300 shadow-sm hover:shadow-md">
-                      <Image 
-                        src="/assets/icons/Zalo.png" 
-                        alt="Zalo" 
-                        width={20} 
-                        height={20} 
+                    <Link
+                      href="https://zalo.me/0939654574"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-8 h-8 rounded-full bg-white flex items-center justify-center hover:bg-gray-300 hover:-translate-y-1 transition-all duration-300 shadow-sm hover:shadow-md"
+                    >
+                      <Image
+                        src="/assets/icons/Zalo.png"
+                        alt="Zalo"
+                        width={20}
+                        height={20}
                         className="object-contain"
                       />
                     </Link>
-                    <Link href="https://www.instagram.com/duky.store/?g=5" target='_blank' rel='noopener noreferrer' className="w-8 h-8 rounded-full bg-white flex items-center justify-center hover:bg-gray-300 hover:-translate-y-1 transition-all duration-300 shadow-sm hover:shadow-md">
-                      <Image 
-                        src="/assets/icons/Instagram.png" 
-                        alt="Instagram" 
-                        width={20} 
-                        height={20} 
+                    <Link
+                      href="https://www.instagram.com/duky.store/?g=5"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-8 h-8 rounded-full bg-white flex items-center justify-center hover:bg-gray-300 hover:-translate-y-1 transition-all duration-300 shadow-sm hover:shadow-md"
+                    >
+                      <Image
+                        src="/assets/icons/Instagram.png"
+                        alt="Instagram"
+                        width={20}
+                        height={20}
                         className="object-contain"
                       />
                     </Link>
-                    <Link href="https://www.tiktok.com/@duky.store" target='_blank' rel='noopener noreferrer'className="w-8 h-8 rounded-full bg-white flex items-center justify-center hover:bg-gray-300 hover:-translate-y-1 transition-all duration-300 shadow-sm hover:shadow-md">
-                      <Image 
-                        src="/assets/icons/Tiktok.png" 
-                        alt="Tiktok" 
-                        width={20} 
-                        height={20} 
+                    <Link
+                      href="https://www.tiktok.com/@duky.store"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-8 h-8 rounded-full bg-white flex items-center justify-center hover:bg-gray-300 hover:-translate-y-1 transition-all duration-300 shadow-sm hover:shadow-md"
+                    >
+                      <Image
+                        src="/assets/icons/Tiktok.png"
+                        alt="Tiktok"
+                        width={20}
+                        height={20}
                         className="object-contain"
                       />
                     </Link>
@@ -203,21 +237,26 @@ export const Footer = () => {
 
                 {/* Col 2: Truy cập */}
                 <div className="custom-footer-col2">
-                  <h4 className="font-bold text-[18px] mb-4 uppercase tracking-wider text-white">Truy Cập</h4>
+                  <h4 className="font-bold text-[18px] mb-4 uppercase tracking-wider text-white">
+                    Truy Cập
+                  </h4>
                   <ul className="space-y-2">
                     {[
-                      { label: 'Trang chủ', href: '/' },
-                      { label: 'Sản phẩm', href: '/products' },
-                      { label: 'Giày boot nam', href: '/collections/boot-nam' },
-                      { label: 'Giày boot nữ', href: '/collections/boot-nu' },
-                      { label: 'Phụ kiện', href: '/collections/phu-kien' },
-                      { label: 'Unisex', href: '/collections/unisex' },
-                      { label: 'Phối đồ', href: '/gallery' },
-                      { label: 'Kinh nghiệm', href: '/blog' },
-                      { label: 'Liên hệ', href: '/contact' },
+                      { label: "Trang chủ", href: "/" },
+                      { label: "Sản phẩm", href: "/san-pham" },
+                      { label: "Giày boot nam", href: "/boot-nam" },
+                      { label: "Giày boot nữ", href: "/boot-nu" },
+                      { label: "Phụ kiện", href: "/phu-kien" },
+                      { label: "Unisex", href: "/unisex" },
+                      { label: "Phối đồ", href: "/thu-vien" },
+                      { label: "Kinh nghiệm", href: "/blog" },
+                      { label: "Liên hệ", href: "/lien-he" },
                     ].map((item) => (
                       <li key={item.label}>
-                        <Link href={item.href} className="inline-flex items-center justify-start content text-[13px] py-1.5 text-gray-300 hover:text-white hover:scale-105 hover:translate-x-1 origin-left transition-all duration-300">
+                        <Link
+                          href={item.href}
+                          className="inline-flex items-center justify-start content text-[13px] py-1.5 text-gray-300 hover:text-white hover:scale-105 hover:translate-x-1 origin-left transition-all duration-300"
+                        >
                           <span>{item.label}</span>
                         </Link>
                       </li>
@@ -227,17 +266,22 @@ export const Footer = () => {
 
                 {/* Col 3: Chính sách */}
                 <div className="custom-footer-col3">
-                  <h4 className="font-bold text-[18px] mb-4 uppercase tracking-wider text-white">Chính Sách</h4>
+                  <h4 className="font-bold text-[18px] mb-4 uppercase tracking-wider text-white">
+                    Chính Sách
+                  </h4>
                   <ul className="space-y-2">
                     {[
-                      { name: 'Chính sách bảo mật', href: '/policy' },
-                      { name: 'Quy định sử dụng', href: '/policy' },
-                      { name: 'Chính sách vận chuyển', href: '/policy' },
-                      { name: 'Chính sách bảo hành', href: '/policy' },
-                      { name: 'Chính sách đổi trả hàng', href: '/policy' },
+                      { name: "Chính sách bảo mật", href: "/chinh-sach" },
+                      { name: "Quy định sử dụng", href: "/chinh-sach" },
+                      { name: "Chính sách vận chuyển", href: "/chinh-sach" },
+                      { name: "Chính sách bảo hành", href: "/chinh-sach" },
+                      { name: "Chính sách đổi trả hàng", href: "/chinh-sach" },
                     ].map((item) => (
                       <li key={item.name}>
-                        <Link href={item.href} className="inline-flex items-center justify-start text-[13px] py-1.5 text-gray-300 hover:text-white hover:scale-105 hover:translate-x-1 origin-left transition-all duration-300">
+                        <Link
+                          href={item.href}
+                          className="inline-flex items-center justify-start text-[13px] py-1.5 text-gray-300 hover:text-white hover:scale-105 hover:translate-x-1 origin-left transition-all duration-300"
+                        >
                           <span>{item.name}</span>
                         </Link>
                       </li>
@@ -248,9 +292,8 @@ export const Footer = () => {
 
               {/* Right Block - Fanpage Banner */}
               <div className="custom-footer-right">
-                <BannerPage className="p-2"/>
+                <BannerPage className="p-2" />
               </div>
-
             </div>
           </div>
         </div>

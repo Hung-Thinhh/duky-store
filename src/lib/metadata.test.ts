@@ -16,7 +16,7 @@ describe("buildMetadata", () => {
     const input: PageMetadataInput = {
       title: "Boot Nam",
       description: "Giày boot nam cao cấp",
-      path: "/collections/boot-nam",
+      path: "/boot-nam",
     };
 
     const metadata = buildMetadata(input);
@@ -27,7 +27,7 @@ describe("buildMetadata", () => {
     const input: PageMetadataInput = {
       title: "Sản phẩm mới",
       description: "Mô tả sản phẩm",
-      path: "/products/test-product",
+      path: "/san-pham/test-product",
       image: "https://example.com/image.jpg",
       type: "product",
     };
@@ -37,7 +37,7 @@ describe("buildMetadata", () => {
 
     expect(og.title).toBe("Sản phẩm mới | Duky Store");
     expect(og.description).toBe("Mô tả sản phẩm");
-    expect(og.url).toBe("https://dukystore.com/products/test-product");
+    expect(og.url).toBe("https://dukystore.com/san-pham/test-product");
     expect(og.type).toBe("website");
     expect(og.images).toEqual([{ url: "https://example.com/image.jpg" }]);
     expect(og.siteName).toBe("Duky Store");
@@ -99,16 +99,16 @@ describe("buildMetadata", () => {
     const input: PageMetadataInput = {
       title: "Test",
       description: "Test description",
-      path: "/collections/boot-nu",
+      path: "/boot-nu",
     };
 
     const metadata = buildMetadata(input);
     const og = metadata.openGraph as Record<string, unknown>;
 
     expect(metadata.alternates).toEqual({
-      canonical: "https://dukystore.com/collections/boot-nu",
+      canonical: "https://dukystore.com/boot-nu",
     });
-    expect(og.url).toBe("https://dukystore.com/collections/boot-nu");
+    expect(og.url).toBe("https://dukystore.com/boot-nu");
   });
 
   it("defaults og:type to 'website' when type is not provided", () => {

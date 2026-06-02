@@ -53,7 +53,7 @@ export default function NotFound() {
               Về trang chủ →
             </Link>
             <Link
-              href="/products"
+              href="/san-pham"
               className="w-full sm:w-auto px-6 py-4 border border-zinc-300 bg-white text-zinc-950 text-[11px] font-bold uppercase tracking-widest rounded-full hover:bg-zinc-50 hover:border-zinc-400 transition-all duration-300 flex items-center justify-center font-montserrat"
             >
               Tiếp tục mua sắm

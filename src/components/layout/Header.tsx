@@ -158,13 +158,13 @@ export const Header = ({ cartCount }: HeaderProps) => {
   ];
 
   const navItems = [
-    { name: "Boot Nam", href: "/collections/boot-nam" },
-    { name: "Boot Nữ", href: "/collections/boot-nu" },
-    { name: "Phụ kiện", href: "/collections/phu-kien" },
-    { name: "Unisex", href: "/collections/unisex" },
-    { name: "Phối đồ", href: "/gallery" },
+    { name: "Boot Nam", href: "/boot-nam" },
+    { name: "Boot Nữ", href: "/boot-nu" },
+    { name: "Phụ kiện", href: "/phu-kien" },
+    { name: "Unisex", href: "/unisex" },
+    { name: "Phối đồ", href: "/thu-vien" },
     { name: "Kinh nghiệm", href: "/blog" },
-    { name: "Liên hệ", href: "/contact" },
+    { name: "Liên hệ", href: "/lien-he" },
   ];
 
   return (
@@ -251,7 +251,7 @@ export const Header = ({ cartCount }: HeaderProps) => {
                       {/* Part 2: Navigation */}
                       <div className="py-2 px-3 border-t border-gray-100">
                         <Link
-                          href="/user"
+                          href="/tai-khoan"
                           onClick={() => setIsAccountMenuOpen(false)}
                           className="flex items-center gap-4 px-4 py-2 text-[14px] text-gray-600 hover:bg-gray-100 hover:text-black rounded-lg transition-all duration-200"
                         >
@@ -263,7 +263,7 @@ export const Header = ({ cartCount }: HeaderProps) => {
                           <span>Tài khoản của tôi</span>
                         </Link>
                         <Link
-                          href="/user/order"
+                          href="/tai-khoan/don-hang"
                           onClick={() => setIsAccountMenuOpen(false)}
                           className="flex items-center gap-4 px-4 py-2 text-[14px] text-gray-600 hover:bg-gray-100 hover:text-black rounded-lg transition-all duration-200"
                         >
@@ -275,7 +275,7 @@ export const Header = ({ cartCount }: HeaderProps) => {
                           <span>Đơn hàng</span>
                         </Link>
                         <Link
-                          href="/user/address"
+                          href="/tai-khoan/dia-chi"
                           onClick={() => setIsAccountMenuOpen(false)}
                           className="flex items-center gap-4 px-4 py-2 text-[14px] text-gray-600 hover:bg-gray-100 hover:text-black rounded-lg transition-all duration-200"
                         >
@@ -287,7 +287,7 @@ export const Header = ({ cartCount }: HeaderProps) => {
                           <span>Địa chỉ</span>
                         </Link>
                         <Link
-                          href="/user/setting"
+                          href="/tai-khoan/cai-dat"
                           onClick={() => setIsAccountMenuOpen(false)}
                           className="flex items-center gap-4 px-4 py-2 text-[14px] text-gray-600 hover:bg-gray-100 hover:text-black rounded-lg transition-all duration-200"
                         >
@@ -320,14 +320,14 @@ export const Header = ({ cartCount }: HeaderProps) => {
               </div>
             ) : (
               <Link
-                href="/login"
+                href="/dang-nhap"
                 className="text-text-main hover:scale-110 transition-transform hidden sm:block cursor-pointer"
               >
                 <User size={22} strokeWidth={2} />
               </Link>
             )}
             <Link
-              href="/cart"
+              href="/gio-hang"
               className="text-text-main hover:scale-110 transition-transform relative cursor-pointer"
             >
               <ShoppingBag size={22} strokeWidth={2} />
@@ -411,11 +411,11 @@ export const Header = ({ cartCount }: HeaderProps) => {
                   <Search size={22} className="text-text-main" />
                 </button>
                 {isAuthenticated && customer ? (
-                  <Link href="/user" onClick={() => setIsMenuOpen(false)}>
+                  <Link href="/tai-khoan" onClick={() => setIsMenuOpen(false)}>
                     <Avatar fullName={customer.fullName} size="mobile" />
                   </Link>
                 ) : (
-                  <Link href="/login" onClick={() => setIsMenuOpen(false)}>
+                  <Link href="/dang-nhap" onClick={() => setIsMenuOpen(false)}>
                     <User size={22} className="text-text-main" />
                   </Link>
                 )}

@@ -183,7 +183,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsAuthenticated(false);
 
     // Redirect to home page only if currently on a user-specific page
-    if (typeof window !== "undefined" && window.location.pathname.startsWith("/user")) {
+    if (typeof window !== "undefined" && window.location.pathname.startsWith("/tai-khoan")) {
       window.location.href = "/";
     }
 

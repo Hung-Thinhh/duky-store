@@ -50,7 +50,7 @@ describe("buildProductJsonLd", () => {
       price: 500000,
       priceCurrency: "VND",
       availability: "https://schema.org/InStock",
-      url: "https://dukystore.com/products/boot-nam-classic",
+      url: "https://dukystore.com/san-pham/boot-nam-classic",
     });
   });
 
@@ -98,8 +98,8 @@ describe("buildBreadcrumbJsonLd", () => {
   it("produces a valid BreadcrumbList with sequential positions", () => {
     const items = [
       { name: "Trang chủ", url: "/" },
-      { name: "Boot Nam", url: "/collections/boot-nam" },
-      { name: "Boot Classic", url: "/products/boot-classic" },
+      { name: "Boot Nam", url: "/boot-nam" },
+      { name: "Boot Classic", url: "/san-pham/boot-classic" },
     ];
     const result = buildBreadcrumbJsonLd(items);
 
@@ -137,7 +137,7 @@ describe("buildWebsiteJsonLd", () => {
     expect(result.url).toBe("https://dukystore.com");
     expect(result.potentialAction["@type"]).toBe("SearchAction");
     expect(result.potentialAction.target.urlTemplate).toBe(
-      "https://dukystore.com/products?search={search_term_string}",
+      "https://dukystore.com/tim-kiem?q={search_term_string}",
     );
     expect(result.potentialAction["query-input"]).toBe(
       "required name=search_term_string",
