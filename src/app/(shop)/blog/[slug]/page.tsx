@@ -21,7 +21,7 @@ function absoluteUrl(pathOrUrl?: string | null) {
     return pathOrUrl;
   }
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://dukystore.vn";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://dukystore.com";
   return new URL(pathOrUrl, siteUrl).toString();
 }
 

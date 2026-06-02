@@ -6,7 +6,7 @@ import { Footer } from "@/components/layout";
 import { CategorySection } from "@/components/shop";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { buildMetadata } from "@/lib/metadata";
-import { buildWebsiteJsonLd } from "@/lib/structured-data";
+import { buildWebsiteJsonLd, buildStoreJsonLd } from "@/lib/structured-data";
 import { SectionSkeleton } from "@/components/shop/home/SectionSkeleton";
 import { HomeHeader } from "./HomeHeader";
 import { HomeHeroBanner } from "./HomeHeroBanner";
@@ -104,6 +104,7 @@ export default async function ShopPage() {
   return (
     <>
       <JsonLd data={buildWebsiteJsonLd()} />
+      <JsonLd data={buildStoreJsonLd()} />
       {/* Above-fold: rendered synchronously for fast LCP */}
       <HomeHeader />
       <HomeHeroBanner initialSlides={slides} />

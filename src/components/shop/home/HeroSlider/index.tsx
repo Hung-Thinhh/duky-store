@@ -73,6 +73,7 @@ export function HeroSlider({
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
+  const [hasMounted, setHasMounted] = useState(false);
 
   // ─── Refs ────────────────────────────────────────────────────────────────
 
@@ -84,6 +85,7 @@ export function HeroSlider({
   // ─── Entry Animation on Mount ────────────────────────────────────────────
 
   useEffect(() => {
+    setHasMounted(true);
     const firstContainer = slideContainersRef.current.get(0);
     if (firstContainer) {
       gsap.set(firstContainer, { opacity: 1 });
@@ -394,6 +396,9 @@ export function HeroSlider({
       {/* All slides rendered, only active one visible */}
       {validSlides.map((slide, index) => {
         const isActive = index === currentSlide;
+        const shouldRender = index === 0 || hasMounted;
+
+        if (!shouldRender) return null;
 
         return (
           <div
@@ -418,6 +423,7 @@ export function HeroSlider({
                 <SlideLayer
                   key={`${slide.id}-layer-${layerIndex}`}
                   src={layer.src}
+                  srcMobile={layer.srcMobile}
                   alt={layer.alt}
                   zIndex={layer.zIndex}
                   className={layerClass}
@@ -431,7 +437,7 @@ export function HeroSlider({
                     }
                   }
                   isActive={isActive}
-                  priority={index === 0 && layer.zIndex === 0}
+                  priority={index === 0}
                 />
               );
             })}

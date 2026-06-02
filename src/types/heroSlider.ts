@@ -27,6 +27,7 @@ export interface LayerLayout {
 
 export interface LayerConfig {
   src: string;
+  srcMobile?: string;
   alt: string;
   zIndex: number;
   role?: "background" | "pedestal" | "model" | "boot";

@@ -4,6 +4,7 @@ import {
   buildBreadcrumbJsonLd,
   buildWebsiteJsonLd,
   buildArticleJsonLd,
+  buildStoreJsonLd,
   ArticleJsonLdInput,
 } from "./structured-data";
 import { Product } from "@/types/product";
@@ -49,7 +50,7 @@ describe("buildProductJsonLd", () => {
       price: 500000,
       priceCurrency: "VND",
       availability: "https://schema.org/InStock",
-      url: "https://dukystore.vn/products/boot-nam-classic",
+      url: "https://dukystore.com/products/boot-nam-classic",
     });
   });
 
@@ -115,7 +116,7 @@ describe("buildBreadcrumbJsonLd", () => {
     const items = [{ name: "Home", url: "/" }];
     const result = buildBreadcrumbJsonLd(items);
 
-    expect(result.itemListElement[0].item).toBe("https://dukystore.vn/");
+    expect(result.itemListElement[0].item).toBe("https://dukystore.com/");
   });
 
   it("preserves absolute URLs", () => {
@@ -133,13 +134,13 @@ describe("buildWebsiteJsonLd", () => {
     expect(result["@context"]).toBe("https://schema.org");
     expect(result["@type"]).toBe("WebSite");
     expect(result.name).toBe("Duky Store");
-    expect(result.url).toBe("https://dukystore.vn");
+    expect(result.url).toBe("https://dukystore.com");
     expect(result.potentialAction["@type"]).toBe("SearchAction");
     expect(result.potentialAction.target.urlTemplate).toBe(
-      "https://dukystore.vn/products?search={search_term_string}"
+      "https://dukystore.com/products?search={search_term_string}",
     );
     expect(result.potentialAction["query-input"]).toBe(
-      "required name=search_term_string"
+      "required name=search_term_string",
     );
   });
 });
@@ -167,7 +168,7 @@ describe("buildArticleJsonLd", () => {
     expect(result.datePublished).toBe("2024-01-15T10:00:00Z");
     expect(result.dateModified).toBe("2024-01-20T12:00:00Z");
     expect(result.url).toBe(
-      "https://dukystore.vn/blog/cach-phoi-do-voi-boot-nam"
+      "https://dukystore.com/blog/cach-phoi-do-voi-boot-nam",
     );
   });
 
@@ -199,5 +200,29 @@ describe("buildArticleJsonLd", () => {
     const result = buildArticleJsonLd(noExcerpt);
 
     expect(result.description).toBe("Cách phối đồ với boot nam");
+  });
+});
+
+describe("buildStoreJsonLd", () => {
+  it("produces a valid ShoeStore schema with store info", () => {
+    const result = buildStoreJsonLd();
+
+    expect(result["@context"]).toBe("https://schema.org");
+    expect(result["@type"]).toBe("ShoeStore");
+    expect(result.name).toBe("Duky Store");
+    expect(result.telephone).toBe("0939.654.574");
+    expect(result.email).toBe("dukystore.info@gmail.com");
+    expect(result.address).toEqual({
+      "@type": "PostalAddress",
+      streetAddress: "122 Nguyễn Hiền, KDC 91B, P. Tân An",
+      addressLocality: "Ninh Kiều",
+      addressRegion: "Cần Thơ",
+      addressCountry: "VN",
+    });
+    expect(result.geo).toEqual({
+      "@type": "GeoCoordinates",
+      latitude: 10.023,
+      longitude: 105.7558,
+    });
   });
 });

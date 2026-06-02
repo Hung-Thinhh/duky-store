@@ -10,11 +10,10 @@ export interface PageMetadataInput {
 
 /**
  * Builds a Next.js Metadata object with Open Graph and Twitter Card tags.
- * Uses NEXT_PUBLIC_SITE_URL env var for canonical URLs with fallback to https://dukystore.vn.
+ * Uses NEXT_PUBLIC_SITE_URL env var for canonical URLs with fallback to https://dukystore.com.
  */
 export function buildMetadata(input: PageMetadataInput): Metadata {
-  const siteUrl =
-    process.env.NEXT_PUBLIC_SITE_URL || "https://dukystore.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://dukystore.com";
 
   const fullTitle =
     input.path === "/" || input.title.includes("Duky Store")
@@ -27,7 +26,7 @@ export function buildMetadata(input: PageMetadataInput): Metadata {
 
   // Next.js openGraph.type only supports standard OG types (website, article, etc.)
   // For "product" pages, we use "website" as the OG type
-  const ogType = input.type === "product" ? "website" : (input.type || "website");
+  const ogType = input.type === "product" ? "website" : input.type || "website";
 
   return {
     metadataBase: new URL(siteUrl),

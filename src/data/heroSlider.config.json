@@ -6,6 +6,7 @@
       "layers": [
         {
           "file": "background.webp",
+          "fileMobile": "background-mobile.webp",
           "alt": "Nen slide boot mua he",
           "zIndex": 0,
           "role": "background",
@@ -193,6 +194,7 @@
       "layers": [
         {
           "file": "background.webp",
+          "fileMobile": "background-mobile.webp",
           "alt": "Nen slide boot nam cao cap",
           "zIndex": 0,
           "role": "background",
@@ -377,6 +379,7 @@
       "layers": [
         {
           "file": "background.webp",
+          "fileMobile": "background-mobile.webp",
           "alt": "Nen slide boot nu",
           "zIndex": 0,
           "role": "background",
