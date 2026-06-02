@@ -21,15 +21,25 @@ export default function CheckoutSuccessPage() {
   const { cartCount } = useCart();
 
   return (
-    <Suspense fallback={
-      <>
-        <Header cartCount={cartCount} />
-        <section className="success-page" style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <p>Đang tải...</p>
-        </section>
-        <Footer />
-      </>
-    }>
+    <Suspense
+      fallback={
+        <>
+          <Header cartCount={cartCount} />
+          <section
+            className="success-page"
+            style={{
+              minHeight: "60vh",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <p>Đang tải...</p>
+          </section>
+          <Footer />
+        </>
+      }
+    >
       <CheckoutSuccessContent cartCount={cartCount} />
     </Suspense>
   );
@@ -40,19 +50,23 @@ function CheckoutSuccessContent({ cartCount }: { cartCount: number }) {
   const [copied, setCopied] = useState(false);
 
   // Read order info from URL params
-  const orderCode = searchParams.get("orderCode") || "DKY" + Date.now().toString().slice(-8);
-  const orderDate = searchParams.get("orderDate") || new Date().toLocaleString("vi-VN", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  const orderCode =
+    searchParams.get("orderCode") || "DKY" + Date.now().toString().slice(-8);
+  const orderDate =
+    searchParams.get("orderDate") ||
+    new Date().toLocaleString("vi-VN", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   const paymentMethod = searchParams.get("payment") || "cod";
 
-  const paymentLabel = paymentMethod === "bank"
-    ? "Chuyển khoản ngân hàng"
-    : "Thanh toán khi nhận hàng";
+  const paymentLabel =
+    paymentMethod === "bank"
+      ? "Chuyển khoản ngân hàng"
+      : "Thanh toán khi nhận hàng";
 
   const handleCopy = () => {
     navigator.clipboard.writeText(orderCode);
@@ -79,7 +93,8 @@ function CheckoutSuccessContent({ cartCount }: { cartCount: number }) {
         {/* Title */}
         <h1 className="success-title">Đặt hàng thành công!</h1>
         <p className="success-subtitle">
-          Cảm ơn bạn đã mua sắm tại Duky Store.<br />
+          Cảm ơn bạn đã mua sắm tại Duky Store.
+          <br />
           Chúng tôi đã nhận được đơn hàng của bạn.
         </p>
 
@@ -151,19 +166,19 @@ function CheckoutSuccessContent({ cartCount }: { cartCount: number }) {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex gap-4 w-full max-w-[520px]">
+        <div className="flex flex-col sm:flex-row gap-3 w-full max-w-[480px] px-4">
           <Link
             href="/"
-            className="flex-1 flex items-center justify-center gap-2.5 px-2 py-2 rounded-xl text-[13px] font-semibold bg-white text-gray-900 border-[1.5px] border-gray-200 shadow-sm hover:border-gray-900 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200"
+            className="w-full sm:flex-1 flex items-center justify-center gap-2.5 px-4 py-4 rounded-xl text-[14px] font-semibold bg-white text-gray-900 border-[1.5px] border-gray-200 shadow-sm hover:border-gray-900 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200"
           >
-            <ShoppingBag size={20} />
+            <ShoppingBag size={20} className="shrink-0" />
             <span>Tiếp tục mua sắm</span>
           </Link>
           <Link
             href="/user/order"
-            className="flex-1 flex items-center justify-center gap-2.5 px-2 py-2 rounded-xl text-[13px] font-semibold bg-gradient-to-br from-gray-900 to-gray-700 text-white shadow-lg shadow-black/20 hover:from-black hover:to-gray-800 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-black/30 transition-all duration-200"
+            className="w-full sm:flex-1 flex items-center justify-center gap-2.5 px-4 py-4 rounded-xl text-[14px] font-semibold bg-gradient-to-br from-gray-900 to-gray-700 text-white shadow-lg shadow-black/20 hover:from-black hover:to-gray-800 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-black/30 transition-all duration-200"
           >
-            <Package size={20} />
+            <Package size={20} className="shrink-0" />
             <span>Xem đơn hàng của tôi</span>
           </Link>
         </div>
@@ -213,14 +228,40 @@ function CheckoutSuccessContent({ cartCount }: { cartCount: number }) {
           animation: sparkle 2s ease-in-out infinite;
         }
 
-        .success-sparkle--1 { top: -4px; left: 10px; animation-delay: 0s; }
-        .success-sparkle--2 { top: 8px; right: -6px; animation-delay: 0.5s; }
-        .success-sparkle--3 { bottom: 4px; left: -4px; animation-delay: 1s; }
-        .success-sparkle--4 { top: -8px; right: 14px; animation-delay: 1.5s; width: 6px; height: 6px; background: #fde047; }
+        .success-sparkle--1 {
+          top: -4px;
+          left: 10px;
+          animation-delay: 0s;
+        }
+        .success-sparkle--2 {
+          top: 8px;
+          right: -6px;
+          animation-delay: 0.5s;
+        }
+        .success-sparkle--3 {
+          bottom: 4px;
+          left: -4px;
+          animation-delay: 1s;
+        }
+        .success-sparkle--4 {
+          top: -8px;
+          right: 14px;
+          animation-delay: 1.5s;
+          width: 6px;
+          height: 6px;
+          background: #fde047;
+        }
 
         @keyframes sparkle {
-          0%, 100% { opacity: 0.4; transform: scale(0.8); }
-          50% { opacity: 1; transform: scale(1.2); }
+          0%,
+          100% {
+            opacity: 0.4;
+            transform: scale(0.8);
+          }
+          50% {
+            opacity: 1;
+            transform: scale(1.2);
+          }
         }
 
         /* ─── Title ─── */

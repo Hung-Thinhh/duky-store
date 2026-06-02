@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import {
   Heart,
@@ -116,6 +116,32 @@ const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, varia
   const [previewImage, setPreviewImage] = useState(0);
   const galleryRef = useRef<HTMLDivElement>(null);
 
+  // Swipe gesture handlers for fullscreen preview
+  const previewTouchStartX = useRef<number | null>(null);
+  const previewTouchEndX = useRef<number | null>(null);
+
+  const handlePreviewTouchStart = useCallback((e: React.TouchEvent) => {
+    previewTouchEndX.current = null;
+    previewTouchStartX.current = e.targetTouches[0].clientX;
+  }, []);
+
+  const handlePreviewTouchMove = useCallback((e: React.TouchEvent) => {
+    previewTouchEndX.current = e.targetTouches[0].clientX;
+  }, []);
+
+  const handlePreviewTouchEnd = useCallback(() => {
+    if (!previewTouchStartX.current || !previewTouchEndX.current) return;
+
+    const distance = previewTouchStartX.current - previewTouchEndX.current;
+    const minSwipeDistance = 50;
+
+    if (distance > minSwipeDistance) {
+      setPreviewImage((prev) => (prev === product.images.length - 1 ? 0 : prev + 1));
+    } else if (distance < -minSwipeDistance) {
+      setPreviewImage((prev) => (prev === 0 ? product.images.length - 1 : prev - 1));
+    }
+  }, [product.images.length]);
+
   // Keyboard navigation for image preview
   useEffect(() => {
     if (!isPreviewOpen) return;
@@ -211,13 +237,39 @@ const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, varia
     ? variantOriginalPrice
     : (product.originalPrice ?? 0) > displayPrice ? (product.originalPrice ?? 0) : null;
 
-  const handlePrevImage = () => {
+  const handlePrevImage = useCallback(() => {
     setSelectedImage((prev) => (prev === 0 ? product.images.length - 1 : prev - 1));
-  };
+  }, [product.images.length]);
 
-  const handleNextImage = () => {
+  const handleNextImage = useCallback(() => {
     setSelectedImage((prev) => (prev === product.images.length - 1 ? 0 : prev + 1));
-  };
+  }, [product.images.length]);
+
+  // Swipe gesture handlers for main gallery
+  const galleryTouchStartX = useRef<number | null>(null);
+  const galleryTouchEndX = useRef<number | null>(null);
+
+  const handleGalleryTouchStart = useCallback((e: React.TouchEvent) => {
+    galleryTouchEndX.current = null;
+    galleryTouchStartX.current = e.targetTouches[0].clientX;
+  }, []);
+
+  const handleGalleryTouchMove = useCallback((e: React.TouchEvent) => {
+    galleryTouchEndX.current = e.targetTouches[0].clientX;
+  }, []);
+
+  const handleGalleryTouchEnd = useCallback(() => {
+    if (!galleryTouchStartX.current || !galleryTouchEndX.current) return;
+
+    const distance = galleryTouchStartX.current - galleryTouchEndX.current;
+    const minSwipeDistance = 50;
+
+    if (distance > minSwipeDistance) {
+      handleNextImage();
+    } else if (distance < -minSwipeDistance) {
+      handlePrevImage();
+    }
+  }, [handleNextImage, handlePrevImage]);
 
   const handleQuantityChange = (delta: number) => {
     setQuantity((prev) => Math.max(1, prev + delta));
@@ -300,7 +352,16 @@ const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, varia
       <div className="info-content">
         {/* ─── Left: Image Gallery ─── */}
         <div className="info-gallery">
-          <div className="gallery-main" ref={galleryRef} onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)} onMouseMove={handleMouseMove}>
+          <div
+            className="gallery-main"
+            ref={galleryRef}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            onMouseMove={handleMouseMove}
+            onTouchStart={handleGalleryTouchStart}
+            onTouchMove={handleGalleryTouchMove}
+            onTouchEnd={handleGalleryTouchEnd}
+          >
             {/* Action Buttons */}
             <div className="gallery-actions">
               <button
@@ -331,8 +392,7 @@ const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, varia
               <Image
                 src={product.images[selectedImage]}
                 alt={product.name}
-                width={600}
-                height={600}
+                fill
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
                 className="gallery-image"
                 priority
@@ -490,14 +550,13 @@ const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, varia
             <span className="validation-error">{validationErrors.find(e => e.field === 'stock')!.message}</span>
           )}
 
-          {/* Add cart & Quick Checkout */}
           <div className="info-actions-secondary">
             <button className="btn-quick-buy" onClick={handleQuickBuy} disabled={isOutOfStock}>
-              <CreditCard size={18} />
+              <CreditCard size={18} className="flex-shrink-0" />
               <span>THANH TOÁN NHANH</span>
             </button>
             <button className="btn-add-cart" onClick={handleAddToCart} disabled={isOutOfStock || isAddingToCart}>
-              <ShoppingCart size={18} />
+              <ShoppingCart size={18} className="flex-shrink-0" />
               <span>{isAddingToCart ? 'ĐANG THÊM...' : 'THÊM VÀO GIỎ HÀNG'}</span>
             </button>
           </div>
@@ -515,7 +574,13 @@ const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, varia
             </div>
           </button>
 
-          <div className="preview-content-container" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="preview-content-container"
+            onClick={(e) => e.stopPropagation()}
+            onTouchStart={handlePreviewTouchStart}
+            onTouchMove={handlePreviewTouchMove}
+            onTouchEnd={handlePreviewTouchEnd}
+          >
             <button
               className="preview-nav-btn preview-nav-prev"
               onClick={() => setPreviewImage((prev) => (prev === 0 ? product.images.length - 1 : prev - 1))}
@@ -611,7 +676,7 @@ const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, varia
           background: var(--bg-card);
           border-radius: var(--radius-section);
           overflow: hidden;
-          aspect-ratio: 1 / 0.85;
+          aspect-ratio: 1 / 1;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -654,6 +719,7 @@ const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, varia
         }
 
         .gallery-image-wrapper {
+          position: relative;
           width: 100%;
           height: 100%;
           display: flex;
@@ -668,9 +734,9 @@ const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, varia
         }
 
         :global(.gallery-image) {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
+          width: 100% !important;
+          height: 100% !important;
+          object-fit: contain !important;
         }
 
         .gallery-nav {
@@ -682,7 +748,7 @@ const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, varia
           border-radius: 50%;
           background: var(--bg-card);
           border: 1px solid var(--border-subtle);
-          display: flex;
+          display: none;
           align-items: center;
           justify-content: center;
           cursor: pointer;
@@ -690,6 +756,12 @@ const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, varia
           transition: var(--transition-fast);
           box-shadow: var(--card-shadow);
           z-index: 10;
+        }
+
+        @media (min-width: 1024px) {
+          .gallery-nav {
+            display: flex;
+          }
         }
         .gallery-nav:hover {
           background: var(--accent-black);
@@ -1047,6 +1119,11 @@ const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, varia
           transform: translateY(-2px);
         }
 
+        .btn-quick-buy :global(svg),
+        .btn-add-cart :global(svg) {
+          flex-shrink: 0;
+        }
+
         /* ─── Validation Errors ─── */
         .validation-error {
           display: block;
@@ -1067,12 +1144,16 @@ const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, varia
         @media (max-width: 1024px) {
           .info-content {
             flex-direction: column;
+            align-items: stretch;
+            gap: 24px;
           }
           .info-gallery {
             max-width: 100%;
+            width: 100%;
           }
           .info-details-wrapper {
             max-width: 100%;
+            width: 100%;
           }
         }
 
@@ -1086,12 +1167,25 @@ const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, varia
           .info-price {
             font-size: 22px;
           }
+          .gallery-main {
+            aspect-ratio: 1 / 1 !important;
+          }
           .gallery-thumbnails {
             gap: 6px;
           }
           .thumbnail-item {
             width: 56px;
             height: 56px;
+          }
+          .info-actions-secondary {
+            flex-direction: column;
+            gap: 10px;
+          }
+          .btn-quick-buy,
+          .btn-add-cart {
+            width: 100%;
+            padding: 14px 20px;
+            font-size: 13px;
           }
         }
 
@@ -1197,13 +1291,19 @@ const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, varia
           border-radius: 50%;
           background: rgba(255, 255, 255, 0.08);
           border: 1px solid rgba(255, 255, 255, 0.2);
-          display: flex;
+          display: none;
           align-items: center;
           justify-content: center;
           cursor: pointer;
           color: #ffffff;
           transition: all var(--transition-fast);
           z-index: 10005;
+        }
+
+        @media (min-width: 1024px) {
+          .preview-nav-btn {
+            display: flex;
+          }
         }
 
         .preview-nav-btn:hover {

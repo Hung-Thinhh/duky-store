@@ -20,7 +20,7 @@ const LazyBootMaleSection = dynamic(
     import("@/components/shop/home/BootMaleSection").then((m) => ({
       default: m.BootMaleSection,
     })),
-  { loading: () => <SectionSkeleton /> }
+  { loading: () => <SectionSkeleton /> },
 );
 
 const LazyBootFemaleSection = dynamic(
@@ -28,7 +28,7 @@ const LazyBootFemaleSection = dynamic(
     import("@/components/shop/home/BootFemaleSection").then((m) => ({
       default: m.BootFemaleSection,
     })),
-  { loading: () => <SectionSkeleton /> }
+  { loading: () => <SectionSkeleton /> },
 );
 
 const LazyGuideSection = dynamic(
@@ -36,7 +36,7 @@ const LazyGuideSection = dynamic(
     import("@/components/shop/home/GuideSection").then((m) => ({
       default: m.GuideSection,
     })),
-  { loading: () => <SectionSkeleton /> }
+  { loading: () => <SectionSkeleton /> },
 );
 
 const LazyNewsSection = dynamic(
@@ -44,7 +44,7 @@ const LazyNewsSection = dynamic(
     import("@/components/shop/home/NewsSection").then((m) => ({
       default: m.NewsSection,
     })),
-  { loading: () => <SectionSkeleton /> }
+  { loading: () => <SectionSkeleton /> },
 );
 
 const LazyFAQSection = dynamic(
@@ -52,7 +52,7 @@ const LazyFAQSection = dynamic(
     import("@/components/shop/home/FAQSection").then((m) => ({
       default: m.FAQSection,
     })),
-  { loading: () => <SectionSkeleton /> }
+  { loading: () => <SectionSkeleton /> },
 );
 
 const LazyPreFooter = dynamic(
@@ -60,10 +60,16 @@ const LazyPreFooter = dynamic(
     import("@/components/shop/home/PreFooter").then((m) => ({
       default: m.PreFooter,
     })),
-  { loading: () => <SectionSkeleton /> }
+  { loading: () => <SectionSkeleton /> },
 );
 
 import { getHeroSliderData } from "@/data/heroSlider";
+import {
+  fetchProductsByCategories,
+  fetchProducts,
+  fetchBlogPosts,
+  mapBlogPostToNewsItem,
+} from "@/lib/api";
 
 export const revalidate = 120;
 
@@ -78,6 +84,22 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function ShopPage() {
   const slides = await getHeroSliderData();
+  const [maleProducts, femaleProducts, bestSellersResult, blogPostsResult] =
+    await Promise.all([
+      fetchProductsByCategories("boot-nam", 12),
+      fetchProductsByCategories("boot-nu", 12),
+      fetchProducts({ isBestSeller: true, limit: 12 }).catch(() => ({
+        data: [],
+        pagination: null,
+      })),
+      fetchBlogPosts({ limit: 9, sort: "newest" }).catch(() => ({ data: [] })),
+    ]);
+
+  const bestSellers = bestSellersResult?.data || [];
+  const newsItems = (blogPostsResult?.data || [])
+    .map(mapBlogPostToNewsItem)
+    .sort((a, b) => b.publishedAtMs - a.publishedAtMs)
+    .slice(0, 9);
 
   return (
     <>
@@ -85,26 +107,28 @@ export default async function ShopPage() {
       {/* Above-fold: rendered synchronously for fast LCP */}
       <HomeHeader />
       <HomeHeroBanner initialSlides={slides} />
-      <CategorySection />
-      {/* Below-fold: lazy-loaded with Suspense boundaries */}
-      <Suspense fallback={<SectionSkeleton />}>
-        <LazyBootMaleSection />
-      </Suspense>
-      <Suspense fallback={<SectionSkeleton />}>
-        <LazyBootFemaleSection />
-      </Suspense>
-      <Suspense fallback={<SectionSkeleton />}>
-        <LazyGuideSection />
-      </Suspense>
-      <Suspense fallback={<SectionSkeleton />}>
-        <LazyNewsSection />
-      </Suspense>
-      <Suspense fallback={<SectionSkeleton />}>
-        <LazyFAQSection />
-      </Suspense>
-      <Suspense fallback={<SectionSkeleton />}>
-        <LazyPreFooter />
-      </Suspense>
+      <div className="home-page-sections">
+        <CategorySection initialProducts={bestSellers} />
+        {/* Below-fold: lazy-loaded with Suspense boundaries */}
+        <Suspense fallback={<SectionSkeleton />}>
+          <LazyBootMaleSection initialProducts={maleProducts} />
+        </Suspense>
+        <Suspense fallback={<SectionSkeleton />}>
+          <LazyBootFemaleSection initialProducts={femaleProducts} />
+        </Suspense>
+        <Suspense fallback={<SectionSkeleton />}>
+          <LazyGuideSection />
+        </Suspense>
+        <Suspense fallback={<SectionSkeleton />}>
+          <LazyNewsSection initialNewsItems={newsItems} />
+        </Suspense>
+        <Suspense fallback={<SectionSkeleton />}>
+          <LazyFAQSection />
+        </Suspense>
+        <Suspense fallback={<SectionSkeleton />}>
+          <LazyPreFooter />
+        </Suspense>
+      </div>
       <Footer />
       <HomeCartToast />
     </>

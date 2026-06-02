@@ -16,6 +16,7 @@ import {
   updateCartItemAPI,
   removeCartItemAPI,
 } from "@/lib/api";
+import { useAuth } from "@/context/AuthContext";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 interface ToastState {
@@ -37,6 +38,7 @@ interface CartContextType {
   refreshCart: () => Promise<void>;
   updateQuantity: (itemId: string, quantity: number) => Promise<void>;
   removeFromCart: (itemId: string) => Promise<void>;
+  removeMultipleFromCart: (itemIds: string[]) => Promise<void>;
   clearCart: () => void;
   openCart: () => void;
   closeCart: () => void;
@@ -51,6 +53,7 @@ const STORAGE_KEY = "duky_cart_session";
 const CartContext = createContext<CartContextType | null>(null);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
+  const { customer, isLoading: authLoading } = useAuth();
   const [cart, setCart] = useState<CartItemResponse[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [toast, setToast] = useState<ToastState | null>(null);
@@ -117,22 +120,46 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  // ─── Initialize sessionId and fetch cart on mount ────────────────────────────
+  // ─── Initialize and switch cart sessions based on auth state ────────────────
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined" || authLoading) return;
 
-    let sid = localStorage.getItem(STORAGE_KEY);
-    if (!sid) {
-      sid = crypto.randomUUID();
-      localStorage.setItem(STORAGE_KEY, sid);
+    let targetSid = "";
+
+    if (customer) {
+      // User is logged in
+      const customerKey = `${STORAGE_KEY}_${customer.id}`;
+      let customerSid = localStorage.getItem(customerKey);
+      if (!customerSid) {
+        // Migrate guest cart session to customer on first login
+        const guestSid = localStorage.getItem(STORAGE_KEY);
+        if (guestSid) {
+          customerSid = guestSid;
+          localStorage.setItem(customerKey, customerSid);
+          // Reset guest session to a new UUID
+          localStorage.setItem(STORAGE_KEY, crypto.randomUUID());
+        } else {
+          customerSid = crypto.randomUUID();
+          localStorage.setItem(customerKey, customerSid);
+        }
+      }
+      targetSid = customerSid;
+    } else {
+      // User is guest (or logged out)
+      let guestSid = localStorage.getItem(STORAGE_KEY);
+      if (!guestSid) {
+        guestSid = crypto.randomUUID();
+        localStorage.setItem(STORAGE_KEY, guestSid);
+      }
+      targetSid = guestSid;
     }
-    sessionIdRef.current = sid;
 
-    // Fetch cart on mount
+    sessionIdRef.current = targetSid;
+
     const fetchCart = async () => {
       setLoading(true);
       try {
-        const response: CartResponse = await getCartAPI(sid!);
+        const response: CartResponse = await getCartAPI(targetSid);
         setCart(response.items);
       } catch {
         setCart([]);
@@ -142,7 +169,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     };
 
     fetchCart();
-  }, []);
+  }, [customer, authLoading]);
 
   // ─── Cleanup toast timer on unmount ──────────────────────────────────────────
   useEffect(() => {
@@ -186,8 +213,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   // ─── updateQuantity ──────────────────────────────────────────────────────────
   const updateQuantity = useCallback(
     async (itemId: string, quantity: number): Promise<void> => {
+      const sid = sessionIdRef.current;
       try {
-        const response: CartResponse = await updateCartItemAPI(itemId, quantity);
+        const response: CartResponse = await updateCartItemAPI(itemId, quantity, sid);
         setCart(response.items);
       } catch (error: unknown) {
         const message =
@@ -203,15 +231,48 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   // ─── removeFromCart ──────────────────────────────────────────────────────────
   const removeFromCart = useCallback(
     async (itemId: string): Promise<void> => {
+      const sid = sessionIdRef.current;
       // Optimistic update: remove from UI immediately
       setCart((prev) => prev.filter((item) => item.id !== itemId));
 
       try {
-        const response: CartResponse = await removeCartItemAPI(itemId);
+        const response: CartResponse = await removeCartItemAPI(itemId, sid);
         setCart(response.items);
       } catch (error: unknown) {
         // On error, refresh cart to restore correct state
-        const sid = sessionIdRef.current;
+        if (sid) {
+          try {
+            const response = await getCartAPI(sid);
+            setCart(response.items);
+          } catch {
+            // ignore
+          }
+        }
+        const message =
+          error instanceof Error
+            ? error.message
+            : "Lỗi kết nối, vui lòng thử lại";
+        showToast(message, "error");
+      }
+    },
+    [showToast]
+  );
+
+  // ─── removeMultipleFromCart ──────────────────────────────────────────────────
+  const removeMultipleFromCart = useCallback(
+    async (itemIds: string[]): Promise<void> => {
+      const sid = sessionIdRef.current;
+      // Optimistic update: remove from UI immediately
+      setCart((prev) => prev.filter((item) => !itemIds.includes(item.id)));
+
+      try {
+        await Promise.all(itemIds.map((itemId) => removeCartItemAPI(itemId, sid)));
+        if (sid) {
+          const response = await getCartAPI(sid);
+          setCart(response.items);
+        }
+      } catch (error: unknown) {
+        // On error, refresh cart to restore correct state
         if (sid) {
           try {
             const response = await getCartAPI(sid);
@@ -246,6 +307,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         refreshCart,
         updateQuantity,
         removeFromCart,
+        removeMultipleFromCart,
         clearCart,
         openCart,
         closeCart,

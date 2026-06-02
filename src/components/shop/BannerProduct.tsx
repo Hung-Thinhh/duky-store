@@ -131,7 +131,7 @@ export const BannerProduct: React.FC<BannerProductProps> = ({ slides }) => {
   return (
     <div 
       ref={containerRef}
-      className="relative w-full overflow-hidden glass-effect rounded-[2.5rem] flex items-center shadow-2xl border border-white/40"
+      className="relative w-full overflow-hidden glass-effect rounded-[2.5rem] flex items-center shadow-2xl border border-white/40 product-banner-card"
       style={{ aspectRatio: '778 / 352' }}
     >
       {/* Content Side */}

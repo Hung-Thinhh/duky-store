@@ -32,6 +32,8 @@ export interface PopupTemplateProps {
   overlayClassName?: string;
   /** Popup body content */
   children?: React.ReactNode;
+  /** Whether to show the close button */
+  showCloseButton?: boolean;
 }
 
 const SIZE_CLASSES: Record<'sm' | 'md' | 'lg', string> = {
@@ -60,6 +62,7 @@ export function PopupTemplate({
   className,
   overlayClassName,
   children,
+  showCloseButton = true,
 }: PopupTemplateProps) {
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -118,13 +121,15 @@ export function PopupTemplate({
               )}
             >
               {/* Close button */}
-              <button
-                onClick={onClose}
-                aria-label="Đóng"
-                className="absolute top-3 right-3 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-slate-100 rounded-full transition-colors z-10 cursor-pointer"
-              >
-                <X size={20} />
-              </button>
+              {showCloseButton && (
+                <button
+                  onClick={onClose}
+                  aria-label="Đóng"
+                  className="absolute top-3 right-3 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-slate-100 rounded-full transition-colors z-10 cursor-pointer"
+                >
+                  <X size={20} />
+                </button>
+              )}
 
               {/* Header section */}
               {hasHeader && (

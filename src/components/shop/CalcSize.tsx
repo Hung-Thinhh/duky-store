@@ -41,11 +41,11 @@ const CalcSize = () => {
   return (
     <div className="w-full py-2">
       <div className="bg-white rounded-[2rem] border border-border-subtle shadow-sm p-6 md:p-8">
-        <div className="flex flex-row lg:flex-row items-center justify-between gap-8 lg:gap-16">
+        <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-8 md:gap-12 lg:gap-16 size-calc-container">
           
           {/* Section 1: Input */}
-          <div className="flex">
-            <div className="relative w-[300px]">
+          <div className="flex w-full md:w-auto justify-center">
+            <div className="relative w-full max-w-[300px]">
               <div className="flex items-center rounded-3xl px-6 py-5 bg-white border border-gray-400 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.08)] hover:shadow-[0_15px_40px_-12px_rgba(0,0,0,0.12)] hover:border-black transition-all duration-500">
                 <Ruler className="w-8 h-8 text-slate-400 mx-2" />
                 <div className="flex-1">
@@ -82,7 +82,7 @@ const CalcSize = () => {
           </div>
 
           {/* Section 2: Summary Result */}
-          <div className="shrink-0 flex flex-col items-center justify-center min-w-[180px]">
+          <div className="shrink-0 flex flex-col items-center justify-center min-w-[180px] w-full md:w-auto">
             <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Size đề xuất</p>
             {results === null ? (
                <div className="text-center animate-in shake duration-300">
@@ -116,7 +116,7 @@ const CalcSize = () => {
           </div>
           
           {/* Section 3: Result Table */}
-          <div className="w-full lg:max-w-[400px]">
+          <div className="w-full md:max-w-[400px]">
              <div className="overflow-hidden rounded-[1.5rem] border border-gray-400 bg-white shadow-[0_8px_25px_-10px_rgba(0,0,0,0.05)]">
                <table className="w-full text-sm text-left border-collapse">
                  <thead>

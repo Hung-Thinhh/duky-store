@@ -16,6 +16,7 @@ export interface SlideLayerProps {
   onError?: () => void;
   className?: string;
   layout?: LayerLayout;
+  priority?: boolean;
 }
 
 /**
@@ -31,6 +32,7 @@ export function SlideLayer({
   onError,
   className,
   layout,
+  priority,
 }: SlideLayerProps) {
   const layerRef = useRef<HTMLDivElement>(null);
   const tweenRef = useRef<gsap.core.Tween | null>(null);
@@ -41,8 +43,7 @@ export function SlideLayer({
 
     if (isActive) {
       // Determine displacement with mobile cap
-      const isMobile =
-        typeof window !== "undefined" && window.innerWidth < 768;
+      const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
       const displacement = isMobile
         ? Math.min(floatConfig.displacement, 10)
         : floatConfig.displacement;
@@ -87,6 +88,7 @@ export function SlideLayer({
 
   const styleVars = {
     zIndex,
+    "--layer-display": layout?.desktop?.display ?? "block",
     "--layer-top": layout?.desktop?.top ?? "0",
     "--layer-right": layout?.desktop?.right ?? "0",
     "--layer-bottom": layout?.desktop?.bottom ?? "0",
@@ -95,6 +97,7 @@ export function SlideLayer({
     "--layer-height": layout?.desktop?.height ?? "100%",
     "--layer-object-fit": layout?.desktop?.objectFit ?? "cover",
     "--layer-object-position": layout?.desktop?.objectPosition ?? "center",
+    "--layer-display-md": layout?.tablet?.display,
     "--layer-top-md": layout?.tablet?.top,
     "--layer-right-md": layout?.tablet?.right,
     "--layer-bottom-md": layout?.tablet?.bottom,
@@ -103,6 +106,7 @@ export function SlideLayer({
     "--layer-height-md": layout?.tablet?.height,
     "--layer-object-fit-md": layout?.tablet?.objectFit,
     "--layer-object-position-md": layout?.tablet?.objectPosition,
+    "--layer-display-sm": layout?.mobile?.display,
     "--layer-top-sm": layout?.mobile?.top,
     "--layer-right-sm": layout?.mobile?.right,
     "--layer-bottom-sm": layout?.mobile?.bottom,
@@ -126,7 +130,7 @@ export function SlideLayer({
         sizes="100vw"
         className="hero-slide-layer__image"
         onError={handleImageError}
-        priority={zIndex === 0}
+        priority={priority ?? zIndex === 0}
       />
     </div>
   );

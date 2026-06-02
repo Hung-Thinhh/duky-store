@@ -27,6 +27,25 @@ const nextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: "/tu-khoa-san-pham/:path*",
+        destination: "/",
+        permanent: true,
+      },
+      {
+        source: "/danh-muc-san-pham/:path*",
+        destination: "/",
+        permanent: true,
+      },
+      {
+        source: "/san-pham/:path*",
+        destination: "/",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

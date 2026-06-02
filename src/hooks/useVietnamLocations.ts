@@ -90,6 +90,50 @@ export function useVietnamLocations() {
     setSelectedWard(wardCode);
   }, []);
 
+  const setAddressByNames = useCallback(async (provinceName: string, districtName: string, wardName: string) => {
+    // 1. Find province by name
+    const province = provinces.find(p => p.name.toLowerCase().trim() === provinceName.toLowerCase().trim());
+    if (!province) return;
+
+    setSelectedProvince(String(province.code));
+    setSelectedDistrict("");
+    setSelectedWard("");
+    setDistricts([]);
+    setWards([]);
+
+    // 2. Fetch districts for this province
+    try {
+      setLoading((prev) => ({ ...prev, districts: true }));
+      const pRes = await fetch(`${API_BASE}/p/${province.code}?depth=2`);
+      const pData: ProvinceDetail = await pRes.json();
+      const districtsList = pData.districts || [];
+      setDistricts(districtsList);
+
+      // Find district by name
+      const district = districtsList.find(d => d.name.toLowerCase().trim() === districtName.toLowerCase().trim());
+      if (!district) return;
+
+      setSelectedDistrict(String(district.code));
+
+      // 3. Fetch wards for this district
+      setLoading((prev) => ({ ...prev, wards: true }));
+      const dRes = await fetch(`${API_BASE}/d/${district.code}?depth=2`);
+      const dData: DistrictDetail = await dRes.json();
+      const wardsList = dData.wards || [];
+      setWards(wardsList);
+
+      // Find ward by name
+      const ward = wardsList.find(w => w.name.toLowerCase().trim() === wardName.toLowerCase().trim());
+      if (ward) {
+        setSelectedWard(String(ward.code));
+      }
+    } catch (err) {
+      console.error("Failed to set address by names:", err);
+    } finally {
+      setLoading((prev) => ({ ...prev, districts: false, wards: false }));
+    }
+  }, [provinces]);
+
   return {
     provinces,
     districts,
@@ -101,5 +145,6 @@ export function useVietnamLocations() {
     handleProvinceChange,
     handleDistrictChange,
     handleWardChange,
+    setAddressByNames,
   };
 }

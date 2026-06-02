@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
 import { useAuth } from '@/context/AuthContext';
 
@@ -16,6 +16,22 @@ const GoogleLoginButton: React.FC<GoogleLoginButtonProps> = ({
   const { googleLogin } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [buttonWidth, setButtonWidth] = useState(380);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+    const handleResize = () => {
+      const padding = 88; // margin/padding of parent containers on mobile
+      const calculated = window.innerWidth - padding;
+      const finalWidth = Math.max(200, Math.min(380, calculated));
+      setButtonWidth(finalWidth);
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleSuccess = useCallback(
     async (credentialResponse: CredentialResponse) => {
@@ -61,16 +77,18 @@ const GoogleLoginButton: React.FC<GoogleLoginButtonProps> = ({
           <span className="google-login-loading">Đang xử lý...</span>
         </div>
       )}
-      <GoogleLogin
-        onSuccess={handleSuccess}
-        onError={handleError}
-        theme="outline"
-        size="large"
-        width="380"
-        text="continue_with"
-        shape="rectangular"
-        logo_alignment="center"
-      />
+      {isMounted && (
+        <GoogleLogin
+          onSuccess={handleSuccess}
+          onError={handleError}
+          theme="outline"
+          size="large"
+          width={buttonWidth.toString()}
+          text="continue_with"
+          shape="rectangular"
+          logo_alignment="center"
+        />
+      )}
       {errorMessage && (
         <p className="google-login-error">{errorMessage}</p>
       )}

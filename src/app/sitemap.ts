@@ -7,7 +7,7 @@ import type { Product } from "@/types/product";
 export const revalidate = 3600;
 
 function siteUrl() {
-  return (process.env.NEXT_PUBLIC_SITE_URL || "https://dukystore.vn").replace(
+  return (process.env.NEXT_PUBLIC_SITE_URL || "https://dukystore.com").replace(
     /\/+$/,
     "",
   );

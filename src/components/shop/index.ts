@@ -18,3 +18,4 @@ export * from './PopupTemplate';
 
 export * from './Navpages';
 export * from './Pagination';
+export * from './BackButton';

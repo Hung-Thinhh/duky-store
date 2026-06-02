@@ -6,6 +6,7 @@ import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import gsap from "gsap";
 import { CategoryCard, ProductCard } from "@/components/shop";
 import { useProducts } from "@/hooks/useProducts";
+import { Product } from "@/types/product";
 
 const CATEGORIES_DATA = [
   { title: "Boot nam", imageSrc: "/assets/boot_nam.png", href: "/collections/boot-nam" },
@@ -14,9 +15,12 @@ const CATEGORIES_DATA = [
   { title: "Phụ kiện", imageSrc: "/assets/phu_kien.png", href: "/collections/phu-kien" },
 ];
 
-export const CategorySection = () => {
+export const CategorySection = ({ initialProducts }: { initialProducts?: Product[] }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const { products, loading } = useProducts({ isBestSeller: true, limit: 12 });
+  const { products, loading } = useProducts(
+    { isBestSeller: true, limit: 12 },
+    { initialData: initialProducts }
+  );
 
   const handleScroll = (direction: "left" | "right") => {
     if (scrollRef.current) {
@@ -65,11 +69,39 @@ export const CategorySection = () => {
 
   return (
     <section 
-      className="pt-24 pb-8 px-6 overflow-hidden"
+      className="pt-24 pb-8 overflow-hidden category-section-container"
     >
-      <div className="container-custom">
+      <style dangerouslySetInnerHTML={{ __html: `
+        .category-section-container {
+          padding-left: 0.5rem;
+          padding-right: 0.5rem;
+        }
+        .category-container-custom {
+          padding-left: 0 !important;
+          padding-right: 0 !important;
+        }
+        .category-header-container {
+          padding-left: 0.5rem;
+          padding-right: 0.5rem;
+        }
+        @media (min-width: 768px) {
+          .category-section-container {
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+          }
+          .category-container-custom {
+            padding-left: 2rem !important;
+            padding-right: 2rem !important;
+          }
+          .category-header-container {
+            padding-left: 0;
+            padding-right: 0;
+          }
+        }
+      `}} />
+      <div className="container-custom category-container-custom">
         {/* Header */}
-        <div className="mt-8">
+        <div className="mt-8 category-header-container">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -86,7 +118,7 @@ export const CategorySection = () => {
         </div>
 
         {/* Categories Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 lg:gap-8">
           {CATEGORIES_DATA.map((cat, i) => (
             <motion.div
               key={cat.title}
@@ -128,7 +160,7 @@ export const CategorySection = () => {
             {/* Navigation Buttons */}
             <button 
               onClick={() => handleScroll("left")}
-              className="absolute -left-2 md:-left-4 top-1/2 -translate-y-1/2 z-30 w-11 h-11 bg-white/95 backdrop-blur-md rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.12)] border border-gray-100 flex items-center justify-center text-black opacity-100 lg:opacity-0 lg:group-hover/slider:opacity-100 lg:group-hover/slider:translate-x-2 transition-all duration-300 hover:bg-gray-100 hover:scale-110 active:scale-95 cursor-pointer"
+              className="hidden lg:flex absolute -left-2 md:-left-4 top-1/2 -translate-y-1/2 z-30 w-11 h-11 bg-white/95 backdrop-blur-md rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.12)] border border-gray-100 items-center justify-center text-black opacity-100 lg:opacity-0 lg:group-hover/slider:opacity-100 lg:group-hover/slider:translate-x-2 transition-all duration-300 hover:bg-gray-100 hover:scale-110 active:scale-95 cursor-pointer"
               aria-label="Previous products"
             >
               <ChevronLeft size={22} strokeWidth={2.5} />
@@ -168,7 +200,7 @@ export const CategorySection = () => {
 
             <button 
               onClick={() => handleScroll("right")}
-              className="absolute -right-2 md:-right-4 top-1/2 -translate-y-1/2 z-30 w-11 h-11 bg-white/95 backdrop-blur-md rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.12)] border border-gray-100 flex items-center justify-center text-black opacity-100 lg:opacity-0 lg:group-hover/slider:opacity-100 lg:group-hover/slider:-translate-x-2 transition-all duration-300 hover:bg-gray-100 hover:scale-110 active:scale-95 cursor-pointer"
+              className="hidden lg:flex absolute -right-2 md:-right-4 top-1/2 -translate-y-1/2 z-30 w-11 h-11 bg-white/95 backdrop-blur-md rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.12)] border border-gray-100 items-center justify-center text-black opacity-100 lg:opacity-0 lg:group-hover/slider:opacity-100 lg:group-hover/slider:-translate-x-2 transition-all duration-300 hover:bg-gray-100 hover:scale-110 active:scale-95 cursor-pointer"
               aria-label="Next products"
             >
               <ChevronRight size={22} strokeWidth={2.5} />

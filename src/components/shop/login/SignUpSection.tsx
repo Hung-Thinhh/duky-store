@@ -263,8 +263,16 @@ const SignUpSection: React.FC = () => {
             display: none;
           }
           .signup-section-container {
-            max-width: 450px;
+            width: 100%;
+            max-width: 440px;
             min-height: auto;
+            border-radius: 24px;
+          }
+          .form-panel {
+            padding: 16px !important;
+          }
+          .form-card {
+            border-radius: 20px !important;
           }
         }
       `}</style>

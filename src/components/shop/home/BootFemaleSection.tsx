@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useMemo } from 'react';
 import Link from 'next/link';
@@ -39,8 +39,8 @@ function getSlideDescription(product: Product): string {
   return 'Thiết kế tôn dáng, chất liệu cao cấp và linh hoạt cho nhiều phong cách.';
 }
 
-export const BootFemaleSection: React.FC = () => {
-  const { products, loading } = useProductsByCategories('boot-nu', 12);
+export const BootFemaleSection: React.FC<{ initialProducts?: Product[] }> = ({ initialProducts }) => {
+  const { products, loading } = useProductsByCategories('boot-nu', 12, initialProducts);
 
   const femaleSlides = useMemo<Slide[]>(() => {
     return products
@@ -79,7 +79,7 @@ export const BootFemaleSection: React.FC = () => {
             </div>
 
             {/* Trust Badges */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
+            <div className="hidden sm:grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
               {trustBadges.map((badge, index) => (
                 <div
                   key={index}

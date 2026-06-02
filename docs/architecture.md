@@ -17,22 +17,22 @@ Duky Store là một ứng dụng **Full-Stack** xây dựng trên nền tảng 
 
 ## 2. Tech Stack chi tiết
 
-| Layer | Công nghệ | Ghi chú |
-|---|---|---|
-| **Framework** | Next.js 14+ (App Router) | SSR, SSG, ISR |
-| **Language** | TypeScript | Strict mode |
-| **Database** | PostgreSQL | Managed (Neon / Supabase / Railway) |
-| **ORM** | Prisma | Type-safe DB client |
-| **Auth** | Auth.js v5 (NextAuth) | JWT session + OAuth |
-| **Styling** | Tailwind CSS v3 | Utility-first, JIT |
-| **Animation** | Framer Motion | Client-side only |
-| **Icons** | Lucide React | Tree-shakable |
-| **State** | Zustand | Cart, UI global state |
-| **Form** | React Hook Form + Zod | Validation |
-| **Email** | Resend | Transactional email |
-| **Payment** | VNPay SDK / Momo API | Cổng thanh toán VN |
-| **Storage** | Cloudinary / Vercel Blob | Upload ảnh sản phẩm |
-| **Hosting** | Vercel | Auto-deploy từ GitHub |
+| Layer         | Công nghệ                | Ghi chú                             |
+| ------------- | ------------------------ | ----------------------------------- |
+| **Framework** | Next.js 14+ (App Router) | SSR, SSG, ISR                       |
+| **Language**  | TypeScript               | Strict mode                         |
+| **Database**  | PostgreSQL               | Managed (Neon / Supabase / Railway) |
+| **ORM**       | Prisma                   | Type-safe DB client                 |
+| **Auth**      | Auth.js v5 (NextAuth)    | JWT session + OAuth                 |
+| **Styling**   | Tailwind CSS v3          | Utility-first, JIT                  |
+| **Animation** | Framer Motion            | Client-side only                    |
+| **Icons**     | Lucide React             | Tree-shakable                       |
+| **State**     | Zustand                  | Cart, UI global state               |
+| **Form**      | React Hook Form + Zod    | Validation                          |
+| **Email**     | Resend                   | Transactional email                 |
+| **Payment**   | VNPay SDK / Momo API     | Cổng thanh toán VN                  |
+| **Storage**   | Cloudinary / Vercel Blob | Upload ảnh sản phẩm                 |
+| **Hosting**   | Vercel                   | Auto-deploy từ GitHub               |
 
 ---
 
@@ -57,7 +57,7 @@ duky-store/
 │   │   ├── (shop)/            # Route group: trang mua hàng
 │   │   │   ├── cart/          # /cart
 │   │   │   └── checkout/      # /checkout
-│   │   ├── account/           # /account/* (protected)
+│   │   ├── user/           # /user/* (protected)
 │   │   │   ├── profile/
 │   │   │   ├── orders/
 │   │   │   └── addresses/
@@ -170,17 +170,17 @@ Client → Server Action → Tạo đơn tạm → Tạo Payment URL
 
 ## 5. Rendering Strategy
 
-| Trang | Strategy | Lý do |
-|---|---|---|
-| Homepage `/` | **ISR** (revalidate 1h) | Content thay đổi, cần SEO |
-| `/products` | **SSR** | Filter/sort động theo query params |
-| `/products/[slug]` | **ISR** (revalidate 30m) | SEO quan trọng, stock thay đổi |
-| `/categories/[slug]` | **ISR** (revalidate 1h) | |
-| `/cart` | **CSR** (Client Component) | Real-time, không cần SEO |
-| `/checkout` | **SSR** | Auth check + load cart từ DB |
-| `/account/*` | **SSR** | Auth protected, data cá nhân |
-| `/admin/*` | **SSR** | Auth + Role check |
-| `/auth/*` | **SSC** (Static) | Không có data dynamic |
+| Trang                | Strategy                   | Lý do                              |
+| -------------------- | -------------------------- | ---------------------------------- |
+| Homepage `/`         | **ISR** (revalidate 1h)    | Content thay đổi, cần SEO          |
+| `/products`          | **SSR**                    | Filter/sort động theo query params |
+| `/products/[slug]`   | **ISR** (revalidate 30m)   | SEO quan trọng, stock thay đổi     |
+| `/categories/[slug]` | **ISR** (revalidate 1h)    |                                    |
+| `/cart`              | **CSR** (Client Component) | Real-time, không cần SEO           |
+| `/checkout`          | **SSR**                    | Auth check + load cart từ DB       |
+| `/user/*`            | **SSR**                    | Auth protected, data cá nhân       |
+| `/admin/*`           | **SSR**                    | Auth + Role check                  |
+| `/auth/*`            | **SSC** (Static)           | Không có data dynamic              |
 
 ---
 
@@ -196,7 +196,7 @@ Vercel Edge Network (DDoS protection, TLS)
 middleware.ts (Route protection, Role-based access)
   │
   ├── Public routes: / , /products, /categories, /auth
-  ├── Protected routes: /account, /checkout → yêu cầu session
+  ├── Protected routes: /user, /checkout → yêu cầu session
   └── Admin routes: /admin → yêu cầu role = ADMIN
   │
   ▼
@@ -225,4 +225,4 @@ PostgreSQL (Private network, không expose ra ngoài)
 
 ---
 
-*Tài liệu kiến trúc này cần được review khi có thay đổi lớn về tech stack hoặc cấu trúc hệ thống.*
+_Tài liệu kiến trúc này cần được review khi có thay đổi lớn về tech stack hoặc cấu trúc hệ thống._

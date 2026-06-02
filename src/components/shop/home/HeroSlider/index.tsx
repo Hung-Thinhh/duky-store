@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useMemo,
+} from "react";
 import { gsap } from "gsap";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -20,6 +26,7 @@ interface HeroSliderProps {
   transitionDuration?: number; // ms, default 800
   trustItems?: TrustItem[];
   className?: string;
+  autoScroll?: boolean;
 }
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -45,12 +52,13 @@ export function HeroSlider({
   transitionDuration = DEFAULT_TRANSITION_DURATION,
   trustItems = [],
   className,
+  autoScroll = true,
 }: HeroSliderProps) {
   // ─── Validate & Clamp Props ──────────────────────────────────────────────
 
   const clampedInterval = Math.min(
     Math.max(autoScrollInterval, MIN_AUTO_SCROLL_INTERVAL),
-    MAX_AUTO_SCROLL_INTERVAL
+    MAX_AUTO_SCROLL_INTERVAL,
   );
 
   // ─── Validate Slides ─────────────────────────────────────────────────────
@@ -87,40 +95,40 @@ export function HeroSlider({
       const tl = gsap.timeline();
 
       if (bg) {
-        gsap.set(bg, { opacity: 0, scale: 1.08 });
+        // Keep background visible at opacity: 1 immediately to optimize LCP
+        gsap.set(bg, { opacity: 1, scale: 1.02 });
         tl.to(bg, {
-          opacity: 1,
           scale: 1,
-          duration: 1.2,
+          duration: 0.6,
           ease: "power2.out",
         });
       }
 
       if (model) {
-        gsap.set(model, { opacity: 0, x: 50 });
+        gsap.set(model, { opacity: 0, x: 20 });
         tl.to(
           model,
           {
             opacity: 1,
             x: 0,
-            duration: 1.2,
+            duration: 0.6,
             ease: "power2.out",
           },
-          "-=0.9"
+          "-=0.4",
         );
       }
 
       if (boot) {
-        gsap.set(boot, { opacity: 0, x: 80 });
+        gsap.set(boot, { opacity: 0, x: 30 });
         tl.to(
           boot,
           {
             opacity: 1,
             x: 0,
-            duration: 1.2,
+            duration: 0.6,
             ease: "power2.out",
           },
-          "-=0.9"
+          "-=0.4",
         );
       }
     }
@@ -190,7 +198,7 @@ export function HeroSlider({
           duration: durationSec * 0.6,
           ease: "power2.out",
         },
-        `-=${durationSec * 0.25}` // Start zoom as current fades out
+        `-=${durationSec * 0.25}`, // Start zoom as current fades out
       );
 
       // Animate model sliding in from right
@@ -203,7 +211,7 @@ export function HeroSlider({
             duration: durationSec * 0.6,
             ease: "power2.out",
           },
-          `-=${durationSec * 0.45}`
+          `-=${durationSec * 0.45}`,
         );
       }
 
@@ -217,19 +225,19 @@ export function HeroSlider({
             duration: durationSec * 0.6,
             ease: "power2.out",
           },
-          `-=${durationSec * 0.45}`
+          `-=${durationSec * 0.45}`,
         );
       }
 
       transitionTimelineRef.current = tl;
     },
-    [currentSlide, isTransitioning, transitionDuration]
+    [currentSlide, isTransitioning, transitionDuration],
   );
 
   // ─── Auto-Scroll Timer ───────────────────────────────────────────────────
 
   useEffect(() => {
-    if (isPaused || isTransitioning) return;
+    if (!autoScroll || isPaused || isTransitioning) return;
 
     autoScrollTimerRef.current = setTimeout(() => {
       const next = getNextSlideIndex(currentSlide, validSlides.length);
@@ -242,12 +250,23 @@ export function HeroSlider({
         autoScrollTimerRef.current = null;
       }
     };
-  }, [currentSlide, isPaused, isTransitioning, clampedInterval, validSlides.length, transitionToSlide]);
+  }, [
+    autoScroll,
+    currentSlide,
+    isPaused,
+    isTransitioning,
+    clampedInterval,
+    validSlides.length,
+    transitionToSlide,
+  ]);
 
   // ─── Hover Pause (Desktop Only) ─────────────────────────────────────────
 
   const handleMouseEnter = useCallback(() => {
-    if (typeof window !== "undefined" && window.innerWidth >= DESKTOP_BREAKPOINT) {
+    if (
+      typeof window !== "undefined" &&
+      window.innerWidth >= DESKTOP_BREAKPOINT
+    ) {
       setIsPaused(true);
     }
   }, []);
@@ -266,7 +285,7 @@ export function HeroSlider({
       // Reset timer by triggering transition (timer resets via useEffect deps)
       transitionToSlide(index);
     },
-    [isTransitioning, currentSlide, transitionToSlide]
+    [isTransitioning, currentSlide, transitionToSlide],
   );
 
   const handlePrevSlide = useCallback(() => {
@@ -281,6 +300,33 @@ export function HeroSlider({
     const nextIndex = getNextSlideIndex(currentSlide, validSlides.length);
     transitionToSlide(nextIndex);
   }, [currentSlide, isTransitioning, transitionToSlide, validSlides.length]);
+
+  // ─── Swipe Detection (Mobile Only) ───────────────────────────────────────
+
+  const touchStartX = useRef<number | null>(null);
+  const touchEndX = useRef<number | null>(null);
+
+  const onTouchStart = useCallback((e: React.TouchEvent) => {
+    touchEndX.current = null;
+    touchStartX.current = e.targetTouches[0].clientX;
+  }, []);
+
+  const onTouchMove = useCallback((e: React.TouchEvent) => {
+    touchEndX.current = e.targetTouches[0].clientX;
+  }, []);
+
+  const onTouchEnd = useCallback(() => {
+    if (!touchStartX.current || !touchEndX.current) return;
+
+    const distance = touchStartX.current - touchEndX.current;
+    const minSwipeDistance = 50;
+
+    if (distance > minSwipeDistance) {
+      handleNextSlide();
+    } else if (distance < -minSwipeDistance) {
+      handlePrevSlide();
+    }
+  }, [handleNextSlide, handlePrevSlide]);
 
   // ─── Page Visibility API ─────────────────────────────────────────────────
 
@@ -324,7 +370,7 @@ export function HeroSlider({
         slideContainersRef.current.delete(index);
       }
     },
-    []
+    [],
   );
 
   // ─── Render ──────────────────────────────────────────────────────────────
@@ -336,11 +382,14 @@ export function HeroSlider({
       ref={sliderRef}
       id="hero"
       className={cn(
-        "group/slider relative overflow-hidden w-full h-screen",
-        className
+        "group/slider relative overflow-hidden w-full h-[100dvh] lg:h-screen",
+        className,
       )}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
     >
       {/* All slides rendered, only active one visible */}
       {validSlides.map((slide, index) => {
@@ -382,6 +431,7 @@ export function HeroSlider({
                     }
                   }
                   isActive={isActive}
+                  priority={index === 0 && layer.zIndex === 0}
                 />
               );
             })}
@@ -423,7 +473,7 @@ export function HeroSlider({
 
       {/* Slide indicators */}
       {validSlides.length > 1 && (
-        <div className="absolute bottom-2 md:bottom-3 left-0 right-0 z-10 translate-y-3">
+        <div className="absolute bottom-4 md:bottom-6 left-0 right-0 z-10">
           <SlideIndicators
             total={validSlides.length}
             current={currentSlide}
@@ -434,7 +484,7 @@ export function HeroSlider({
       )}
 
       {/* Trust bar */}
-      <TrustBar items={trustItems} className="bottom-8 md:bottom-12" />
+      <TrustBar items={trustItems} className="bottom-12 md:bottom-16" />
     </section>
   );
 }

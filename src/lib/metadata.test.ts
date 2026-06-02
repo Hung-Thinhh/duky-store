@@ -37,7 +37,7 @@ describe("buildMetadata", () => {
 
     expect(og.title).toBe("Sản phẩm mới | Duky Store");
     expect(og.description).toBe("Mô tả sản phẩm");
-    expect(og.url).toBe("https://dukystore.vn/products/test-product");
+    expect(og.url).toBe("https://dukystore.com/products/test-product");
     expect(og.type).toBe("website");
     expect(og.images).toEqual([{ url: "https://example.com/image.jpg" }]);
     expect(og.siteName).toBe("Duky Store");
@@ -61,7 +61,7 @@ describe("buildMetadata", () => {
     expect(twitter.images).toEqual(["https://example.com/blog.jpg"]);
   });
 
-  it("uses 'summary' twitter card when no image is provided", () => {
+  it("uses fallback image and summary_large_image for twitter card when no image is provided", () => {
     const input: PageMetadataInput = {
       title: "No Image Page",
       description: "Page without image",
@@ -71,8 +71,8 @@ describe("buildMetadata", () => {
     const metadata = buildMetadata(input);
     const twitter = metadata.twitter as Record<string, unknown>;
 
-    expect(twitter.card).toBe("summary");
-    expect(twitter.images).toBeUndefined();
+    expect(twitter.card).toBe("summary_large_image");
+    expect(twitter.images).toEqual(["/assets/logo_header.png"]);
   });
 
   it("uses NEXT_PUBLIC_SITE_URL env var for canonical URLs", () => {
@@ -106,9 +106,9 @@ describe("buildMetadata", () => {
     const og = metadata.openGraph as Record<string, unknown>;
 
     expect(metadata.alternates).toEqual({
-      canonical: "https://dukystore.vn/collections/boot-nu",
+      canonical: "https://dukystore.com/collections/boot-nu",
     });
-    expect(og.url).toBe("https://dukystore.vn/collections/boot-nu");
+    expect(og.url).toBe("https://dukystore.com/collections/boot-nu");
   });
 
   it("defaults og:type to 'website' when type is not provided", () => {
@@ -124,7 +124,7 @@ describe("buildMetadata", () => {
     expect(og.type).toBe("website");
   });
 
-  it("omits og:images when no image is provided", () => {
+  it("uses fallback image for og:images when no image is provided", () => {
     const input: PageMetadataInput = {
       title: "No Image",
       description: "No image page",
@@ -134,6 +134,6 @@ describe("buildMetadata", () => {
     const metadata = buildMetadata(input);
     const og = metadata.openGraph as Record<string, unknown>;
 
-    expect(og.images).toBeUndefined();
+    expect(og.images).toEqual([{ url: "/assets/logo_header.png" }]);
   });
 });

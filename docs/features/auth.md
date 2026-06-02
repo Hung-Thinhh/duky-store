@@ -33,7 +33,7 @@ Module Authentication là nền tảng bảo mật của toàn hệ thống. Nó
 4. Server kiểm tra Email đã tồn tại trong DB chưa.
 5. Nếu chưa: hash mật khẩu bằng `bcryptjs`, lưu user mới vào bảng `users` với `role = "CUSTOMER"`.
 6. Gửi **Email xác thực** (Verification Email) qua Resend/Nodemailer.
-7. Hiển thị thông báo: *"Vui lòng kiểm tra email để xác thực tài khoản."*
+7. Hiển thị thông báo: _"Vui lòng kiểm tra email để xác thực tài khoản."_
 8. Sau khi người dùng click link xác thực → cập nhật `emailVerified = true` → tự động đăng nhập.
 
 **Validation rules:**
@@ -45,6 +45,7 @@ Module Authentication là nền tảng bảo mật của toàn hệ thống. Nó
 | Xác nhận MK | Phải khớp với Mật khẩu |
 
 **Error states:**
+
 - Email đã được sử dụng → `"Email này đã có tài khoản. Vui lòng đăng nhập."`
 - Validation thất bại → Hiện lỗi inline bên dưới từng field.
 
@@ -80,6 +81,7 @@ Module Authentication là nền tảng bảo mật của toàn hệ thống. Nó
 5. Redirect về trang trước đó (hoặc `/`).
 
 **"Remember me" (Ghi nhớ đăng nhập):**
+
 - Checkbox tùy chọn.
 - Khi checked: `maxAge` của session = 30 ngày.
 - Khi unchecked: Session hết hạn khi đóng trình duyệt (`maxAge` = 0).
@@ -96,7 +98,7 @@ Module Authentication là nền tảng bảo mật của toàn hệ thống. Nó
 2. Server kiểm tra email trong DB.
 3. Nếu tồn tại → tạo `reset_token` (UUID, hạn 1 giờ), lưu vào bảng `password_reset_tokens`.
 4. Gửi email chứa link: `https://dukystore.com/auth/reset-password?token=<token>`.
-5. Luôn hiển thị thông báo thành công (để tránh User Enumeration Attack): *"Nếu email tồn tại, bạn sẽ nhận được hướng dẫn đặt lại mật khẩu."*
+5. Luôn hiển thị thông báo thành công (để tránh User Enumeration Attack): _"Nếu email tồn tại, bạn sẽ nhận được hướng dẫn đặt lại mật khẩu."_
 
 ---
 
@@ -124,7 +126,7 @@ Module Authentication là nền tảng bảo mật của toàn hệ thống. Nó
 1. Gọi `signOut()` từ NextAuth.
 2. Xóa cookie session.
 3. Redirect về trang chủ `/`.
-4. Hiển thị toast notification: *"Đã đăng xuất thành công."*
+4. Hiển thị toast notification: _"Đã đăng xuất thành công."_
 
 ---
 
@@ -145,23 +147,24 @@ Module Authentication là nền tảng bảo mật của toàn hệ thống. Nó
 
 ### 3.1. Các vai trò (Roles)
 
-| Role | Mô tả |
-|---|---|
+| Role       | Mô tả                                                                      |
+| ---------- | -------------------------------------------------------------------------- |
 | `CUSTOMER` | Thành viên thường. Có thể mua hàng, xem lịch sử đơn hàng, quản lý profile. |
-| `ADMIN` | Quản trị viên. Có toàn quyền: quản lý sản phẩm, đơn hàng, người dùng. |
+| `ADMIN`    | Quản trị viên. Có toàn quyền: quản lý sản phẩm, đơn hàng, người dùng.      |
 
 ### 3.2. Bảo vệ Routes (Route Protection)
 
 Sử dụng **NextAuth Middleware** (`middleware.ts`) kết hợp `auth()` để bảo vệ route:
 
-| Route Pattern | Yêu cầu |
-|---|---|
-| `/account/*` | Phải đăng nhập (`CUSTOMER` hoặc `ADMIN`) |
-| `/checkout/*` | Phải đăng nhập |
-| `/admin/*` | Phải có role `ADMIN` |
-| `/auth/login`, `/auth/register` | Nếu đã đăng nhập → redirect về `/` |
+| Route Pattern                   | Yêu cầu                                  |
+| ------------------------------- | ---------------------------------------- |
+| `/user/*`                       | Phải đăng nhập (`CUSTOMER` hoặc `ADMIN`) |
+| `/checkout/*`                   | Phải đăng nhập                           |
+| `/admin/*`                      | Phải có role `ADMIN`                     |
+| `/auth/login`, `/auth/register` | Nếu đã đăng nhập → redirect về `/`       |
 
 **Logic middleware:**
+
 ```
 Nếu route là /admin/* và user.role !== "ADMIN" → redirect /403
 Nếu route là protected và chưa login → redirect /auth/login?callbackUrl=<current_url>
@@ -188,43 +191,47 @@ export async function updateProfile(data: ProfileData) {
 ## 4. Cấu trúc Database (Auth-related Tables)
 
 ### Bảng `users`
-| Column | Type | Ghi chú |
-|---|---|---|
-| `id` | `uuid` | Primary Key |
-| `name` | `varchar(100)` | Họ tên hiển thị |
-| `email` | `varchar(255)` | Unique, Not Null |
-| `emailVerified` | `timestamp` | Null nếu chưa xác thực |
-| `hashedPassword` | `text` | Null nếu dùng OAuth |
-| `image` | `text` | Avatar URL |
-| `role` | `enum` | `CUSTOMER` \| `ADMIN` |
-| `createdAt` | `timestamp` | |
-| `updatedAt` | `timestamp` | |
+
+| Column           | Type           | Ghi chú                |
+| ---------------- | -------------- | ---------------------- |
+| `id`             | `uuid`         | Primary Key            |
+| `name`           | `varchar(100)` | Họ tên hiển thị        |
+| `email`          | `varchar(255)` | Unique, Not Null       |
+| `emailVerified`  | `timestamp`    | Null nếu chưa xác thực |
+| `hashedPassword` | `text`         | Null nếu dùng OAuth    |
+| `image`          | `text`         | Avatar URL             |
+| `role`           | `enum`         | `CUSTOMER` \| `ADMIN`  |
+| `createdAt`      | `timestamp`    |                        |
+| `updatedAt`      | `timestamp`    |                        |
 
 ### Bảng `accounts` (NextAuth OAuth)
-| Column | Type | Ghi chú |
-|---|---|---|
-| `id` | `uuid` | Primary Key |
-| `userId` | `uuid` | FK → `users.id` |
-| `provider` | `varchar` | `google`, `credentials` |
-| `providerAccountId` | `varchar` | ID từ provider |
-| `access_token` | `text` | |
-| `refresh_token` | `text` | |
+
+| Column              | Type      | Ghi chú                 |
+| ------------------- | --------- | ----------------------- |
+| `id`                | `uuid`    | Primary Key             |
+| `userId`            | `uuid`    | FK → `users.id`         |
+| `provider`          | `varchar` | `google`, `credentials` |
+| `providerAccountId` | `varchar` | ID từ provider          |
+| `access_token`      | `text`    |                         |
+| `refresh_token`     | `text`    |                         |
 
 ### Bảng `verification_tokens`
-| Column | Type | Ghi chú |
-|---|---|---|
-| `identifier` | `varchar` | Email |
-| `token` | `varchar` | UUID token |
-| `expires` | `timestamp` | Thời hạn |
+
+| Column       | Type        | Ghi chú    |
+| ------------ | ----------- | ---------- |
+| `identifier` | `varchar`   | Email      |
+| `token`      | `varchar`   | UUID token |
+| `expires`    | `timestamp` | Thời hạn   |
 
 ### Bảng `password_reset_tokens`
-| Column | Type | Ghi chú |
-|---|---|---|
-| `id` | `uuid` | Primary Key |
-| `email` | `varchar` | |
-| `token` | `varchar` | UUID token, Unique |
+
+| Column    | Type        | Ghi chú               |
+| --------- | ----------- | --------------------- |
+| `id`      | `uuid`      | Primary Key           |
+| `email`   | `varchar`   |                       |
+| `token`   | `varchar`   | UUID token, Unique    |
 | `expires` | `timestamp` | Hạn 1 giờ sau khi tạo |
-| `used` | `boolean` | Default: false |
+| `used`    | `boolean`   | Default: false        |
 
 ---
 
@@ -314,4 +321,4 @@ EMAIL_FROM=no-reply@dukystore.com
 
 ---
 
-*Tài liệu này cần được cập nhật khi có thay đổi về schema hoặc luồng nghiệp vụ.*
+_Tài liệu này cần được cập nhật khi có thay đổi về schema hoặc luồng nghiệp vụ._

@@ -38,7 +38,7 @@ describe("robots", () => {
 
   it("includes a reference to the sitemap URL", () => {
     const result = robots();
-    expect(result.sitemap).toBe("https://dukystore.vn/sitemap.xml");
+    expect(result.sitemap).toBe("https://dukystore.com/sitemap.xml");
   });
 
   it("uses NEXT_PUBLIC_SITE_URL env var for sitemap URL", () => {
@@ -47,9 +47,9 @@ describe("robots", () => {
     expect(result.sitemap).toBe("https://custom-domain.com/sitemap.xml");
   });
 
-  it("falls back to https://dukystore.vn when env var is not set", () => {
+  it("falls back to https://dukystore.com when env var is not set", () => {
     delete process.env.NEXT_PUBLIC_SITE_URL;
     const result = robots();
-    expect(result.sitemap).toBe("https://dukystore.vn/sitemap.xml");
+    expect(result.sitemap).toBe("https://dukystore.com/sitemap.xml");
   });
 });

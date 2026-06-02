@@ -126,7 +126,18 @@ export const TextOverlay: React.FC<TextOverlayProps> = ({
       className="hero-text-overlay"
       style={textVars}
     >
-      <div className="hero-text-panel">
+      <div
+        className="hero-text-panel"
+        style={{
+          background: "none",
+          backdropFilter: "none",
+          WebkitBackdropFilter: "none",
+          border: "none",
+          boxShadow: "none",
+          padding: 0,
+          margin: 0,
+        }}
+      >
         {/* Badge */}
         <span
           data-animate

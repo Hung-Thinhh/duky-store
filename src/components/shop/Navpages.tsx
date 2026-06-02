@@ -2,6 +2,7 @@
 "use client";
 
 import Link from "next/link";
+import { BackButton } from "./BackButton";
 
 export interface BreadcrumbItem {
   label: string;
@@ -15,6 +16,7 @@ interface NavpagesProps {
 export const Navpages = ({ items }: NavpagesProps) => {
   return (
     <nav aria-label="Breadcrumb" className="mb-8">
+      <BackButton />
       <ol
         className="flex items-center gap-2 text-sm"
         itemScope

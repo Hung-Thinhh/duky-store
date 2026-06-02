@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 
 function siteUrl() {
-  return (process.env.NEXT_PUBLIC_SITE_URL || "https://dukystore.vn").replace(
+  return (process.env.NEXT_PUBLIC_SITE_URL || "https://dukystore.com").replace(
     /\/+$/,
     "",
   );
