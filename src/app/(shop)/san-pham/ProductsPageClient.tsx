@@ -2,7 +2,7 @@ import React, { Suspense } from "react";
 import Image from "next/image";
 import type { Metadata } from "next";
 import { buildMetadata } from "@/lib/metadata";
-import { ProductsClient } from "./ProductsClient";
+import { ProductsClient } from "../products/ProductsClient";
 
 interface BannerContent {
   image: string;
