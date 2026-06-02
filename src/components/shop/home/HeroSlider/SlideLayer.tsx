@@ -9,6 +9,7 @@ import type { FloatAnimationConfig, LayerLayout } from "@/types/heroSlider";
 
 export interface SlideLayerProps {
   src: string;
+  srcMobile?: string;
   alt: string;
   zIndex: number;
   floatConfig: FloatAnimationConfig;
@@ -25,6 +26,7 @@ export interface SlideLayerProps {
  */
 export function SlideLayer({
   src,
+  srcMobile,
   alt,
   zIndex,
   floatConfig,
@@ -37,6 +39,16 @@ export function SlideLayer({
   const layerRef = useRef<HTMLDivElement>(null);
   const tweenRef = useRef<gsap.core.Tween | null>(null);
   const [hasError, setHasError] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   useEffect(() => {
     if (!layerRef.current) return;
@@ -124,7 +136,7 @@ export function SlideLayer({
       style={styleVars}
     >
       <Image
-        src={src}
+        src={isMobile && srcMobile ? srcMobile : src}
         alt={alt}
         fill
         sizes="100vw"

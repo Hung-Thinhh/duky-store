@@ -24,34 +24,14 @@ interface BlogDetailPageProps {
 
 const getBlogPostBySlug = cache(fetchBlogPostBySlug);
 
-function truncateMeta(value?: string | null, maxLength = 160) {
-  const text = blogText(value);
-
-  if (text.length <= maxLength) {
-    return text || undefined;
+function absoluteUrl(pathOrUrl?: string | null) {
+  if (!pathOrUrl) return undefined;
+  if (pathOrUrl.startsWith("http://") || pathOrUrl.startsWith("https://")) {
+    return pathOrUrl;
   }
 
-  const clipped = text.slice(0, maxLength - 1);
-  const lastSpace = clipped.lastIndexOf(" ");
-
-  return `${clipped.slice(0, lastSpace > 80 ? lastSpace : clipped.length)}...`;
-}
-
-async function getBlogPageData(slug: string) {
-  const post = await getBlogPostBySlug(slug);
-  const [categoriesResult, recentPostsResult] = await Promise.allSettled([
-    fetchBlogCategories(),
-    fetchBlogPosts({ limit: 5, sort: "newest" }),
-  ]);
-
-  const categories: BlogCategory[] =
-    categoriesResult.status === "fulfilled" ? categoriesResult.value.data : [];
-  const recentPosts: BlogPost[] =
-    recentPostsResult.status === "fulfilled"
-      ? recentPostsResult.value.data
-      : [];
-
-  return { post, categories, recentPosts };
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://dukystore.com";
+  return new URL(pathOrUrl, siteUrl).toString();
 }
 
 export async function generateMetadata({

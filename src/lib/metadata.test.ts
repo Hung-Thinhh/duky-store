@@ -93,7 +93,7 @@ describe("buildMetadata", () => {
     expect(og.url).toBe("https://custom-domain.com/test");
   });
 
-  it("falls back to https://dukystore.vn when env var is not set", () => {
+  it("falls back to https://dukystore.com when env var is not set", () => {
     delete process.env.NEXT_PUBLIC_SITE_URL;
 
     const input: PageMetadataInput = {

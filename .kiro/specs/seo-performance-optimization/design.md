@@ -5,6 +5,7 @@
 This design converts the Duky Store Next.js frontend from fully client-rendered pages (`"use client"`) to a **Server Component shell + Client Component islands** architecture. The server shell handles data fetching and SEO-critical HTML rendering via ISR, while interactive elements (cart, filters, animations) remain as hydrated client islands.
 
 Key goals:
+
 - Pre-render all public pages as static HTML with ISR for search engine indexing
 - Generate comprehensive SEO metadata (Open Graph, Twitter Cards) per page
 - Emit JSON-LD structured data for rich search results
@@ -179,17 +180,17 @@ export default async function ProductDetailPage({ params }) {
 
 ### Shared Components
 
-| Component | Type | Purpose |
-|-----------|------|---------|
-| `JsonLd` | Server | Renders `<script type="application/ld+json">` |
-| `CartToastClient` | Client | Toast notification for cart actions |
-| `CollectionClient` | Client | Filters, pagination, favorites state |
-| `ProductDetailClient` | Client | Size/color selectors, add-to-cart, image gallery |
-| `LazyBootMaleSection` | Client (dynamic) | Below-fold animated section |
-| `LazyBootFemaleSection` | Client (dynamic) | Below-fold animated section |
-| `LazyGuideSection` | Client (dynamic) | Below-fold animated section |
-| `LazyNewsSection` | Client (dynamic) | Below-fold animated section |
-| `LazyFAQSection` | Client (dynamic) | Below-fold FAQ accordion |
+| Component               | Type             | Purpose                                          |
+| ----------------------- | ---------------- | ------------------------------------------------ |
+| `JsonLd`                | Server           | Renders `<script type="application/ld+json">`    |
+| `CartToastClient`       | Client           | Toast notification for cart actions              |
+| `CollectionClient`      | Client           | Filters, pagination, favorites state             |
+| `ProductDetailClient`   | Client           | Size/color selectors, add-to-cart, image gallery |
+| `LazyBootMaleSection`   | Client (dynamic) | Below-fold animated section                      |
+| `LazyBootFemaleSection` | Client (dynamic) | Below-fold animated section                      |
+| `LazyGuideSection`      | Client (dynamic) | Below-fold animated section                      |
+| `LazyNewsSection`       | Client (dynamic) | Below-fold animated section                      |
+| `LazyFAQSection`        | Client (dynamic) | Below-fold FAQ accordion                         |
 
 ### Metadata Generator Interface
 
@@ -204,7 +205,7 @@ export interface PageMetadataInput {
 }
 
 export function buildMetadata(input: PageMetadataInput): Metadata {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://dukystore.vn";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://dukystore.com";
   return {
     title: `${input.title} | Duky Store`,
     description: input.description,
@@ -303,19 +304,21 @@ interface ProductJsonLd {
   image: string[];
   sku: string;
   brand: { "@type": "Brand"; name: string };
-  offers: {
-    "@type": "Offer";
-    price: number;
-    priceCurrency: "VND";
-    availability: string;
-    url: string;
-  } | {
-    "@type": "AggregateOffer";
-    lowPrice: number;
-    highPrice: number;
-    priceCurrency: "VND";
-    offerCount: number;
-  };
+  offers:
+    | {
+        "@type": "Offer";
+        price: number;
+        priceCurrency: "VND";
+        availability: string;
+        url: string;
+      }
+    | {
+        "@type": "AggregateOffer";
+        lowPrice: number;
+        highPrice: number;
+        priceCurrency: "VND";
+        offerCount: number;
+      };
 }
 
 // BreadcrumbList schema
@@ -351,7 +354,14 @@ interface WebsiteJsonLd {
 interface SitemapEntry {
   url: string;
   lastModified?: Date | string;
-  changeFrequency?: "always" | "hourly" | "daily" | "weekly" | "monthly" | "yearly" | "never";
+  changeFrequency?:
+    | "always"
+    | "hourly"
+    | "daily"
+    | "weekly"
+    | "monthly"
+    | "yearly"
+    | "never";
   priority?: number;
 }
 ```
@@ -360,8 +370,8 @@ interface SitemapEntry {
 
 ```typescript
 interface RevalidateRequest {
-  path?: string;   // e.g., "/products/boot-abc"
-  tag?: string;    // e.g., "products" or "collections"
+  path?: string; // e.g., "/products/boot-abc"
+  tag?: string; // e.g., "products" or "collections"
 }
 
 interface RevalidateResponse {
@@ -372,83 +382,83 @@ interface RevalidateResponse {
 
 ## Correctness Properties
 
-*A property is a characteristic or behavior that should hold true across all valid executions of a system — essentially, a formal statement about what the system should do. Properties serve as the bridge between human-readable specifications and machine-verifiable correctness guarantees.*
+_A property is a characteristic or behavior that should hold true across all valid executions of a system — essentially, a formal statement about what the system should do. Properties serve as the bridge between human-readable specifications and machine-verifiable correctness guarantees._
 
 ### Property 1: Title follows site pattern
 
-*For any* page with a title string, the `buildMetadata` function SHALL produce a title matching the pattern `"{title} | Duky Store"`.
+_For any_ page with a title string, the `buildMetadata` function SHALL produce a title matching the pattern `"{title} | Duky Store"`.
 
 **Validates: Requirements 5.1**
 
 ### Property 2: Product metadata contains product name and price
 
-*For any* valid product object with a name and price, the generated metadata title and description SHALL contain the product name, and the description SHALL contain a formatted price string.
+_For any_ valid product object with a name and price, the generated metadata title and description SHALL contain the product name, and the description SHALL contain a formatted price string.
 
 **Validates: Requirements 5.3**
 
 ### Property 3: Collection metadata contains collection name
 
-*For any* valid collection with a known slug and title, the generated metadata title SHALL contain the collection title.
+_For any_ valid collection with a known slug and title, the generated metadata title SHALL contain the collection title.
 
 **Validates: Requirements 5.4**
 
 ### Property 4: All pages have complete Open Graph and Twitter Card fields
 
-*For any* page metadata input with title, description, and path, the generated metadata SHALL include non-empty `openGraph.title`, `openGraph.description`, `openGraph.url`, `openGraph.type`, `twitter.card`, `twitter.title`, and `twitter.description` fields.
+_For any_ page metadata input with title, description, and path, the generated metadata SHALL include non-empty `openGraph.title`, `openGraph.description`, `openGraph.url`, `openGraph.type`, `twitter.card`, `twitter.title`, and `twitter.description` fields.
 
 **Validates: Requirements 5.5, 5.6**
 
 ### Property 5: Product og:image matches thumbnail URL
 
-*For any* product with a non-null `thumbnailMedia` containing a URL, the generated metadata `openGraph.images[0].url` SHALL equal the product's thumbnail secure URL (or URL if secureUrl is null).
+_For any_ product with a non-null `thumbnailMedia` containing a URL, the generated metadata `openGraph.images[0].url` SHALL equal the product's thumbnail secure URL (or URL if secureUrl is null).
 
 **Validates: Requirements 5.7**
 
 ### Property 6: Product JSON-LD contains all required schema fields
 
-*For any* valid product object, the `buildProductJsonLd` function SHALL produce an object containing `@type: "Product"`, non-empty `name`, `description`, `image`, `sku`, `brand.name`, and `offers` with `price` and `priceCurrency`.
+_For any_ valid product object, the `buildProductJsonLd` function SHALL produce an object containing `@type: "Product"`, non-empty `name`, `description`, `image`, `sku`, `brand.name`, and `offers` with `price` and `priceCurrency`.
 
 **Validates: Requirements 6.1, 6.2**
 
 ### Property 7: BreadcrumbList JSON-LD is valid for any path
 
-*For any* non-empty array of breadcrumb items (each with name and url), the `buildBreadcrumbJsonLd` function SHALL produce a valid `BreadcrumbList` with sequential `position` values starting at 1 and matching item count.
+_For any_ non-empty array of breadcrumb items (each with name and url), the `buildBreadcrumbJsonLd` function SHALL produce a valid `BreadcrumbList` with sequential `position` values starting at 1 and matching item count.
 
 **Validates: Requirements 6.3**
 
 ### Property 8: Article JSON-LD is valid for any blog post
 
-*For any* valid blog post object with title, content, and dates, the `buildArticleJsonLd` function SHALL produce an object with `@type` containing "Article" or "BlogPosting", non-empty `headline`, and valid `datePublished`.
+_For any_ valid blog post object with title, content, and dates, the `buildArticleJsonLd` function SHALL produce an object with `@type` containing "Article" or "BlogPosting", non-empty `headline`, and valid `datePublished`.
 
 **Validates: Requirements 6.5**
 
 ### Property 9: Sale price products include both prices in offers
 
-*For any* product where `salePrice` is non-null and less than `originalPrice`, the `buildProductJsonLd` function SHALL include both the sale price and the original price in the offers structure.
+_For any_ product where `salePrice` is non-null and less than `originalPrice`, the `buildProductJsonLd` function SHALL include both the sale price and the original price in the offers structure.
 
 **Validates: Requirements 6.6**
 
 ### Property 10: All published entities appear in sitemap
 
-*For any* set of published products and blog posts returned by the API, the sitemap generator output SHALL contain a URL entry for each product slug and each blog post slug.
+_For any_ set of published products and blog posts returned by the API, the sitemap generator output SHALL contain a URL entry for each product slug and each blog post slug.
 
 **Validates: Requirements 7.2, 7.4**
 
 ### Property 11: Valid revalidation request triggers revalidation and returns 200
 
-*For any* POST request to `/api/revalidate` with a valid Authorization token and a JSON body containing a non-empty `path` or `tag`, the endpoint SHALL call the appropriate revalidation function and return status 200 with `{ revalidated: true }`.
+_For any_ POST request to `/api/revalidate` with a valid Authorization token and a JSON body containing a non-empty `path` or `tag`, the endpoint SHALL call the appropriate revalidation function and return status 200 with `{ revalidated: true }`.
 
 **Validates: Requirements 9.2, 9.6**
 
 ### Property 12: Invalid auth token returns 401
 
-*For any* POST request to `/api/revalidate` where the Authorization header is missing or does not match the configured secret, the endpoint SHALL return status 401 regardless of the request body content.
+_For any_ POST request to `/api/revalidate` where the Authorization header is missing or does not match the configured secret, the endpoint SHALL return status 401 regardless of the request body content.
 
 **Validates: Requirements 9.4**
 
 ### Property 13: Product revalidation cascades to collection pages
 
-*For any* revalidation request targeting a product path (matching `/products/[slug]`), the endpoint SHALL also trigger revalidation for the `"collections"` tag to ensure collection pages reflect updated product data.
+_For any_ revalidation request targeting a product path (matching `/products/[slug]`), the endpoint SHALL also trigger revalidation for the `"collections"` tag to ensure collection pages reflect updated product data.
 
 **Validates: Requirements 9.5**
 
@@ -456,19 +466,19 @@ interface RevalidateResponse {
 
 ### API Fetch Failures
 
-| Scenario | Handling |
-|----------|----------|
-| API returns 404 for product/blog slug | Call `notFound()` → Next.js renders 404 page |
-| API returns 5xx or network error | Let error propagate → Next.js error boundary renders error page; stale ISR cache continues serving |
-| API timeout during ISR revalidation | Stale page continues serving; next request retries |
+| Scenario                              | Handling                                                                                           |
+| ------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| API returns 404 for product/blog slug | Call `notFound()` → Next.js renders 404 page                                                       |
+| API returns 5xx or network error      | Let error propagate → Next.js error boundary renders error page; stale ISR cache continues serving |
+| API timeout during ISR revalidation   | Stale page continues serving; next request retries                                                 |
 
 ### Revalidation Endpoint Errors
 
-| Scenario | Response |
-|----------|----------|
-| Missing Authorization header | 401 `{ error: "Unauthorized" }` |
-| Invalid secret token | 401 `{ error: "Unauthorized" }` |
-| Missing both `path` and `tag` in body | 400 `{ error: "Missing path or tag" }` |
+| Scenario                                | Response                               |
+| --------------------------------------- | -------------------------------------- |
+| Missing Authorization header            | 401 `{ error: "Unauthorized" }`        |
+| Invalid secret token                    | 401 `{ error: "Unauthorized" }`        |
+| Missing both `path` and `tag` in body   | 400 `{ error: "Missing path or tag" }` |
 | `revalidatePath`/`revalidateTag` throws | 500 `{ error: "Revalidation failed" }` |
 
 ### Metadata Generation Fallbacks
@@ -493,38 +503,40 @@ This feature is suitable for property-based testing because the metadata generat
 **Library:** [fast-check](https://github.com/dubzzz/fast-check) (TypeScript PBT library)
 
 **Configuration:**
+
 - Minimum 100 iterations per property test
 - Each test tagged with: `Feature: seo-performance-optimization, Property {N}: {title}`
 
 **Property tests to implement:**
+
 - Properties 1–13 as defined in Correctness Properties section
 - Generators for: random Product objects, random BlogPost objects, random breadcrumb arrays, random revalidation requests
 
 ### Unit Tests (Example-Based)
 
-| Test | Validates |
-|------|-----------|
-| Homepage renders with revalidate = 120 | Req 1.1 |
-| Collection page generateStaticParams returns 4 slugs | Req 2.5 |
-| Product page calls notFound() on 404 | Req 3.5 |
-| Blog page calls notFound() on 404 | Req 4.4 |
-| WebSite JSON-LD contains SearchAction | Req 6.4 |
-| Sitemap includes 4 collection URLs | Req 7.3 |
-| Sitemap includes static pages | Req 7.5 |
-| Sitemap has correct changeFrequency/priority | Req 7.6 |
-| Robots.txt allows public paths | Req 8.2 |
-| Robots.txt disallows private paths | Req 8.3 |
-| Robots.txt references sitemap | Req 8.4 |
+| Test                                                 | Validates |
+| ---------------------------------------------------- | --------- |
+| Homepage renders with revalidate = 120               | Req 1.1   |
+| Collection page generateStaticParams returns 4 slugs | Req 2.5   |
+| Product page calls notFound() on 404                 | Req 3.5   |
+| Blog page calls notFound() on 404                    | Req 4.4   |
+| WebSite JSON-LD contains SearchAction                | Req 6.4   |
+| Sitemap includes 4 collection URLs                   | Req 7.3   |
+| Sitemap includes static pages                        | Req 7.5   |
+| Sitemap has correct changeFrequency/priority         | Req 7.6   |
+| Robots.txt allows public paths                       | Req 8.2   |
+| Robots.txt disallows private paths                   | Req 8.3   |
+| Robots.txt references sitemap                        | Req 8.4   |
 
 ### Integration Tests
 
-| Test | Validates |
-|------|-----------|
-| Homepage fetches products, categories, posts from API | Req 1.3 |
-| Collection page fetches products by slug | Req 2.2 |
-| Product page fetches product + variants | Req 3.2 |
-| Blog page fetches full post content | Req 4.3 |
-| Revalidation endpoint calls revalidatePath with correct path | Req 9.2 |
+| Test                                                         | Validates |
+| ------------------------------------------------------------ | --------- |
+| Homepage fetches products, categories, posts from API        | Req 1.3   |
+| Collection page fetches products by slug                     | Req 2.2   |
+| Product page fetches product + variants                      | Req 3.2   |
+| Blog page fetches full post content                          | Req 4.3   |
+| Revalidation endpoint calls revalidatePath with correct path | Req 9.2   |
 
 ### Visual/Snapshot Tests
 
@@ -567,6 +579,7 @@ src/
 ### Performance Optimization Approach
 
 **Dynamic Imports for Below-Fold Sections:**
+
 ```typescript
 import dynamic from "next/dynamic";
 
@@ -577,15 +590,18 @@ const LazyBootMaleSection = dynamic(
 ```
 
 **Suspense Boundaries:**
+
 - Each below-fold section wrapped in `<Suspense>` with skeleton fallback
 - Above-fold (HeroBanner, CategorySection) rendered synchronously
 
 **Bundle Optimization:**
+
 - `motion/react` and `gsap` only imported in Client Components
 - Server shell imports zero animation libraries
 - Next.js automatically code-splits Client Components
 
 **Image Optimization:**
+
 - All images use `next/image` with explicit `width`/`height` or `fill` + container aspect ratio
 - Above-fold images: `priority={true}`
 - Below-fold images: default lazy loading

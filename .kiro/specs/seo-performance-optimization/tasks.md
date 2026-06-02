@@ -12,7 +12,7 @@ Convert the Duky Store Next.js frontend from client-rendered pages to Server Com
     - Generate title following pattern `"{title} | Duky Store"`
     - Generate Open Graph tags (og:title, og:description, og:image, og:url, og:type)
     - Generate Twitter Card tags (twitter:card, twitter:title, twitter:description, twitter:image)
-    - Use `NEXT_PUBLIC_SITE_URL` env var for canonical URLs with fallback to `https://dukystore.vn`
+    - Use `NEXT_PUBLIC_SITE_URL` env var for canonical URLs with fallback to `https://dukystore.com`
     - _Requirements: 5.1, 5.2, 5.5, 5.6_
 
   - [x] 1.2 Create JSON-LD structured data builders (`src/lib/structured-data.ts`)
@@ -47,7 +47,7 @@ Convert the Duky Store Next.js frontend from client-rendered pages to Server Com
     - Preserve existing product grid layout and favorites functionality
     - _Requirements: 2.4_
 
-  - [ ]* 2.3 Write property test for collection metadata generation
+  - [ ]\* 2.3 Write property test for collection metadata generation
     - **Property 3: Collection metadata contains collection name**
     - **Validates: Requirements 5.4**
 
@@ -68,7 +68,7 @@ Convert the Duky Store Next.js frontend from client-rendered pages to Server Com
     - Handle size/color selectors, add-to-cart button, image gallery interactions
     - _Requirements: 3.4_
 
-  - [ ]* 3.3 Write property tests for product metadata and JSON-LD
+  - [ ]\* 3.3 Write property tests for product metadata and JSON-LD
     - **Property 2: Product metadata contains product name and price**
     - **Property 5: Product og:image matches thumbnail URL**
     - **Property 6: Product JSON-LD contains all required schema fields**
@@ -91,7 +91,7 @@ Convert the Duky Store Next.js frontend from client-rendered pages to Server Com
     - Ensure animated sections delegate to client components without affecting server shell
     - _Requirements: 1.5_
 
-  - [ ]* 4.3 Write property tests for homepage metadata and WebSite JSON-LD
+  - [ ]\* 4.3 Write property tests for homepage metadata and WebSite JSON-LD
     - **Property 1: Title follows site pattern**
     - **Property 4: All pages have complete Open Graph and Twitter Card fields**
     - **Validates: Requirements 5.1, 5.5, 5.6**
@@ -111,7 +111,7 @@ Convert the Duky Store Next.js frontend from client-rendered pages to Server Com
     - Add `JsonLd` with Article schema
     - _Requirements: 4.2, 4.3, 4.4, 6.5_
 
-  - [ ]* 5.3 Write property tests for blog metadata and Article JSON-LD
+  - [ ]\* 5.3 Write property tests for blog metadata and Article JSON-LD
     - **Property 8: Article JSON-LD is valid for any blog post**
     - **Validates: Requirements 6.5**
 
@@ -133,11 +133,11 @@ Convert the Duky Store Next.js frontend from client-rendered pages to Server Com
     - Include reference to sitemap URL
     - _Requirements: 8.1, 8.2, 8.3, 8.4_
 
-  - [ ]* 7.3 Write property test for sitemap completeness
+  - [ ]\* 7.3 Write property test for sitemap completeness
     - **Property 10: All published entities appear in sitemap**
     - **Validates: Requirements 7.2, 7.4**
 
-  - [ ]* 7.4 Write property test for breadcrumb JSON-LD validity
+  - [ ]\* 7.4 Write property test for breadcrumb JSON-LD validity
     - **Property 7: BreadcrumbList JSON-LD is valid for any path**
     - **Validates: Requirements 6.3**
 
@@ -154,7 +154,7 @@ Convert the Duky Store Next.js frontend from client-rendered pages to Server Com
     - Return 500 with error message on failure
     - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5, 9.6_
 
-  - [ ]* 8.2 Write property tests for revalidation endpoint
+  - [ ]\* 8.2 Write property tests for revalidation endpoint
     - **Property 11: Valid revalidation request triggers revalidation and returns 200**
     - **Property 12: Invalid auth token returns 401**
     - **Property 13: Product revalidation cascades to collection pages**

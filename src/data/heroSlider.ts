@@ -5,6 +5,7 @@ type SliderFolder = "slider_1" | "slider_2" | "slider_3";
 
 interface SliderConfigLayer {
   file: string;
+  fileMobile?: string;
   alt: string;
   zIndex: number;
   role?: "background" | "pedestal" | "model" | "boot";
@@ -45,6 +46,7 @@ const toSlideConfig = (slide: SliderConfigSlide): SlideConfig => ({
   // Other slides continue to use their own configured folder.
   layers: slide.layers.map((layer) => ({
     src: toAssetPath(lockedFolderBySlideId[slide.id] ?? slide.folder, layer.file),
+    srcMobile: layer.fileMobile ? toAssetPath(lockedFolderBySlideId[slide.id] ?? slide.folder, layer.fileMobile) : undefined,
     alt: layer.alt,
     zIndex: layer.zIndex,
     role: layer.role,
