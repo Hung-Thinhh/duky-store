@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Image from "next/image";
@@ -126,80 +127,20 @@ export async function generateMetadata({
   });
 }
 
-// ─── Helper: fetch categories from API ───────────────────────────────────────
-interface CategoryItem {
-  id: string;
-  slug: string;
-  parentId: string | null;
-}
-
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api/v1";
-
-async function fetchCategories(): Promise<CategoryItem[]> {
-  try {
-    const res = await fetch(`${API_URL}/categories`, {
-      next: { revalidate: 60 },
-    });
-    if (!res.ok) return [];
-    const json = await res.json();
-    return json?.DT?.data || [];
-  } catch {
-    return [];
-  }
-}
-
 // ─── Helper: fetch all products for a parent category (parent + children) ────
 async function fetchParentCategoryProducts(
   slug: string
 ): Promise<Product[]> {
-  const categories = await fetchCategories();
-
-  // Find the parent category
-  const parentCat = categories.find((c) => c.slug === slug);
-
-  // Collect all slugs to fetch: parent + children
-  const slugsToFetch = new Set<string>([slug]);
-  if (parentCat) {
-    for (const child of categories.filter(
-      (c) => c.parentId === parentCat.id
-    )) {
-      slugsToFetch.add(child.slug);
-    }
+  try {
+    const result = await fetchProducts({
+      categorySlug: slug,
+      limit: 100,
+      sort: "newest",
+    });
+    return result.data;
+  } catch {
+    return [];
   }
-
-  const slugsArray = Array.from(slugsToFetch);
-
-  // Fetch products from all slugs in parallel
-  const results = await Promise.all(
-    slugsArray.map((s) =>
-      fetchProducts({ categorySlug: s, limit: 100, sort: "newest" })
-        .then((res) => res.data.map((p) => ({ ...p, categorySlug: s })))
-        .catch(() => [] as Product[])
-    )
-  );
-
-  // Deduplicate products by id, keeping a list of categorySlugs
-  const productMap = new Map<string, Product & { categorySlugs?: string[] }>();
-  for (let i = 0; i < slugsArray.length; i++) {
-    const s = slugsArray[i];
-    const products = results[i];
-    for (const p of products) {
-      if (!productMap.has(p.id)) {
-        productMap.set(p.id, {
-          ...p,
-          categorySlugs: [s],
-        });
-      } else {
-        const existing = productMap.get(p.id)!;
-        if (existing.categorySlugs && !existing.categorySlugs.includes(s)) {
-          existing.categorySlugs.push(s);
-        }
-      }
-    }
-  }
-
-  return Array.from(productMap.values());
 }
 
 // ─── Page Component (Server) ─────────────────────────────────────────────────
@@ -276,11 +217,13 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
       </section>
 
       {/* ═══ SECTION 2: Product Showcase (Client Component) ═══ */}
-      <CollectionClient
-        initialProducts={products}
-        slug={slug}
-        collectionTitle={meta.title}
-      />
+      <Suspense fallback={<div className="animate-pulse h-[50vh] bg-gray-50 rounded-2xl" />}>
+        <CollectionClient
+          initialProducts={products}
+          slug={slug}
+          collectionTitle={meta.title}
+        />
+      </Suspense>
     </>
   );
 }

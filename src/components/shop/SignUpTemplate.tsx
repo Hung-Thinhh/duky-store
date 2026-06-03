@@ -15,6 +15,7 @@ const SignUpTemplate: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [agreeToTerms, setAgreeToTerms] = useState(false);
 
   const auth = useAuth();
   const router = useRouter();
@@ -26,6 +27,11 @@ const SignUpTemplate: React.FC = () => {
     // Client-side validation
     if (!email || !password || !confirmPassword) {
       setError('Vui lòng điền đầy đủ thông tin');
+      return;
+    }
+
+    if (!agreeToTerms) {
+      setError('Vui lòng đồng ý với Điều khoản sử dụng và Chính sách bảo mật');
       return;
     }
 
@@ -131,7 +137,12 @@ const SignUpTemplate: React.FC = () => {
         {/* Terms and Conditions */}
         <div className="terms-options">
           <label className="terms-checkbox">
-            <input type="checkbox" className="checkbox-input" />
+            <input 
+              type="checkbox" 
+              className="checkbox-input" 
+              checked={agreeToTerms}
+              onChange={(e) => setAgreeToTerms(e.target.checked)}
+            />
             <span className="terms-text">
               Tôi đồng ý với <a href="#">Điều khoản sử dụng</a> và <a href="#">Chính sách bảo mật</a>
             </span>

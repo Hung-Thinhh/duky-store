@@ -182,16 +182,12 @@ export function BlogDetailPageClient({
                   </span>
                 </div>
 
-                {/* Cover Image */}
                 {coverUrl && (
-                  <div className="relative w-full aspect-[16/9] rounded-2xl overflow-hidden mb-10 bg-gray-100">
-                    <Image
+                  <div className="w-full rounded-2xl overflow-hidden mb-10 bg-gray-50 flex justify-center">
+                    <img
                       src={coverUrl}
                       alt={post.coverMedia?.altText || post.title}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 768px) 100vw, 800px"
-                      priority
+                      className="max-w-full h-auto max-h-[600px] object-contain rounded-2xl"
                     />
                   </div>
                 )}

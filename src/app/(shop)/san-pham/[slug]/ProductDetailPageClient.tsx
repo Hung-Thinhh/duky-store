@@ -138,7 +138,7 @@ export default function ProductDetailPageClient({
     name: product.name,
     category: "",
     collection: "",
-    breadcrumb: ["Trang chu", product.name],
+    breadcrumb: ["Trang chủ", product.name],
     rating: 4.9,
     reviewsCount: 0,
     soldCount: 0,

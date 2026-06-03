@@ -271,11 +271,11 @@ export const Footer = () => {
                   </h4>
                   <ul className="space-y-2">
                     {[
-                      { name: "Chính sách bảo mật", href: "/chinh-sach" },
-                      { name: "Quy định sử dụng", href: "/chinh-sach" },
-                      { name: "Chính sách vận chuyển", href: "/chinh-sach" },
-                      { name: "Chính sách bảo hành", href: "/chinh-sach" },
-                      { name: "Chính sách đổi trả hàng", href: "/chinh-sach" },
+                      { name: "Chính sách bảo mật", href: "/chinh-sach-bao-mat" },
+                      { name: "Quy định sử dụng", href: "/quy-dinh-su-dung" },
+                      { name: "Chính sách vận chuyển", href: "/chinh-sach-van-chuyen" },
+                      { name: "Chính sách bảo hành", href: "/chinh-sach-bao-hanh" },
+                      { name: "Chính sách đổi trả hàng", href: "/chinh-sach-doi-tra-hang" },
                     ].map((item) => (
                       <li key={item.name}>
                         <Link

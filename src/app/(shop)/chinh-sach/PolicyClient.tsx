@@ -34,7 +34,7 @@ export function PolicyClient({ children }: PolicyClientProps) {
         }
 
         :global(.policy-title) {
-          font-family: var(--font-accent);
+          font-family: var(--font-main);
           font-size: 28px;
           font-weight: 800;
           color: var(--text-main);
@@ -56,7 +56,7 @@ export function PolicyClient({ children }: PolicyClientProps) {
         }
 
         :global(.policy-section-title) {
-          font-family: var(--font-accent);
+          font-family: var(--font-main);
           font-size: 20px;
           font-weight: 700;
           color: #000000ff;

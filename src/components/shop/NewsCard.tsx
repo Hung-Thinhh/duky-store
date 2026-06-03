@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React from "react";
 import Image from "next/image";
@@ -45,7 +45,9 @@ export const NewsCard: React.FC<NewsCardProps> = ({
 
         <div className="absolute top-4 left-4 z-20">
           <div className="flex flex-col items-center justify-center w-15 h-15 rounded-2xl border border-white/30 bg-white/10 backdrop-blur-md text-white shadow-xl">
-            <span className="content text-2xl font-bold leading-none">{date.day}</span>
+            <span className="content text-2xl font-bold leading-none">
+              {date.day}
+            </span>
             <span className="content text-xs font-medium uppercase tracking-wider mt-1 opacity-80">
               {date.month}
             </span>

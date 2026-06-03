@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { Header, Footer } from "@/components/layout";
 import { Navpages } from "@/components/shop/Navpages";
 import { Pagination } from "@/components/shop/Pagination";
@@ -17,6 +17,7 @@ const POSTS_PER_PAGE = 10;
 
 export function BlogPageClient() {
   const { cartCount } = useCart();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const rawCategory = searchParams.get("category") || undefined;
 
@@ -37,7 +38,35 @@ export function BlogPageClient() {
     }
   })();
 
-  const [currentPage, setCurrentPage] = useState(1);
+  // Read page from URL, default to 1 if not present or invalid
+  const queryPage = searchParams.get("page");
+  const initialPage = queryPage ? parseInt(queryPage, 10) : 1;
+  const [currentPage, setCurrentPage] = useState(isNaN(initialPage) ? 1 : initialPage);
+
+  // Sync state if URL changes (e.g. going back/forward in browser history)
+  useEffect(() => {
+    const page = searchParams.get("page");
+    if (page) {
+      const parsed = parseInt(page, 10);
+      if (!isNaN(parsed) && parsed !== currentPage) {
+        setCurrentPage(parsed);
+      }
+    } else {
+      setCurrentPage(1);
+    }
+  }, [searchParams]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    const params = new URLSearchParams(searchParams.toString());
+    if (page === 1) {
+      params.delete("page");
+    } else {
+      params.set("page", page.toString());
+    }
+    const queryString = params.toString();
+    router.push(`/blog${queryString ? `?${queryString}` : ""}`, { scroll: false });
+  };
   const [categories, setCategories] = useState<BlogCategory[]>([]);
   const [recentPosts, setRecentPosts] = useState<ReturnType<typeof useBlogPosts>["posts"]>([]);
   const [sidebarLoading, setSidebarLoading] = useState(true);
@@ -68,11 +97,6 @@ export function BlogPageClient() {
       setSidebarLoading(false);
     });
   }, []);
-
-  // Reset page when category changes
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [categorySlug]);
 
   const featuredPost = currentPage === 1 && posts.length > 0 ? posts[0] : null;
   const listPosts = currentPage === 1 ? posts.slice(1) : posts;
@@ -150,7 +174,7 @@ export function BlogPageClient() {
               <Pagination
                 currentPage={currentPage}
                 totalPages={totalPages}
-                onPageChange={setCurrentPage}
+                onPageChange={handlePageChange}
               />
             )}
           </div>

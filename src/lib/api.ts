@@ -499,51 +499,9 @@ export async function fetchProductsByCategories(
 ): Promise<Product[]> {
   try {
     const slugs = Array.isArray(parentSlug) ? parentSlug : [parentSlug];
-
-    // Fetch categories
-    const categoriesResult = await apiFetch<{ data: CategoryItem[] }>(
-      "/categories",
-    );
-    const categories = categoriesResult?.data || [];
-
-    // Resolve all slugs + their children
-    const allSlugsToFetch = new Set<string>();
-    for (const slug of slugs) {
-      allSlugsToFetch.add(slug);
-      const parentCat = categories.find((c) => c.slug === slug);
-      if (parentCat) {
-        for (const child of categories.filter(
-          (c) => c.parentId === parentCat.id,
-        )) {
-          allSlugsToFetch.add(child.slug);
-        }
-      }
-    }
-
-    // Fetch products from all slugs in parallel
-    const results = await Promise.all(
-      Array.from(allSlugsToFetch).map((slug) =>
-        fetchProducts({ categorySlug: slug, limit, sort: "newest" }).catch(
-          () => ({ data: [], pagination: null }),
-        ),
-      ),
-    );
-
-    // Merge results
-    const seen = new Set<string>();
-    const merged: Product[] = [];
-    for (const result of results) {
-      if (result && Array.isArray(result.data)) {
-        for (const product of result.data) {
-          if (!seen.has(product.id)) {
-            seen.add(product.id);
-            merged.push(product);
-          }
-        }
-      }
-    }
-
-    return merged.slice(0, limit);
+    const categorySlug = slugs.join(",");
+    const result = await fetchProducts({ categorySlug, limit, sort: "newest" });
+    return result?.data || [];
   } catch (error) {
     console.error("Error in fetchProductsByCategories:", error);
     return [];

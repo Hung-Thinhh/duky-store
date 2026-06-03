@@ -133,16 +133,67 @@ body {
   font-family: var(--font-main);
   color: var(--text-main);
   background-color: var(--bg-primary);
-  background-image: url("/assets/background-01.png");
-  background-size: cover;
-  background-attachment: fixed;
-  background-position: center;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE/Edge */
+}
+
+/* Pseudo-elements to draw top-left and right curved glass shapes */
+body::before {
+  content: "";
+  position: fixed;
+  top: -12%;
+  left: -12%;
+  width: 50%;
+  height: 20%;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.35) 0%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  border-radius: 0 0 100% 0;
+  box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.005);
+  z-index: -2;
+  pointer-events: none;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  top: 20%;
+  right: -150px;
+  width: 350px;
+  height: 350px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.3) 0%,
+    rgba(255, 255, 255, 0.08) 100%
+  );
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: -10px 10px 30px rgba(0, 0, 0, 0.008);
+  z-index: -2;
+  pointer-events: none;
+}
+
+@media (min-width: 768px) {
+  body::before {
+    top: -22%;
+    left: -22%;
+    width: 35%;
+    height: 30%;
+  }
+  body::after {
+    top: 15%;
+    right: -250px;
+    width: 650px;
+    height: 650px;
+  }
 }
 
 body::-webkit-scrollbar {

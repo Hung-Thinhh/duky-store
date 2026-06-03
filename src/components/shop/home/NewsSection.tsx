@@ -16,14 +16,24 @@ import {
 import { fetchBlogPosts, NewsItem, mapBlogPostToNewsItem } from "@/lib/api";
 import { NewsCard } from "../NewsCard";
 
-export const NewsSection = ({ initialNewsItems }: { initialNewsItems?: NewsItem[] }) => {
+export const NewsSection = ({
+  initialNewsItems,
+}: {
+  initialNewsItems?: NewsItem[];
+}) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [newsItems, setNewsItems] = useState<NewsItem[]>(initialNewsItems || []);
-  const [loading, setLoading] = useState(!initialNewsItems || initialNewsItems.length === 0);
+  const [newsItems, setNewsItems] = useState<NewsItem[]>(
+    initialNewsItems || [],
+  );
+  const [loading, setLoading] = useState(
+    !initialNewsItems || initialNewsItems.length === 0,
+  );
   const [visibleItems, setVisibleItems] = useState(3);
   const [isPaused, setIsPaused] = useState(false);
 
-  const hasLoadedInitial = React.useRef(Boolean(initialNewsItems && initialNewsItems.length > 0));
+  const hasLoadedInitial = React.useRef(
+    Boolean(initialNewsItems && initialNewsItems.length > 0),
+  );
 
   useEffect(() => {
     const handleResize = () => {
@@ -131,7 +141,7 @@ export const NewsSection = ({ initialNewsItems }: { initialNewsItems?: NewsItem[
               </Link>
             </div>
 
-            <div 
+            <div
               className="w-full lg:w-[70%] relative overflow-x-auto lg:overflow-hidden snap-x snap-mandatory scrollbar-none group/slider news-section-slider"
               onMouseEnter={() => setIsPaused(true)}
               onMouseLeave={() => setIsPaused(false)}
@@ -153,7 +163,10 @@ export const NewsSection = ({ initialNewsItems }: { initialNewsItems?: NewsItem[
                 <>
                   <motion.div
                     animate={{
-                      x: visibleItems < 3 ? 0 : `calc(-${currentIndex} * (100% + 24px) / ${visibleItems})`,
+                      x:
+                        visibleItems < 3
+                          ? 0
+                          : `calc(-${currentIndex} * (100% + 24px) / ${visibleItems})`,
                     }}
                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
                     className="flex gap-6 pb-4"
@@ -192,7 +205,10 @@ export const NewsSection = ({ initialNewsItems }: { initialNewsItems?: NewsItem[
         </div>
 
         <div className="glass-effect p-6 md:p-12 rounded-[40px] shadow-2xl relative overflow-hidden mt-8">
-          <div id="newsletter-flex-container" className="flex flex-col md:flex-row gap-6 items-center relative z-10">
+          <div
+            id="newsletter-flex-container"
+            className="flex flex-col md:flex-row gap-6 items-center relative z-10"
+          >
             <div className="absolute -bottom-12 -right-12 opacity-[0.05] pointer-events-none">
               <svg
                 width="400"
@@ -232,7 +248,10 @@ export const NewsSection = ({ initialNewsItems }: { initialNewsItems?: NewsItem[
               </svg>
             </div>
 
-            <div id="newsletter-email-col" className="w-full md:w-[35%] space-y-8">
+            <div
+              id="newsletter-email-col"
+              className="w-full md:w-[35%] space-y-8"
+            >
               <div className="space-y-4">
                 <span className="badge-title text-[10px] font-bold tracking-[0.3em] text-gray-400 uppercase">
                   Duky Store
@@ -264,7 +283,10 @@ export const NewsSection = ({ initialNewsItems }: { initialNewsItems?: NewsItem[
               </div>
             </div>
 
-            <div id="newsletter-cards-col" className="w-full md:w-[65%] grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+            <div
+              id="newsletter-cards-col"
+              className="w-full md:w-[65%] grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6"
+            >
               {[
                 {
                   icon: <Gift size={38} strokeWidth={1} />,

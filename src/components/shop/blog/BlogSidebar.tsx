@@ -21,7 +21,12 @@ function formatDate(dateStr: string | null): string {
   });
 }
 
-export function BlogSidebar({ recentPosts, categories, activeCategory, loading = false }: BlogSidebarProps) {
+export function BlogSidebar({
+  recentPosts,
+  categories,
+  activeCategory,
+  loading = false,
+}: BlogSidebarProps) {
   if (loading) {
     return (
       <aside className="space-y-8">
@@ -105,7 +110,8 @@ export function BlogSidebar({ recentPosts, categories, activeCategory, loading =
           </h3>
           <ul className="space-y-4">
             {recentPosts.map((post) => {
-              const coverUrl = post.coverMedia?.secureUrl || post.coverMedia?.url;
+              const coverUrl =
+                post.coverMedia?.secureUrl || post.coverMedia?.url;
               return (
                 <li key={post.id}>
                   <Link
@@ -118,7 +124,7 @@ export function BlogSidebar({ recentPosts, categories, activeCategory, loading =
                           src={coverUrl}
                           alt={post.coverMedia?.altText || post.title}
                           fill
-                          className="object-cover group-hover:scale-110 transition-transform duration-300"
+                          className="object-contain bg-gray-50 group-hover:scale-105 transition-transform duration-500"
                           sizes="64px"
                         />
                       ) : (

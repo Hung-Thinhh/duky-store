@@ -10,10 +10,6 @@ export function SignUpClient() {
 
       <style jsx>{`
         main {
-          background-image: url("/assets/background-01.png");
-          background-size: cover;
-          background-position: center;
-          background-attachment: fixed;
         }
 
         @media (max-width: 640px) {

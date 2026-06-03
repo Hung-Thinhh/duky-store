@@ -119,7 +119,7 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
     ...(data.post.seo?.schemaJson || {}),
   };
   const breadcrumbJsonLd = buildBreadcrumbJsonLd([
-    { name: "Trang chu", url: "/" },
+    { name: "Trang chủ", url: "/" },
     { name: "Blog", url: "/blog" },
     { name: data.post.title, url: `/blog/${data.post.slug}` },
   ]);

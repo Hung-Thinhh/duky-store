@@ -111,7 +111,7 @@ export default function CollectionPageClient({
       <section className="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 py-16 mt-8 mb-8">
         <Navpages
           items={[
-            { label: "Trang chu", href: "/" },
+            { label: "Trang chủ", href: "/" },
             { label: meta.title, href: `/${slug}` },
             { label: `Trang ${currentPage}` },
           ]}

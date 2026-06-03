@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ProductCard } from "@/components/shop/ProductCard";
 import { Product } from "@/types/product";
 import { LiquidGlassCard } from "@/components/ui/liquid-glass";
@@ -34,7 +35,27 @@ export default function CollectionClient({
   slug,
   collectionTitle,
 }: CollectionClientProps) {
-  const [currentPage, setCurrentPage] = useState(1);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Read page from URL, default to 1 if not present or invalid
+  const queryPage = searchParams.get("page");
+  const initialPage = queryPage ? parseInt(queryPage, 10) : 1;
+  const [currentPage, setCurrentPage] = useState(isNaN(initialPage) ? 1 : initialPage);
+
+  // Sync state if URL changes (e.g. going back/forward in browser history)
+  useEffect(() => {
+    const page = searchParams.get("page");
+    if (page) {
+      const parsed = parseInt(page, 10);
+      if (!isNaN(parsed) && parsed !== currentPage) {
+        setCurrentPage(parsed);
+      }
+    } else {
+      setCurrentPage(1);
+    }
+  }, [searchParams]);
+
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
   const [filterState, setFilterState] = useState<FilterState>({
     category: "Tất cả",
@@ -98,9 +119,25 @@ export default function CollectionClient({
     currentPage * PRODUCTS_PER_PAGE
   );
 
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    const params = new URLSearchParams(searchParams.toString());
+    if (page === 1) {
+      params.delete("page");
+    } else {
+      params.set("page", page.toString());
+    }
+    const queryString = params.toString();
+    router.push(`/${slug}${queryString ? `?${queryString}` : ""}`, { scroll: false });
+  };
+
   const handleFilterChange = (state: FilterState) => {
     setFilterState(state);
     setCurrentPage(1);
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("page");
+    const queryString = params.toString();
+    router.push(`/${slug}${queryString ? `?${queryString}` : ""}`, { scroll: false });
   };
 
   const toggleFavorite = (product: Product) => {
@@ -173,7 +210,7 @@ export default function CollectionClient({
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
-            onPageChange={setCurrentPage}
+            onPageChange={handlePageChange}
           />
         </div>
       </div>
