@@ -14,7 +14,7 @@ interface BannerContent {
 }
 
 const GALLERY_BANNER: BannerContent = {
-  image: "/assets/banner_lookbook.jpg",
+  image: "/assets/banner_lookbook.webp",
   alt: "Lookbook - Duky Store",
   badge: "LOOKBOOK",
   titleLine1: "PHONG CÁCH",
@@ -25,7 +25,8 @@ const GALLERY_BANNER: BannerContent = {
 export async function generateMetadata(): Promise<Metadata> {
   return buildMetadata({
     title: "Thư viện ảnh",
-    description: "Thư viện hình ảnh khách hàng, lookbook và các sản phẩm nổi bật của Duky Store.",
+    description:
+      "Thư viện hình ảnh khách hàng, lookbook và các sản phẩm nổi bật của Duky Store.",
     path: "/gallery",
   });
 }

@@ -28,12 +28,13 @@ interface BannerContent {
 // TODO: Replace with API call when backend is ready
 // Example: const bannerData = await fetch(`${API_URL}/api/banners/blog`).then(res => res.json());
 const MOCK_BLOG_BANNER: BannerContent = {
-  image: "/assets/banner_blog.jpg",
+  image: "/assets/banner_blog.webp",
   alt: "Kinh nghiệm - Duky Store Blog",
   badge: "BLOG",
   titleLine1: "KINH NGHIỆM",
   titleLine2: "THỜI TRANG",
-  description: "Chia sẻ bí quyết phối đồ, bảo quản boot và cập nhật xu hướng mới nhất.",
+  description:
+    "Chia sẻ bí quyết phối đồ, bảo quản boot và cập nhật xu hướng mới nhất.",
 };
 
 export default function BlogPage() {
@@ -63,9 +64,13 @@ export default function BlogPage() {
                 {banner.badge}
               </span>
               <h1 className="leading-[1.1] tracking-tighter text-gray-900">
-                <span className="block text-[24px] sm:text-[36px] md:text-[52px] lg:text-[64px] font-semibold">{banner.titleLine1}</span>
+                <span className="block text-[24px] sm:text-[36px] md:text-[52px] lg:text-[64px] font-semibold">
+                  {banner.titleLine1}
+                </span>
                 <span className="block text-[20px] sm:text-[30px] md:text-[44px] lg:text-[56px] font-medium italic -mt-1 md:-mt-2">
-                  <span className="font-montserrat not-italic font-semibold tracking-wide bg-gradient-to-br from-zinc-500 via-zinc-300 to-zinc-700 bg-clip-text text-transparent inline-block ml-1 md:ml-2">{banner.titleLine2}</span>
+                  <span className="font-montserrat not-italic font-semibold tracking-wide bg-gradient-to-br from-zinc-500 via-zinc-300 to-zinc-700 bg-clip-text text-transparent inline-block ml-1 md:ml-2">
+                    {banner.titleLine2}
+                  </span>
                 </span>
               </h1>
               <div className="flex items-start gap-2 md:gap-3 max-w-[170px] sm:max-w-sm">

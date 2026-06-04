@@ -12,6 +12,7 @@ interface CategoryCardProps {
   imageSrc: string;
   href?: string;
   className?: string;
+  priority?: boolean;
 }
 
 /**
@@ -29,6 +30,7 @@ export const CategoryCard = ({
   imageSrc,
   href = "#",
   className,
+  priority = false,
 }: CategoryCardProps) => {
   return (
     <motion.div
@@ -93,6 +95,7 @@ export const CategoryCard = ({
             fill
             className="category-card-image object-contain object-right-bottom drop-shadow-[0_26px_40px_rgba(0,0,0,0.22)]"
             sizes="(max-width: 768px) 60vw, 40vw"
+            priority={priority}
           />
         </motion.div>
       </div>

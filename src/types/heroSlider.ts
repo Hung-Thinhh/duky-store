@@ -33,6 +33,7 @@ export interface LayerConfig {
   role?: "background" | "pedestal" | "model" | "boot";
   layout?: LayerLayout;
   float?: FloatAnimationConfig;
+  sizes?: string;
 }
 
 export interface CTAButton {

@@ -50,7 +50,7 @@ export const PreFooter = () => {
                 >
                   <div className="w-7 h-7 rounded-full flex items-center justify-center overflow-hidden shrink-0">
                     <Image
-                      src="/assets/icons/Zalo.png"
+                      src="/assets/icons/Zalo.svg"
                       alt="Zalo"
                       width={28}
                       height={28}
@@ -71,7 +71,7 @@ export const PreFooter = () => {
               className="relative aspect-[4/3] lg:aspect-auto lg:h-[400px] w-full"
             >
               <Image
-                src="/assets/prefooter.png"
+                src="/assets/prefooter.webp"
                 alt="Prefooter Visual"
                 fill
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 700px"

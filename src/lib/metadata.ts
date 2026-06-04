@@ -21,7 +21,7 @@ export function buildMetadata(input: PageMetadataInput): Metadata {
       : `${input.title} | Duky Store`;
   const canonicalUrl = `${siteUrl}${input.path}`;
 
-  const defaultImage = "/assets/logo_header.png";
+  const defaultImage = "/assets/logo_header.webp";
   const ogImage = input.image || defaultImage;
 
   // Next.js openGraph.type only supports standard OG types (website, article, etc.)

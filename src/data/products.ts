@@ -44,7 +44,7 @@ export const PRODUCTS: Product[] = [
     desc: "Tối giản, dễ phối đồ, hợp mọi hoàn cảnh.",
     price: 2490000,
     formattedPrice: "2.490.000đ",
-    img: "/assets/phu_kien.png",
+    img: "/assets/phu_kien.webp",
   },
   {
     id: "6",
@@ -107,9 +107,8 @@ export const PRODUCTS: Product[] = [
     desc: "Điểm nhấn khóa kim loại, sang trọng và thời thượng.",
     price: 2590000,
     formattedPrice: "2.590.000đ",
-    img: "/assets/out_fit.png",
+    img: "/assets/out_fit.webp",
   },
 ];
 
 export const BEST_SELLERS = PRODUCTS;
-

@@ -182,7 +182,7 @@ export const Header = ({ cartCount }: HeaderProps) => {
           >
             <div className="relative w-10 h-10 md:w-14 md:h-14">
               <Image
-                src="/assets/logo_header.png"
+                src="/assets/logo_header.webp"
                 alt="Duky Store Logo"
                 fill
                 priority
@@ -452,7 +452,7 @@ export const Header = ({ cartCount }: HeaderProps) => {
         isOpen={isContactOpen}
         onClose={() => setIsContactOpen(false)}
         size="md"
-        headerImage="/assets/logo_header.png"
+        headerImage="/assets/logo_header.webp"
         headerImageAlt="Duky Store"
         ariaLabel="Thông tin liên hệ"
       >

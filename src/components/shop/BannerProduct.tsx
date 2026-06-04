@@ -27,27 +27,6 @@ export const BannerProduct: React.FC<BannerProductProps> = ({ slides }) => {
   const isAnimating = useRef(false);
 
   useEffect(() => {
-    // Initial animation
-    const ctx = gsap.context(() => {
-      gsap.from(".slide-content > *", {
-        y: 30,
-        opacity: 0,
-        stagger: 0.1,
-        duration: 0.8,
-        ease: "power3.out"
-      });
-      gsap.from(".slide-image", {
-        x: 50,
-        opacity: 0,
-        duration: 1,
-        ease: "power3.out"
-      });
-    }, containerRef);
-
-    return () => ctx.revert();
-  }, []);
-
-  useEffect(() => {
     const timer = setInterval(() => {
       const nextIndex = (currentIndex + 1) % slides.length;
       changeSlide(nextIndex);
@@ -60,40 +39,41 @@ export const BannerProduct: React.FC<BannerProductProps> = ({ slides }) => {
     if (index === currentIndex || isAnimating.current) return;
     isAnimating.current = true;
 
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({
-        onComplete: () => {
-          setCurrentIndex(index);
-          // Animate in new content
-          gsap.fromTo(".slide-content > *", 
-            { y: 30, opacity: 0 },
-            { y: 0, opacity: 1, stagger: 0.1, duration: 0.4, ease: "power3.out" }
-          );
-          gsap.fromTo(".slide-image",
-            { x: 50, opacity: 0 },
-            { x: 0, opacity: 1, duration: 0.6, ease: "power3.out", onComplete: () => {
-              isAnimating.current = false;
-            }}
-          );
-        }
-      });
-
-      // Animate out current content
-      tl.to(".slide-content > *", {
-        y: -20,
-        opacity: 0,
-        stagger: 0.05,
-        duration: 0.4,
-        ease: "power3.in"
-      });
-      tl.to(".slide-image", {
-        x: -30,
-        opacity: 0,
-        duration: 0.5,
-        ease: "power3.in"
-      }, "<");
-    }, containerRef);
+    // Fade out first
+    gsap.to(containerRef.current ? containerRef.current.querySelectorAll(".slide-content > *") : [], {
+      y: -20,
+      opacity: 0,
+      stagger: 0.05,
+      duration: 0.3,
+      ease: "power3.in",
+      onComplete: () => {
+        setCurrentIndex(index);
+      }
+    });
+    gsap.to(containerRef.current ? containerRef.current.querySelector(".slide-image") : null, {
+      x: -30,
+      opacity: 0,
+      duration: 0.3,
+      ease: "power3.in"
+    });
   };
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.fromTo(".slide-content > *",
+        { y: 30, opacity: 0 },
+        { y: 0, opacity: 1, stagger: 0.1, duration: 0.5, ease: "power3.out" }
+      );
+      gsap.fromTo(".slide-image",
+        { x: 50, opacity: 0 },
+        { x: 0, opacity: 1, duration: 0.6, ease: "power3.out", onComplete: () => {
+          isAnimating.current = false;
+        }}
+      );
+    }, containerRef);
+
+    return () => ctx.revert();
+  }, [currentIndex]);
 
   const handlePrevSlide = () => {
     const prevIndex = (currentIndex - 1 + slides.length) % slides.length;

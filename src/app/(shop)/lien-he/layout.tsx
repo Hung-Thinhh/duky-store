@@ -6,9 +6,13 @@ export const metadata: Metadata = buildPageMetadata({
   description:
     "Lien he Duky Store de duoc tu van size giay boot, chinh sach bao hanh, doi size va ho tro dat hang.",
   path: "/lien-he",
-  image: "/assets/logo-duky-fashion.png",
+  image: "/assets/logo-duky-fashion.webp",
 });
 
-export default function ContactLayout({ children }: { children: React.ReactNode }) {
+export default function ContactLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return children;
 }

@@ -2,7 +2,7 @@
 
 import { useRef, useEffect, useState } from "react";
 import type { CSSProperties } from "react";
-import Image from "next/image";
+import Image, { getImageProps } from "next/image";
 import { gsap } from "gsap";
 import { cn } from "@/lib/utils";
 import type { FloatAnimationConfig, LayerLayout } from "@/types/heroSlider";
@@ -18,6 +18,7 @@ export interface SlideLayerProps {
   className?: string;
   layout?: LayerLayout;
   priority?: boolean;
+  sizes?: string;
 }
 
 /**
@@ -35,30 +36,24 @@ export function SlideLayer({
   className,
   layout,
   priority,
+  sizes,
 }: SlideLayerProps) {
   const layerRef = useRef<HTMLDivElement>(null);
   const tweenRef = useRef<gsap.core.Tween | null>(null);
   const [hasError, setHasError] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
 
   useEffect(() => {
     if (!layerRef.current) return;
 
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+
     if (isActive) {
-      // Determine displacement with mobile cap
-      const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
-      const displacement = isMobile
-        ? Math.min(floatConfig.displacement, 10)
-        : floatConfig.displacement;
+      if (isMobile) {
+        gsap.set(layerRef.current, { y: 0 });
+        return;
+      }
+
+      const displacement = floatConfig.displacement;
 
       // Create floating tween
       tweenRef.current = gsap.to(layerRef.current, {
@@ -129,6 +124,65 @@ export function SlideLayer({
     "--layer-object-position-sm": layout?.mobile?.objectPosition,
   } as CSSProperties;
 
+  if (srcMobile) {
+    const isDesktopHidden = layout?.desktop?.display === "none";
+    const isMobileHidden = layout?.mobile?.display === "none";
+
+    const desktopSrc = isDesktopHidden
+      ? "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+      : src;
+    const mobileSrc = isMobileHidden
+      ? "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+      : srcMobile;
+
+    const common = {
+      alt,
+      sizes: sizes || "100vw",
+      priority: priority ?? zIndex === 0,
+      unoptimized: true,
+    };
+
+    const {
+      props: { srcSet: desktopSrcSet },
+    } = getImageProps({
+      ...common,
+      fill: true,
+      src: desktopSrc,
+    });
+
+    const {
+      props: { srcSet: mobileSrcSet, ...rest },
+    } = getImageProps({
+      ...common,
+      fill: true,
+      src: mobileSrc,
+    });
+
+    return (
+      <div
+        ref={layerRef}
+        className={cn("hero-slide-layer absolute", className)}
+        style={styleVars}
+      >
+        <picture className="absolute inset-0 w-full h-full">
+          <source media="(min-width: 768px)" srcSet={desktopSrcSet || desktopSrc} />
+          <source media="(max-width: 767px)" srcSet={mobileSrcSet || mobileSrc} />
+          <img
+            {...rest}
+            src={mobileSrc}
+            className="hero-slide-layer__image"
+            onError={handleImageError}
+          />
+        </picture>
+      </div>
+    );
+  }
+
+  const isDesktopHidden = layout?.desktop?.display === "none";
+  const finalSrc = isDesktopHidden
+    ? "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+    : src;
+
   return (
     <div
       ref={layerRef}
@@ -136,13 +190,14 @@ export function SlideLayer({
       style={styleVars}
     >
       <Image
-        src={isMobile && srcMobile ? srcMobile : src}
+        src={finalSrc}
         alt={alt}
         fill
-        sizes="100vw"
+        sizes={sizes || "100vw"}
         className="hero-slide-layer__image"
         onError={handleImageError}
         priority={priority ?? zIndex === 0}
+        unoptimized
       />
     </div>
   );

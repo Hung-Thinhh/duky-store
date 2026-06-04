@@ -58,6 +58,23 @@ export interface Product {
     schemaJson?: Record<string, unknown> | null;
   } | null;
   variants?: any[];
+  inventory?: {
+    id: string;
+    quantity: number;
+    reservedQuantity: number;
+    lowStockThreshold: number;
+    soldOut: boolean;
+    createdAt: string;
+    updatedAt: string;
+  } | null;
+  stockSummary?: {
+    quantity: number;
+    reservedQuantity: number;
+    availableQuantity: number;
+    lowStockThreshold: number;
+    soldOut: boolean;
+    isLowStock: boolean;
+  } | null;
 
   desc?: string;
   price?: number;
@@ -78,8 +95,7 @@ export function getProductImageUrl(product: Product): string {
     product.thumbnailMedia?.url ||
     product.image?.media?.secureUrl ||
     product.image?.media?.url ||
-    product.img ||
-    "/assets/placeholder.jpg"
+    product.img
   );
 }
 

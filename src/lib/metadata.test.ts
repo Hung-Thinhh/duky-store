@@ -72,7 +72,7 @@ describe("buildMetadata", () => {
     const twitter = metadata.twitter as Record<string, unknown>;
 
     expect(twitter.card).toBe("summary_large_image");
-    expect(twitter.images).toEqual(["/assets/logo_header.png"]);
+    expect(twitter.images).toEqual(["/assets/logo_header.webp"]);
   });
 
   it("uses NEXT_PUBLIC_SITE_URL env var for canonical URLs", () => {
@@ -134,6 +134,6 @@ describe("buildMetadata", () => {
     const metadata = buildMetadata(input);
     const og = metadata.openGraph as Record<string, unknown>;
 
-    expect(og.images).toEqual([{ url: "/assets/logo_header.png" }]);
+    expect(og.images).toEqual([{ url: "/assets/logo_header.webp" }]);
   });
 });

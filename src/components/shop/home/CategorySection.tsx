@@ -11,14 +11,14 @@ import { Product } from "@/types/product";
 const CATEGORIES_DATA = [
   {
     title: "Boot nam",
-    imageSrc: "/assets/boot_nam.png",
+    imageSrc: "/assets/boot_nam.webp",
     href: "/boot-nam",
   },
-  { title: "Boot nữ", imageSrc: "/assets/boot_nu.png", href: "/boot-nu" },
-  { title: "Unisex", imageSrc: "/assets/out_fit.png", href: "/unisex" },
+  { title: "Boot nữ", imageSrc: "/assets/boot_nu.webp", href: "/boot-nu" },
+  { title: "Unisex", imageSrc: "/assets/out_fit.webp", href: "/unisex" },
   {
     title: "Phụ kiện",
-    imageSrc: "/assets/phu_kien.png",
+    imageSrc: "/assets/phu_kien.webp",
     href: "/phu-kien",
   },
 ];
@@ -215,7 +215,7 @@ export const CategorySection = ({
                       </div>
                     </div>
                   ))
-                : products.map((product) => (
+                : products.map((product, index) => (
                     <div
                       key={product.id}
                       className="w-[220px] md:w-[240px] snap-start flex-shrink-0"
@@ -223,7 +223,6 @@ export const CategorySection = ({
                       <ProductCard
                         product={product}
                         variant="bestSeller"
-                        priority={false}
                       />
                     </div>
                   ))}

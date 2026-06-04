@@ -198,7 +198,7 @@ export function ContactClient() {
                   aria-label="Zalo"
                 >
                   <Image
-                    src="/assets/icons/Zalo.png"
+                    src="/assets/icons/Zalo.svg"
                     alt="Zalo"
                     width={22}
                     height={22}
@@ -212,7 +212,7 @@ export function ContactClient() {
                   aria-label="Instagram"
                 >
                   <Image
-                    src="/assets/icons/Instagram.png"
+                    src="/assets/icons/Instagram.svg"
                     alt="Instagram"
                     width={22}
                     height={22}
@@ -226,7 +226,7 @@ export function ContactClient() {
                   aria-label="TikTok"
                 >
                   <Image
-                    src="/assets/icons/Tiktok.png"
+                    src="/assets/icons/Tiktok.svg"
                     alt="TikTok"
                     width={22}
                     height={22}

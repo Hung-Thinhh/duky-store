@@ -9,7 +9,9 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const forMaleParam = searchParams.get("forMale");
-    
+    if (!fs.existsSync(GALLERY_DIR)) {
+      return NextResponse.json([]);
+    }
     const files = fs.readdirSync(GALLERY_DIR);
 
     let images = files

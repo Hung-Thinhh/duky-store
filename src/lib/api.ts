@@ -473,17 +473,8 @@ export async function fetchGalleryImages(
     }
     return await apiFetch<GalleryImage[]>("/gallery", params);
   } catch (error) {
-    // Fallback to local Next.js API route /api/gallery
-    const baseUrl =
-      typeof window !== "undefined" ? "" : "http://localhost:3000";
-    const query = forMale !== undefined ? `?forMale=${forMale}` : "";
-    const res = await fetch(`${baseUrl}/api/gallery${query}`);
-    if (!res.ok) {
-      throw new Error(
-        "Failed to fetch gallery from both backend and local fallback",
-      );
-    }
-    return res.json();
+    console.error("Failed to fetch gallery from backend:", error);
+    return [];
   }
 }
 
@@ -528,10 +519,7 @@ export function mapBlogPostToNewsItem(post: BlogPost): NewsItem {
 
   return {
     id: post.id,
-    image:
-      post.coverMedia?.secureUrl ||
-      post.coverMedia?.url ||
-      "/assets/placeholder.jpg",
+    image: post.coverMedia?.secureUrl || post.coverMedia?.url,
     date: {
       day: validDate ? String(validDate.getDate()).padStart(2, "0") : "--",
       month: validDate ? `TH ${validDate.getMonth() + 1}` : "TH ?",

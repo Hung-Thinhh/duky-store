@@ -134,7 +134,7 @@ export function buildStoreJsonLd() {
     description:
       "Duky Store chuyên cung cấp các dòng giày boot nam, boot nữ cao cấp, phụ kiện thời trang và phong cách unisex hiện đại.",
     url: SITE_URL,
-    logo: `${SITE_URL}/assets/logo_header.png`,
+    logo: `${SITE_URL}/assets/logo_header.webp`,
     image: [
       `${SITE_URL}/assets/outside-store.webp`,
       `${SITE_URL}/assets/space-shop-1.webp`,

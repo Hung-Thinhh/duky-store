@@ -143,7 +143,7 @@ export const Footer = () => {
                 <div className="custom-footer-col1">
                   <div className="custom-footer-logo-wrapper">
                     <Image
-                      src="/assets/logo_footer.png"
+                      src="/assets/logo_footer.webp"
                       alt="Duky Store"
                       width={110}
                       height={110}
@@ -197,7 +197,7 @@ export const Footer = () => {
                       className="w-8 h-8 rounded-full bg-white flex items-center justify-center hover:bg-gray-300 hover:-translate-y-1 transition-all duration-300 shadow-sm hover:shadow-md"
                     >
                       <Image
-                        src="/assets/icons/Zalo.png"
+                        src="/assets/icons/Zalo.svg"
                         alt="Zalo"
                         width={20}
                         height={20}
@@ -211,7 +211,7 @@ export const Footer = () => {
                       className="w-8 h-8 rounded-full bg-white flex items-center justify-center hover:bg-gray-300 hover:-translate-y-1 transition-all duration-300 shadow-sm hover:shadow-md"
                     >
                       <Image
-                        src="/assets/icons/Instagram.png"
+                        src="/assets/icons/Instagram.svg"
                         alt="Instagram"
                         width={20}
                         height={20}
@@ -225,7 +225,7 @@ export const Footer = () => {
                       className="w-8 h-8 rounded-full bg-white flex items-center justify-center hover:bg-gray-300 hover:-translate-y-1 transition-all duration-300 shadow-sm hover:shadow-md"
                     >
                       <Image
-                        src="/assets/icons/Tiktok.png"
+                        src="/assets/icons/Tiktok.svg"
                         alt="Tiktok"
                         width={20}
                         height={20}
@@ -271,11 +271,23 @@ export const Footer = () => {
                   </h4>
                   <ul className="space-y-2">
                     {[
-                      { name: "Chính sách bảo mật", href: "/chinh-sach-bao-mat" },
+                      {
+                        name: "Chính sách bảo mật",
+                        href: "/chinh-sach-bao-mat",
+                      },
                       { name: "Quy định sử dụng", href: "/quy-dinh-su-dung" },
-                      { name: "Chính sách vận chuyển", href: "/chinh-sach-van-chuyen" },
-                      { name: "Chính sách bảo hành", href: "/chinh-sach-bao-hanh" },
-                      { name: "Chính sách đổi trả hàng", href: "/chinh-sach-doi-tra-hang" },
+                      {
+                        name: "Chính sách vận chuyển",
+                        href: "/chinh-sach-van-chuyen",
+                      },
+                      {
+                        name: "Chính sách bảo hành",
+                        href: "/chinh-sach-bao-hanh",
+                      },
+                      {
+                        name: "Chính sách đổi trả hàng",
+                        href: "/chinh-sach-doi-tra-hang",
+                      },
                     ].map((item) => (
                       <li key={item.name}>
                         <Link

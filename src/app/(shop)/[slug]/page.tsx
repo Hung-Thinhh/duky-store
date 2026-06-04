@@ -37,7 +37,7 @@ const COLLECTION_META: Record<
     title: "Giày Boot Nam Cao Cấp",
     description:
       "Bộ sưu tập giày boot nam cao cấp - Da thật, thiết kế tinh tế.",
-    heroImage: "/assets/banner_boot_nam.jpg",
+    heroImage: "/assets/banner_boot_nam.webp",
     heroTitle: "GIÀY BOOT\nNAM CAO CẤP",
     heroDescription:
       "Thiết kế tinh tế - Da thật cao cấp - Bền bỉ theo thời gian",
@@ -45,13 +45,14 @@ const COLLECTION_META: Record<
       badge: "MEN'S COLLECTION",
       titleLine1: "BOOT NAM",
       titleLine2: "CAO CẤP",
-      description: "Thiết kế tinh tế – Da thật cao cấp – Bền bỉ theo thời gian.",
+      description:
+        "Thiết kế tinh tế – Da thật cao cấp – Bền bỉ theo thời gian.",
     },
   },
   "boot-nu": {
     title: "Giày Boot Nữ Cao Cấp",
     description: "Bộ sưu tập giày boot nữ - Thanh lịch, quyến rũ.",
-    heroImage: "/assets/banner_boot_nu.jpg",
+    heroImage: "/assets/banner_boot_nu.webp",
     heroTitle: "GIÀY BOOT\nNỮ CAO CẤP",
     heroDescription:
       "Tôn dáng trong từng bước đi - Phong cách nữ tính hiện đại",
@@ -65,27 +66,29 @@ const COLLECTION_META: Record<
   "phu-kien": {
     title: "Phụ Kiện",
     description: "Phụ kiện thời trang cao cấp.",
-    heroImage: "/assets/banner_phukien.jpg",
+    heroImage: "/assets/banner_phukien.webp",
     heroTitle: "PHỤ KIỆN\nCAO CẤP",
     heroDescription: "Hoàn thiện phong cách với phụ kiện đẳng cấp",
     banner: {
       badge: "ACCESSORIES",
       titleLine1: "PHỤ KIỆN",
       titleLine2: "ĐẲNG CẤP",
-      description: "Hoàn thiện phong cách với những phụ kiện được chọn lọc kỹ lưỡng.",
+      description:
+        "Hoàn thiện phong cách với những phụ kiện được chọn lọc kỹ lưỡng.",
     },
   },
   unisex: {
     title: "Unisex",
     description: "Gợi ý phối đồ cùng boot.",
-    heroImage: "/assets/banner_outfit.jpg",
+    heroImage: "/assets/banner_outfit.webp",
     heroTitle: "UNISEX\nPHỐI ĐỒ",
     heroDescription: "Gợi ý phong cách phối đồ cùng boot Duky",
     banner: {
       badge: "UNISEX",
       titleLine1: "THỜI TRANG",
       titleLine2: "DUKY",
-      description: "Cùng Duky nâng tầm phong cách phối đồ cùng boot – Tự tin mỗi ngày.",
+      description:
+        "Cùng Duky nâng tầm phong cách phối đồ cùng boot – Tự tin mỗi ngày.",
     },
   },
 };
@@ -128,9 +131,7 @@ export async function generateMetadata({
 }
 
 // ─── Helper: fetch all products for a parent category (parent + children) ────
-async function fetchParentCategoryProducts(
-  slug: string
-): Promise<Product[]> {
+async function fetchParentCategoryProducts(slug: string): Promise<Product[]> {
   try {
     const result = await fetchProducts({
       categorySlug: slug,
@@ -200,9 +201,13 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
                 {meta.banner.badge}
               </span>
               <h1 className="leading-[1.1] tracking-tighter text-gray-900">
-                <span className="block text-[24px] sm:text-[36px] md:text-[52px] lg:text-[64px] font-semibold">{meta.banner.titleLine1}</span>
+                <span className="block text-[24px] sm:text-[36px] md:text-[52px] lg:text-[64px] font-semibold">
+                  {meta.banner.titleLine1}
+                </span>
                 <span className="block text-[20px] sm:text-[30px] md:text-[44px] lg:text-[56px] font-medium italic -mt-1 md:-mt-2">
-                  <span className="font-montserrat not-italic font-semibold tracking-wide bg-gradient-to-br from-zinc-500 via-zinc-300 to-zinc-700 bg-clip-text text-transparent inline-block ml-1 md:ml-2">{meta.banner.titleLine2}</span>
+                  <span className="font-montserrat not-italic font-semibold tracking-wide bg-gradient-to-br from-zinc-500 via-zinc-300 to-zinc-700 bg-clip-text text-transparent inline-block ml-1 md:ml-2">
+                    {meta.banner.titleLine2}
+                  </span>
                 </span>
               </h1>
               <div className="flex items-start gap-2 md:gap-3 max-w-[170px] sm:max-w-sm">
@@ -217,7 +222,11 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
       </section>
 
       {/* ═══ SECTION 2: Product Showcase (Client Component) ═══ */}
-      <Suspense fallback={<div className="animate-pulse h-[50vh] bg-gray-50 rounded-2xl" />}>
+      <Suspense
+        fallback={
+          <div className="animate-pulse h-[50vh] bg-gray-50 rounded-2xl" />
+        }
+      >
         <CollectionClient
           initialProducts={products}
           slug={slug}

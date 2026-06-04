@@ -280,7 +280,7 @@ const COLLECTIONS: Record<string, CollectionConfig> = {
       label: "PREMIUM MEN'S BOOTS",
       title: "GIÀY BOOT NAM CAO CẤP",
       description: "Phong cách mạnh mẽ, chất liệu da bò thật...",
-      image: "/assets/boot_nam.png",
+      image: "/assets/boot_nam.webp",
       ctaPrimary: "Mua ngay",
       ctaSecondary: "Xem bộ sưu tập",
     },
@@ -293,7 +293,7 @@ const COLLECTIONS: Record<string, CollectionConfig> = {
       label: "PREMIUM WOMEN'S BOOTS",
       title: "GIÀY BOOT NỮ CAO CẤP",
       description: "Thanh lịch, quyến rũ, tôn dáng...",
-      image: "/assets/boot_nu.png",
+      image: "/assets/boot_nu.webp",
       ctaPrimary: "Mua ngay",
       ctaSecondary: "Xem bộ sưu tập",
     },
@@ -485,7 +485,7 @@ const invalid = getCollectionBySlug("invalid-slug");
   label="PREMIUM MEN'S BOOTS"
   title="GIÀY BOOT NAM CAO CẤP"
   description="Phong cách mạnh mẽ, chất liệu da bò thật..."
-  image="/assets/boot_nam.png"
+  image="/assets/boot_nam.webp"
   trustBadges={[
     { icon: <Shield />, text: "Da bò thật 100%" },
     { icon: <Award />, text: "Bảo hành 12 tháng" },

@@ -16,6 +16,7 @@ interface SliderConfigLayer {
     displacement: number;
     ease: string;
   };
+  sizes?: string;
 }
 
 interface SliderConfigSlide {
@@ -52,6 +53,7 @@ const toSlideConfig = (slide: SliderConfigSlide): SlideConfig => ({
     role: layer.role,
     layout: layer.layout,
     float: layer.float,
+    sizes: layer.sizes,
   })),
   text: slide.text,
   animation: slide.animation,

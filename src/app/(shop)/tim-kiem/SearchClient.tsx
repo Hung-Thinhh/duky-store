@@ -69,7 +69,7 @@ export function SearchClient() {
         style={{ width: "100vw", marginLeft: "calc(-50vw + 50%)" }}
       >
         <Image
-          src="/assets/banner_products.jpg"
+          src="/assets/banner_products.webp"
           alt="Tìm kiếm sản phẩm - Duky Store"
           width={1920}
           height={1080}

@@ -17,7 +17,7 @@ export const COLLECTIONS: Record<string, CollectionSeo> = {
     title: "Giay Boot Nam Cao Cap",
     description:
       "Bo suu tap giay boot nam cao cap, de phoi do va phu hop nhieu phong cach.",
-    heroImage: "/assets/banner_boot_nam.jpg",
+    heroImage: "/assets/banner_boot_nam.webp",
     heroTitle: "GIAY BOOT\nNAM CAO CAP",
     heroDescription:
       "Thiet ke nam tinh, chat lieu ben dep va form dang de mang hang ngay.",
@@ -33,7 +33,7 @@ export const COLLECTIONS: Record<string, CollectionSeo> = {
     title: "Giay Boot Nu Cao Cap",
     description:
       "Bo suu tap giay boot nu cao cap, ton dang va de phoi voi nhieu outfit.",
-    heroImage: "/assets/banner_boot_nu.jpg",
+    heroImage: "/assets/banner_boot_nu.webp",
     heroTitle: "GIAY BOOT\nNU CAO CAP",
     heroDescription:
       "Ton dang trong tung buoc di voi cac mau boot nu thanh lich va ca tinh.",
@@ -49,7 +49,7 @@ export const COLLECTIONS: Record<string, CollectionSeo> = {
     title: "Phu Kien Thoi Trang",
     description:
       "Phu kien thoi trang giup hoan thien outfit voi giay boot va ao khoac da.",
-    heroImage: "/assets/banner_phukien.jpg",
+    heroImage: "/assets/banner_phukien.webp",
     heroTitle: "PHU KIEN\nCAO CAP",
     heroDescription:
       "Hoan thien phong cach voi nhung chi tiet nho nhung co diem nhan.",
@@ -65,7 +65,7 @@ export const COLLECTIONS: Record<string, CollectionSeo> = {
     title: "Unisex",
     description:
       "Goi y outfit phoi do cung giay boot, ao khoac da va phu kien Duky Store.",
-    heroImage: "/assets/banner_outfit.jpg",
+    heroImage: "/assets/banner_outfit.webp",
     heroTitle: "UNISEX\nPHOI DO",
     heroDescription:
       "Goi y cach ket hop san pham Duky Store thanh nhung set do co phong cach rieng.",

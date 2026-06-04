@@ -145,6 +145,7 @@ body {
 body::before {
   content: "";
   position: fixed;
+  display: none;
   top: -12%;
   left: -12%;
   width: 50%;
@@ -163,6 +164,7 @@ body::before {
 body::after {
   content: "";
   position: fixed;
+  display: none;
   top: 20%;
   right: -150px;
   width: 350px;
@@ -183,12 +185,14 @@ body::after {
 
 @media (min-width: 768px) {
   body::before {
+    display: block;
     top: -22%;
     left: -22%;
     width: 35%;
     height: 30%;
   }
   body::after {
+    display: block;
     top: 15%;
     right: -250px;
     width: 650px;

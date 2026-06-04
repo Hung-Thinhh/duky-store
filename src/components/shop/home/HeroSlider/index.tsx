@@ -90,9 +90,19 @@ export function HeroSlider({
     if (firstContainer) {
       gsap.set(firstContainer, { opacity: 1 });
 
+      const isMobile = window.innerWidth < 1024;
+
       const bg = firstContainer.querySelector(".layer-bg");
       const model = firstContainer.querySelector(".layer-model");
       const boot = firstContainer.querySelector(".layer-boot");
+
+      if (isMobile) {
+        // Render layers statically on mobile to prevent LCP animation delay
+        if (bg) gsap.set(bg, { opacity: 1, scale: 1 });
+        if (model) gsap.set(model, { opacity: 1, x: 0 });
+        if (boot) gsap.set(boot, { opacity: 1, x: 0 });
+        return;
+      }
 
       const tl = gsap.timeline();
 
@@ -438,6 +448,7 @@ export function HeroSlider({
                   }
                   isActive={isActive}
                   priority={index === 0}
+                  sizes={layer.sizes}
                 />
               );
             })}

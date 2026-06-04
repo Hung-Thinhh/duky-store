@@ -24,8 +24,7 @@ export function CartItemRow({
   const lineTotal = item.unitPrice * item.quantity;
   const imageUrl =
     item.product?.thumbnailMedia?.secureUrl ||
-    item.product?.thumbnailMedia?.url ||
-    "/assets/placeholder.jpg";
+    item.product?.thumbnailMedia?.url;
 
   return (
     <div className="relative border border-slate-200 rounded-2xl p-4 sm:p-5 bg-white min-h-[180px] flex">
@@ -69,7 +68,9 @@ export function CartItemRow({
             {item.productName}
           </h3>
           {item.variantName && (
-            <p className="p-2 text-xs text-slate-500 mt-1">{item.variantName}</p>
+            <p className="p-2 text-xs text-slate-500 mt-1">
+              {item.variantName}
+            </p>
           )}
         </div>
 
@@ -77,7 +78,9 @@ export function CartItemRow({
         <div className="flex items-center justify-between mt-4">
           <QuantitySelector
             quantity={item.quantity}
-            onChange={(delta) => onUpdateQuantity(item.id, item.quantity + delta)}
+            onChange={(delta) =>
+              onUpdateQuantity(item.id, item.quantity + delta)
+            }
           />
 
           <span className="text-base sm:text-lg font-bold text-black">

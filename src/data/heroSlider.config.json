@@ -10,6 +10,7 @@
           "alt": "Nen slide boot mua he",
           "zIndex": 0,
           "role": "background",
+          "sizes": "100vw",
           "layout": {
             "desktop": {
               "top": "0",
@@ -45,19 +46,21 @@
           "alt": "Nguoi mau mang boot mua he",
           "zIndex": 2,
           "role": "model",
+          "sizes": "(max-width: 767px) 200vw, 100vw",
           "layout": {
             "desktop": {
-              "top": "0",
+              "top": "9.5%",
               "right": "0%",
-              "bottom": "0",
-              "left": "0",
-              "width": "100%",
-              "height": "100%",
+              "bottom": "0%",
+              "left": "23%",
+              "width": "65%",
+              "height": "65%",
               "objectFit": "contain",
               "objectPosition": "76% 90%"
             },
             "tablet": { "objectPosition": "70% 88%" },
             "mobile": {
+              "display": "none",
               "top": "auto",
               "bottom": "26%",
               "left": "-78%",
@@ -78,14 +81,15 @@
           "alt": "Boot mua he noi bat",
           "zIndex": 4,
           "role": "boot",
+          "sizes": "(min-width: 1024px) 18vw, (min-width: 768px) 180vw, 120vw",
           "layout": {
             "desktop": {
               "top": "auto",
-              "right": "1.7%",
-              "bottom": "43.7%",
+              "right": "4%",
+              "bottom": "47.5%",
               "left": "auto",
-              "width": "18vw",
-              "height": "12vw",
+              "width": "15%",
+              "height": "15%",
               "objectFit": "contain",
               "objectPosition": "center bottom"
             },
@@ -96,10 +100,10 @@
               "height": "180%"
             },
             "mobile": {
-              "right": "-12%",
-              "bottom": "7%",
-              "width": "120%",
-              "height": "120%"
+              "right": "17%",
+              "bottom": "15%",
+              "width": "70%",
+              "height": "70%"
             }
           },
           "float": {
@@ -114,6 +118,7 @@
           "alt": "Buc phat sang",
           "zIndex": 3,
           "role": "pedestal",
+          "sizes": "(min-width: 768px) 0vw, 110vw",
           "layout": {
             "desktop": {
               "display": "none"
@@ -123,10 +128,10 @@
             },
             "mobile": {
               "display": "block",
-              "right": "0%",
-              "top": "-10%",
-              "width": "110%",
-              "height": "110%",
+              "left": "2%",
+              "top": "5%",
+              "width": "95%",
+              "height": "95%",
               "objectFit": "contain",
               "objectPosition": "center bottom"
             }
@@ -198,6 +203,7 @@
           "alt": "Nen slide boot nam cao cap",
           "zIndex": 0,
           "role": "background",
+          "sizes": "100vw",
           "layout": {
             "desktop": {
               "top": "0",
@@ -224,25 +230,26 @@
           "alt": "Buc trung bay",
           "zIndex": 1,
           "role": "pedestal",
+          "sizes": "(max-width: 767px) 140vw, 100vw",
           "layout": {
             "desktop": {
-              "top": "0",
-              "right": "0",
+              "top": "60%",
+              "right": "0%",
               "bottom": "0",
-              "left": "0",
-              "width": "100%",
-              "height": "100%",
+              "left": "70%",
+              "width": "30%",
+              "height": "30%",
               "objectFit": "contain",
               "objectPosition": "100% 92%"
             },
             "tablet": { "objectPosition": "100% 93%" },
             "mobile": {
-              "top": "-50%",
+              "top": "0%",
               "right": "0%",
               "bottom": "0%",
-              "left": "-40%",
-              "width": "140%",
-              "height": "140%",
+              "left": "0%",
+              "width": "100%",
+              "height": "100%",
               "objectFit": "contain",
               "objectPosition": "100% 92%"
             }
@@ -259,19 +266,21 @@
           "alt": "Nguoi mau nam",
           "zIndex": 2,
           "role": "model",
+          "sizes": "(max-width: 767px) 180vw, 100vw",
           "layout": {
             "desktop": {
-              "top": "0",
+              "top": "20%",
               "right": "0",
               "bottom": "0",
-              "left": "0",
-              "width": "100%",
-              "height": "100%",
+              "left": "10%",
+              "width": "70%",
+              "height": "70%",
               "objectFit": "contain",
-              "objectPosition": "67.5% 79.5%"
+              "objectPosition": "100%"
             },
             "tablet": { "objectPosition": "69.5% 81%" },
             "mobile": {
+              "display": "none",
               "top": "auto",
               "bottom": "15%",
               "left": "-75%",
@@ -292,14 +301,15 @@
           "alt": "San pham boot nam",
           "zIndex": 3,
           "role": "boot",
+          "sizes": "(min-width: 1024px) 28vw, (min-width: 768px) 36vw, 52vw",
           "layout": {
             "desktop": {
               "top": "auto",
-              "right": "-4.2%",
-              "bottom": "26.8%",
+              "right": "3%",
+              "bottom": "37%",
               "left": "auto",
-              "width": "clamp(330px, 28vw, 620px)",
-              "height": "clamp(212px, 19vw, 430px)",
+              "width": "12%",
+              "height": "12%",
               "objectFit": "contain",
               "objectPosition": "center bottom"
             },
@@ -310,10 +320,10 @@
               "height": "clamp(152px, 26vw, 286px)"
             },
             "mobile": {
-              "right": "-10%",
-              "bottom": "27.5%",
-              "width": "clamp(188px, 52vw, 330px)",
-              "height": "clamp(120px, 36vw, 212px)"
+              "right": "15%",
+              "bottom": "36.5%",
+              "width": "55%",
+              "height": "55%"
             }
           },
           "float": {
@@ -380,9 +390,10 @@
         {
           "file": "background.webp",
           "fileMobile": "background-mobile.webp",
-          "alt": "Nen slide boot nu",
+          "alt": "Nen slide phu kien",
           "zIndex": 0,
           "role": "background",
+          "sizes": "100vw",
           "layout": {
             "desktop": {
               "top": "0",
@@ -409,6 +420,7 @@
           "alt": "Nguoi mau nam",
           "zIndex": 2,
           "role": "model",
+          "sizes": "(max-width: 767px) 150vw, 100vw",
           "layout": {
             "desktop": {
               "top": "8%",
@@ -427,6 +439,7 @@
               "objectPosition": "right 90%"
             },
             "mobile": {
+              "display": "none",
               "right": "15%",
               "top": "-59%",
               "width": "150%",
@@ -446,14 +459,15 @@
           "alt": "Sản phẩm trưng bày",
           "zIndex": 3,
           "role": "boot",
+          "sizes": "(max-width: 767px) 190vw, (max-width: 1023px) 62vw, 100vw",
           "layout": {
             "desktop": {
               "top": "auto",
-              "right": "3%",
+              "right": "0%",
               "bottom": "0",
               "left": "auto",
-              "width": "100%",
-              "height": "100%",
+              "width": "60%",
+              "height": "60%",
               "objectFit": "contain",
               "objectPosition": "right bottom"
             },
@@ -465,10 +479,10 @@
               "objectPosition": "right bottom"
             },
             "mobile": {
-              "right": "-6%",
+              "right": "3%",
               "bottom": "8.2%",
-              "width": "190%",
-              "height": "190%",
+              "width": "90%",
+              "height": "90%",
               "objectPosition": "right bottom"
             }
           },

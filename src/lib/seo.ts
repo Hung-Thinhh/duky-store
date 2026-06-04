@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const SITE_NAME = "Duky Store";
 export const DEFAULT_SITE_URL = "https://dukystore.com";
-export const DEFAULT_OG_IMAGE = "/assets/logo-duky-fashion.png";
+export const DEFAULT_OG_IMAGE = "/assets/logo-duky-fashion.webp";
 
 export function siteUrl() {
   return (process.env.NEXT_PUBLIC_SITE_URL || DEFAULT_SITE_URL).replace(

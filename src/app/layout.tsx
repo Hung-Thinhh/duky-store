@@ -20,7 +20,9 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://dukystore.com"),
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL || "https://dukystore.com",
+  ),
   title: {
     default: "Duky Store - Giay Boot Da Cao Cap",
     template: `%s | ${SITE_NAME}`,
@@ -67,9 +69,9 @@ export const metadata: Metadata = {
     images: [DEFAULT_OG_IMAGE],
   },
   icons: {
-    icon: "/assets/logo_header.png",
-    shortcut: "/assets/logo_header.png",
-    apple: "/assets/logo_header.png",
+    icon: "/assets/logo_header.webp",
+    shortcut: "/assets/logo_header.webp",
+    apple: "/assets/logo_header.webp",
   },
 };
 

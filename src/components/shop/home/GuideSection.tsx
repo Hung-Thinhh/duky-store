@@ -16,17 +16,17 @@ const STEPS = [
   {
     id: "01",
     title: "Đo chiều dài bàn chân",
-    image: "/assets/step_1.png",
+    image: "/assets/step_1.webp",
   },
   {
     id: "02",
     title: "Đối chiếu bảng size Duky",
-    image: "/assets/step_2.png",
+    image: "/assets/step_2.webp",
   },
   {
     id: "03",
     title: "Nhận size đề xuất",
-    image: "/assets/step_3.png",
+    image: "/assets/step_3.webp",
   },
 ];
 
@@ -35,16 +35,32 @@ const MOCK_LOOKBOOK_IMAGES: GalleryImage[] = [
   { id: "mock-2", src: "/assets/mau_nam_2.png", alt: "Lookbook 2" },
   { id: "mock-3", src: "/assets/mau_nu_1.png", alt: "Lookbook 3" },
   { id: "mock-4", src: "/assets/mau_nu_2.png", alt: "Lookbook 4" },
-  { id: "mock-5", src: "/assets/mau_nu_2.png", alt: "Lookbook 5" },
   { id: "mock-6", src: "/assets/mau_nu_3.png", alt: "Lookbook 6" },
 ];
 
 export const GuideSection = () => {
+  const sectionRef = React.useRef<HTMLElement>(null);
   const sliderRef = React.useRef<HTMLDivElement>(null);
   const lookbookSliderRef = React.useRef<HTMLDivElement>(null);
   const [showCalculator, setShowCalculator] = React.useState(false);
   const [lookbookImages, setLookbookImages] =
-    React.useState<GalleryImage[]>(MOCK_LOOKBOOK_IMAGES);
+    React.useState<GalleryImage[]>([]);
+  const [isInView, setIsInView] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!sectionRef.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsInView(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "200px" }
+    );
+    observer.observe(sectionRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   React.useEffect(() => {
     fetchGalleryImages()
@@ -53,15 +69,18 @@ export const GuideSection = () => {
           // Lấy ngẫu nhiên tối đa 20 hình làm đại diện
           const shuffled = [...data].sort(() => 0.5 - Math.random());
           setLookbookImages(shuffled.slice(0, 20));
+        } else {
+          setLookbookImages([]);
         }
       })
       .catch((err) => {
         console.error("Failed to load lookbook images:", err);
+        setLookbookImages([]);
       });
   }, []);
 
   React.useEffect(() => {
-    if (!sliderRef.current) return;
+    if (!isInView || !sliderRef.current) return;
 
     const track = sliderRef.current;
     const items = track.querySelectorAll(".feedback-item");
@@ -69,6 +88,31 @@ export const GuideSection = () => {
 
     // Initial position
     gsap.set(track, { x: 0 });
+
+    let trackStartLeft = 0;
+    let itemsData: { element: Element; centerRelative: number }[] = [];
+
+    const cachePositions = () => {
+      const trackRect = track.getBoundingClientRect();
+      const currentX = gsap.getProperty(track, "x") as number;
+      trackStartLeft = trackRect.left - currentX;
+
+      itemsData = Array.from(items).map((item) => {
+        const itemRect = item.getBoundingClientRect();
+        const itemCenter = itemRect.left + itemRect.width / 2;
+        return {
+          element: item,
+          centerRelative: itemCenter - trackRect.left,
+        };
+      });
+    };
+
+    // Run caching after a short delay to ensure rendering and layout are complete
+    const timeoutId = setTimeout(() => {
+      cachePositions();
+    }, 100);
+
+    window.addEventListener("resize", cachePositions);
 
     // Infinite loop animation (Right to Left)
     const animation = gsap.to(track, {
@@ -78,9 +122,10 @@ export const GuideSection = () => {
       repeat: -1,
       onUpdate: () => {
         const center = window.innerWidth / 2;
-        items.forEach((item) => {
-          const rect = item.getBoundingClientRect();
-          const itemCenter = rect.left + rect.width / 2;
+        const currentX = gsap.getProperty(track, "x") as number;
+
+        itemsData.forEach((item) => {
+          const itemCenter = trackStartLeft + currentX + item.centerRelative;
           const distance = Math.abs(center - itemCenter);
           const maxDistance = 600; // Range of focus effect
 
@@ -93,14 +138,14 @@ export const GuideSection = () => {
             const factor = 1 - distance / maxDistance;
             scale = 0.9 + 0.2 * factor; // 0.9 to 1.1
             opacity = 0.8 + 0.2 * factor; // 0.8 to 1
-            blur = 0.3 * (1 - factor); // 0.5px to 0px
+            blur = 0.3 * (1 - factor); // 0.3px to 0px
           } else {
             scale = 0.9;
             opacity = 0.8;
             blur = 0.3;
           }
 
-          gsap.set(item, {
+          gsap.set(item.element, {
             scale: scale,
             opacity: opacity,
             filter: `blur(${blur}px)`,
@@ -111,16 +156,23 @@ export const GuideSection = () => {
     });
 
     // Pause on hover
-    track.addEventListener("mouseenter", () => animation.pause());
-    track.addEventListener("mouseleave", () => animation.play());
+    const handleMouseEnter = () => animation.pause();
+    const handleMouseLeave = () => animation.play();
+
+    track.addEventListener("mouseenter", handleMouseEnter);
+    track.addEventListener("mouseleave", handleMouseLeave);
 
     return () => {
+      clearTimeout(timeoutId);
+      window.removeEventListener("resize", cachePositions);
+      track.removeEventListener("mouseenter", handleMouseEnter);
+      track.removeEventListener("mouseleave", handleMouseLeave);
       animation.kill();
     };
-  }, []);
+  }, [isInView]);
 
   React.useEffect(() => {
-    if (!lookbookSliderRef.current || lookbookImages.length === 0) return;
+    if (!isInView || !lookbookSliderRef.current || lookbookImages.length === 0) return;
 
     const track = lookbookSliderRef.current;
 
@@ -153,10 +205,10 @@ export const GuideSection = () => {
     return () => {
       ctx.revert();
     };
-  }, [lookbookImages]);
+  }, [isInView, lookbookImages]);
 
   return (
-    <section className="pt-24 pb-8 px-6 overflow-hidden">
+    <section ref={sectionRef} className="pt-24 pb-8 px-6 overflow-hidden">
       <div className="container-custom">
         <div className="glass-effect p-4 mt-8 md:p-8 lg:p-12 overflow-hidden shadow-2xl">
           <div className="w-full max-w-[1380px] relative flex flex-row lg:flex-row items-center justify-between gap-2 lg:gap-0 size-guide-row">
@@ -274,34 +326,40 @@ export const GuideSection = () => {
           </div>
 
           <div className="lookbook-slider-container relative overflow-hidden py-4">
-            <div
-              className="lookbook-track flex gap-4 md:gap-6"
-              ref={lookbookSliderRef}
-              style={{ width: "fit-content" }}
-            >
-              {[...lookbookImages, ...lookbookImages, ...lookbookImages].map(
-                (img, i) => (
-                  <motion.div
-                    key={`${i}-${img.id}-${img.src}`}
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6 }}
-                    className="relative aspect-[3/4] overflow-hidden rounded-[1.5rem] group cursor-pointer shadow-sm hover:shadow-xl transition-all duration-500 shrink-0"
-                    style={{ width: "280px" }}
-                  >
-                    <Image
-                      src={img.src}
-                      alt={img.alt || `Lookbook ${i + 1}`}
-                      fill
-                      sizes="280px"
-                      className="object-cover group-hover:scale-110 transition-transform duration-700"
-                    />
-                    <div className="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors duration-300" />
-                  </motion.div>
-                ),
-              )}
-            </div>
+            {lookbookImages.length > 0 ? (
+              <div
+                className="lookbook-track flex gap-4 md:gap-6"
+                ref={lookbookSliderRef}
+                style={{ width: "fit-content", willChange: "transform" }}
+              >
+                {[...lookbookImages, ...lookbookImages, ...lookbookImages].map(
+                  (img, i) => (
+                    <motion.div
+                      key={`${i}-${img.id}-${img.src}`}
+                      initial={{ opacity: 0 }}
+                      whileInView={{ opacity: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.6 }}
+                      className="relative aspect-[3/4] overflow-hidden rounded-[1.5rem] group cursor-pointer shadow-sm hover:shadow-xl transition-all duration-500 shrink-0"
+                      style={{ width: "280px" }}
+                    >
+                      <Image
+                        src={img.src}
+                        alt={img.alt || `Lookbook ${i + 1}`}
+                        fill
+                        sizes="280px"
+                        className="object-cover group-hover:scale-110 transition-transform duration-700"
+                      />
+                      <div className="absolute inset-0 bg-black/5 group-hover:bg-black/0 transition-colors duration-300" />
+                    </motion.div>
+                  ),
+                )}
+              </div>
+            ) : (
+              <div className="text-center py-12 text-gray-500 text-sm font-light">
+                Chưa có hình ảnh phối đồ nào.
+              </div>
+            )}
           </div>
         </div>
 
@@ -324,13 +382,13 @@ export const GuideSection = () => {
             <div
               className="feedback-track flex gap-8 items-center"
               ref={sliderRef}
-              style={{ width: "fit-content" }}
+              style={{ width: "fit-content", willChange: "transform" }}
             >
               {[...FEEDBACKS, ...FEEDBACKS, ...FEEDBACKS].map((fb, i) => (
                 <div
                   key={`${fb.id}-${i}`}
                   className="feedback-item shrink-0"
-                  style={{ width: "min(85vw, 400px)" }}
+                  style={{ width: "min(85vw, 400px)", willChange: "transform, opacity, filter" }}
                 >
                   <FeedBackCard {...fb} />
                 </div>

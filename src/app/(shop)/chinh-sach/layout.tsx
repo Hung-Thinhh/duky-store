@@ -6,9 +6,13 @@ export const metadata: Metadata = buildPageMetadata({
   description:
     "Thong tin chinh sach mua hang, doi size, bao hanh, giao hang va ho tro khach hang tai Duky Store.",
   path: "/chinh-sach",
-  image: "/assets/logo-duky-fashion.png",
+  image: "/assets/logo-duky-fashion.webp",
 });
 
-export default function PolicyLayout({ children }: { children: React.ReactNode }) {
+export default function PolicyLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return children;
 }

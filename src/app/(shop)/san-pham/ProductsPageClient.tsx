@@ -14,19 +14,19 @@ interface BannerContent {
 }
 
 const PRODUCTS_BANNER: BannerContent = {
-  image: "/assets/banner_products.jpg",
+  image: "/assets/banner_products.webp",
   alt: "Tất cả sản phẩm - Duky Store",
   badge: "ALL PRODUCTS",
   titleLine1: "BỘ SƯU TẬP",
   titleLine2: "DUKY STORE",
-  description:
-    "Khám phá bộ sưu tập giày boot nam nữ cao cấp tại Duky Store.",
+  description: "Khám phá bộ sưu tập giày boot nam nữ cao cấp tại Duky Store.",
 };
 
 export async function generateMetadata(): Promise<Metadata> {
   return buildMetadata({
     title: "Tất cả sản phẩm",
-    description: "Khám phá bộ sưu tập giày boot nam nữ cao cấp, phụ kiện thời trang và phong cách độc đáo tại Duky Store.",
+    description:
+      "Khám phá bộ sưu tập giày boot nam nữ cao cấp, phụ kiện thời trang và phong cách độc đáo tại Duky Store.",
     path: "/san-pham",
   });
 }
@@ -76,7 +76,14 @@ export default function ProductsPage() {
         </div>
       </section>
 
-      <Suspense fallback={<div className="products-grid-skeleton" style={{ minHeight: "80vh" }} />}>
+      <Suspense
+        fallback={
+          <div
+            className="products-grid-skeleton"
+            style={{ minHeight: "80vh" }}
+          />
+        }
+      >
         <ProductsClient />
       </Suspense>
     </>

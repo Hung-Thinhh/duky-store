@@ -17,7 +17,7 @@ export const BannerPage = ({ className }: BannerPageProps) => {
       {/* 1. Banner Image - Thêm rounded-xl để bo góc ảnh bên trong */}
       <div className="relative aspect-[2/1] w-full bg-gray-100 rounded-xl overflow-hidden">
         <Image
-          src="/assets/page_img.jpg" // Đảm bảo đường dẫn này đúng
+          src="/assets/page_img.webp" // Đảm bảo đường dẫn này đúng
           alt="Duky Collection"
           fill
           sizes="(max-width: 768px) 100vw, 400px"

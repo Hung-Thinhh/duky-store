@@ -13,7 +13,11 @@ export interface CollectionHeroData {
 
 export interface CollectionConfig {
   slug: string;
-  meta: { title: string; description: string; gender: "male" | "female" | "unisex" };
+  meta: {
+    title: string;
+    description: string;
+    gender: "male" | "female" | "unisex";
+  };
   hero: CollectionHeroData;
   products: Product[];
 }
@@ -34,7 +38,7 @@ export const COLLECTIONS: Record<string, CollectionConfig> = {
       title: "GIÀY BOOT\nNAM CAO CẤP",
       description:
         "Thiết kế tinh tế - Da thật cao cấp - Bền bỉ theo thời gian\nKhẳng định phong cách quý ông hiện đại.",
-      image: "/assets/banner_boot_nam.jpg",
+      image: "/assets/banner_boot_nam.webp",
       ctaPrimary: "Mua ngay",
       ctaSecondary: "Xem bộ sưu tập",
     },
@@ -249,7 +253,7 @@ export const COLLECTIONS: Record<string, CollectionConfig> = {
       title: "GIÀY BOOT\nNỮ CAO CẤP",
       description:
         "Thanh lịch - Quyến rũ - Tôn dáng hoàn hảo\nĐẳng cấp phái đẹp trong từng bước chân.",
-      image: "/assets/banner_boot_nu.jpg",
+      image: "/assets/banner_boot_nu.webp",
       ctaPrimary: "Mua ngay",
       ctaSecondary: "Xem bộ sưu tập",
     },
@@ -351,7 +355,7 @@ export const COLLECTIONS: Record<string, CollectionConfig> = {
         desc: "Đế xuồng tăng chiều cao tự nhiên, siêu nhẹ.",
         price: 1050000,
         formattedPrice: "1.050.000đ",
-        img: "/assets/page_img.jpg",
+        img: "/assets/page_img.webp",
         category: "Boot cổ thấp",
         badge: "NEW",
         rating: 4.2,
@@ -366,7 +370,7 @@ export const COLLECTIONS: Record<string, CollectionConfig> = {
         desc: "Gót block heel 7cm, tôn dáng tối đa cho buổi tối.",
         price: 1490000,
         formattedPrice: "1.490.000đ",
-        img: "/assets/banner_sample.png",
+        img: "/assets/banner_products.webp",
         category: "Chelsea",
         badge: "-18%",
         originalPrice: 1820000,
@@ -382,7 +386,7 @@ export const COLLECTIONS: Record<string, CollectionConfig> = {
         desc: "Gót block heel 7cm, tôn dáng tối đa cho buổi tối.",
         price: 1490000,
         formattedPrice: "1.490.000đ",
-        img: "/assets/banner_sample.png",
+        img: "/assets/banner_products.webp",
         category: "Chelsea",
         badge: "-18%",
         originalPrice: 1820000,
@@ -398,7 +402,7 @@ export const COLLECTIONS: Record<string, CollectionConfig> = {
         desc: "Gót block heel 7cm, tôn dáng tối đa cho buổi tối.",
         price: 1490000,
         formattedPrice: "1.490.000đ",
-        img: "/assets/banner_sample.png",
+        img: "/assets/banner_products.webp",
         category: "Chelsea",
         badge: "-18%",
         originalPrice: 1820000,
@@ -423,7 +427,7 @@ export const COLLECTIONS: Record<string, CollectionConfig> = {
       title: "PHỤ KIỆN\nTHỜI TRANG",
       description:
         "Hoàn thiện phong cách với phụ kiện cao cấp\nThắt lưng da, ví, tất và xi đánh giày chính hãng.",
-      image: "/assets/banner_phukien.jpg",
+      image: "/assets/banner_phukien.webp",
       ctaPrimary: "Mua ngay",
       ctaSecondary: "Xem tất cả",
     },
@@ -548,7 +552,7 @@ export const COLLECTIONS: Record<string, CollectionConfig> = {
       },
     ],
   },
-  "unisex": {
+  unisex: {
     slug: "unisex",
     meta: {
       title: "Unisex & Mix Match | Duky Store",
@@ -561,7 +565,7 @@ export const COLLECTIONS: Record<string, CollectionConfig> = {
       title: "UNISEX\nPHỐI ĐỒ",
       description:
         "Gợi ý phối đồ hoàn hảo cùng boot\nÁo khoác da, quần jeans, váy và set unisex trendy.",
-      image: "/assets/banner_outfit.png",
+      image: "/assets/banner_outfit.webp",
       ctaPrimary: "Mua ngay",
       ctaSecondary: "Xem lookbook",
     },
@@ -679,7 +683,7 @@ export const COLLECTIONS: Record<string, CollectionConfig> = {
         desc: "Áo thun cotton 100%, form oversize, phối cùng boot và quần jeans.",
         price: 290000,
         formattedPrice: "290.000đ",
-        img: "/assets/page_img.jpg",
+        img: "/assets/page_img.webp",
         category: "Áo",
         rating: 4.3,
         reviewsCount: 189,
@@ -694,7 +698,7 @@ export const COLLECTIONS: Record<string, CollectionConfig> = {
 // ─── Helper Function ────────────────────────────────────────────────────────
 
 export function getCollectionBySlug(
-  slug: string
+  slug: string,
 ): CollectionConfig | undefined {
   return COLLECTIONS[slug];
 }

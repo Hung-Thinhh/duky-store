@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import React from 'react';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { RefreshCw, Crown, MapPin, X } from 'lucide-react';
-import SignUpTemplate from '../SignUpTemplate';
+import React from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { RefreshCw, Crown, MapPin, X } from "lucide-react";
+import SignUpTemplate from "../SignUpTemplate";
 
 const SignUpSection: React.FC = () => {
   const router = useRouter();
@@ -15,33 +15,36 @@ const SignUpSection: React.FC = () => {
       <div className="brand-panel">
         <div className="brand-content">
           <div className="logo-wrapper">
-            <Image 
-              src="/assets/logo_header.png" 
-              alt="Duky Store Logo" 
-              width={120} 
-              height={60} 
+            <Image
+              src="/assets/logo_header.webp"
+              alt="Duky Store Logo"
+              width={120}
+              height={60}
               className="brand-logo"
             />
           </div>
-          
+
           <h2 className="welcome-title">Welcome to Duky</h2>
           <p className="welcome-desc">
-            Tạo tài khoản để nhận nhiều ưu đãi hấp dẫn và theo dõi hành trình mua sắm của bạn.
+            Tạo tài khoản để nhận nhiều ưu đãi hấp dẫn và theo dõi hành trình
+            mua sắm của bạn.
           </p>
 
           <div className="product-visual">
-            <Image 
-              src="/assets/login.png" 
-              alt="Premium Boots" 
-              width={260} 
-              height={340} 
+            <Image
+              src="/assets/login.webp"
+              alt="Premium Boots"
+              width={260}
+              height={340}
               className="product-image"
             />
           </div>
 
           {/* Floating Badges */}
           <div className="badge-float badge-1">
-            <div className="badge-icon"><RefreshCw size={18} /></div>
+            <div className="badge-icon">
+              <RefreshCw size={18} />
+            </div>
             <div className="badge-text">
               <span>Đổi size</span>
               <span>3 ngày</span>
@@ -49,7 +52,9 @@ const SignUpSection: React.FC = () => {
           </div>
 
           <div className="badge-float badge-2">
-            <div className="badge-icon"><Crown size={18} /></div>
+            <div className="badge-icon">
+              <Crown size={18} />
+            </div>
             <div className="badge-text">
               <span>Ưu đãi</span>
               <span>thành viên</span>
@@ -57,7 +62,9 @@ const SignUpSection: React.FC = () => {
           </div>
 
           <div className="badge-float badge-3">
-            <div className="badge-icon"><MapPin size={18} /></div>
+            <div className="badge-icon">
+              <MapPin size={18} />
+            </div>
             <div className="badge-text">
               <span>Có sẵn tại</span>
               <span>Cần Thơ</span>
@@ -93,7 +100,11 @@ const SignUpSection: React.FC = () => {
 
         .brand-panel {
           flex: 1;
-          background: linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(237,237,239,0.5) 100%);
+          background: linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.8) 0%,
+            rgba(237, 237, 239, 0.5) 100%
+          );
           padding: 40px;
           display: flex;
           flex-direction: column;
@@ -149,7 +160,7 @@ const SignUpSection: React.FC = () => {
         .product-image {
           position: relative;
           z-index: 2;
-          filter: drop-shadow(0 20px 30px rgba(0,0,0,0.15));
+          filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.15));
           transform: translateY(-20px);
           transition: transform 0.5s ease;
         }
@@ -165,11 +176,11 @@ const SignUpSection: React.FC = () => {
           backdrop-filter: blur(10px);
           padding: 12px 16px;
           border-radius: 20px;
-          border: 1px solid rgba(255,255,255,0.8);
+          border: 1px solid rgba(255, 255, 255, 0.8);
           display: flex;
           align-items: center;
           gap: 12px;
-          box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
           transition: all 0.4s ease;
           z-index: 3;
         }
@@ -177,7 +188,7 @@ const SignUpSection: React.FC = () => {
         .badge-float:hover {
           transform: translateY(-5px);
           background: rgba(255, 255, 255, 0.9);
-          box-shadow: 0 12px 25px rgba(0,0,0,0.1);
+          box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
         }
 
         .badge-icon {
@@ -189,7 +200,7 @@ const SignUpSection: React.FC = () => {
           align-items: center;
           justify-content: center;
           color: var(--text-main);
-          box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
         }
 
         .badge-text {
@@ -203,9 +214,18 @@ const SignUpSection: React.FC = () => {
           line-height: 1.2;
         }
 
-        .badge-1 { top: 300px; left: -20px; }
-        .badge-2 { top: 340px; right: -20px; }
-        .badge-3 { bottom: 60px; right: 20px; }
+        .badge-1 {
+          top: 300px;
+          left: -20px;
+        }
+        .badge-2 {
+          top: 340px;
+          right: -20px;
+        }
+        .badge-3 {
+          bottom: 60px;
+          right: 20px;
+        }
 
         /* Right Panel */
         .form-panel {

@@ -29,7 +29,7 @@ export const HeroBanner = ({
   badge = "SUMMER COLLECTION",
   title,
   description,
-  backgroundImage = "/assets/banner_hero.png",
+  backgroundImage = "/assets/banner_hero.webp",
   primaryBtn = { text: "KHÁM PHÁ NGAY", link: "/san-pham" },
   secondaryBtn = { text: "XEM LOOKBOOK", link: "/thu-vien" },
   trustItems = [],

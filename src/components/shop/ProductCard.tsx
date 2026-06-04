@@ -5,7 +5,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { Heart, ShoppingBag, Star } from "lucide-react";
 
-import { Product, getProductImageUrl, getDisplayPrice, hasDiscount } from "@/types/product";
+import {
+  Product,
+  getProductImageUrl,
+  getDisplayPrice,
+  hasDiscount,
+} from "@/types/product";
 import { Card } from "@/components/ui/card";
 import { cn, formatCurrency } from "@/lib/utils";
 
@@ -52,14 +57,24 @@ export const ProductCard = ({
     }
   };
 
-  const handleToggleFavorite: React.MouseEventHandler<HTMLButtonElement> = (e) => {
+  const handleToggleFavorite: React.MouseEventHandler<HTMLButtonElement> = (
+    e,
+  ) => {
     e.preventDefault();
     e.stopPropagation();
     onToggleFavorite?.(product);
   };
 
   const isBestSeller = variant === "bestSeller" || product.isBestSeller;
-  const displayBadge = badge || (isBestSeller ? "BEST" : product.isNewArrival ? "NEW" : undefined);
+  const displayBadge =
+    badge || (isBestSeller ? "BEST" : product.isNewArrival ? "NEW" : undefined);
+  const isSoldOut =
+    product.status === "SOLD_OUT" ||
+    product.inventory?.soldOut ||
+    product.stockSummary?.soldOut ||
+    (product.variants &&
+      product.variants.length > 0 &&
+      product.variants.every((v: any) => v.inventory?.soldOut));
 
   const Media = (
     <div className="relative w-full aspect-square rounded-xl overflow-hidden mb-3 bg-gray-50/50 cursor-pointer">
@@ -68,7 +83,7 @@ export const ProductCard = ({
         alt={product.image?.altText || product.name}
         fill
         priority={priority}
-        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
         className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
       />
       {/* Top Bar - Float over image */}
@@ -77,30 +92,24 @@ export const ProductCard = ({
           <span className="badge-title px-2 py-1 bg-white/90 backdrop-blur-sm text-gray-700 text-[10px] font-semibold rounded-full pointer-events-auto shadow-sm">
             {displayBadge}
           </span>
-        ) : <div />}
-        {/* <button
-          type="button"
-          onClick={handleToggleFavorite}
-          disabled={!onToggleFavorite}
-          className={cn(
-            "pointer-events-auto p-1.5 rounded-full bg-white/60 backdrop-blur-sm transition-all duration-200 hover:scale-110 hover:bg-white shadow-sm",
-            onToggleFavorite ? "" : "opacity-60 cursor-not-allowed",
-            isFavorite ? "text-red-500" : "text-gray-500 hover:text-red-500"
-          )}
-        >
-          <Heart
-            size={16}
-            className={cn(isFavorite && "fill-red-500")}
-            strokeWidth={2}
-          />
-        </button> */}
+        ) : (
+          <div />
+        )}
+        {isSoldOut && (
+          <span className="px-2 py-1 bg-red-600/90 text-white text-[10px] font-semibold rounded-full pointer-events-auto shadow-sm tracking-wider">
+            Hết hàng
+          </span>
+        )}
       </div>
     </div>
   );
 
   const Body = (
     <div className="flex flex-col gap-1 p-2">
-      <h3 className="content product-card__name text-sm text-black font-bold truncate leading-tight cursor-pointer" title={product.name}>
+      <h3
+        className="content product-card__name text-sm text-black font-bold truncate leading-tight cursor-pointer"
+        title={product.name}
+      >
         {product.name}
       </h3>
       <div className="flex items-center gap-2 mt-0.5">
@@ -115,7 +124,8 @@ export const ProductCard = ({
         <div className="flex items-center gap-1 text-[10px] text-gray-400 mt-1">
           <Star size={12} className="fill-gray-400 text-gray-400" />
           <span>
-            {rating.toFixed(1)} {typeof reviewsCount === "number" && `(${reviewsCount})`}
+            {rating.toFixed(1)}{" "}
+            {typeof reviewsCount === "number" && `(${reviewsCount})`}
           </span>
         </div>
       )}
@@ -126,14 +136,15 @@ export const ProductCard = ({
     <Card
       className={cn(
         "group relative w-full bg-[#fcfcfc] rounded-2xl border border-gray-100 p-2 sm:p-3 flex flex-col justify-between transition-all duration-300 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1",
-        className
+        className,
       )}
     >
-      <Link href={productHref} className="flex-1 flex flex-col focus-visible:outline-none">
+      <Link
+        href={productHref}
+        className="flex-1 flex flex-col focus-visible:outline-none"
+      >
         {Media}
-        <div className="relative flex-1">
-          {Body}
-        </div>
+        <div className="relative flex-1">{Body}</div>
       </Link>
 
       {/* Cart Button */}

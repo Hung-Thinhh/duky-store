@@ -82,7 +82,78 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
+import { preload } from "react-dom";
+import { Product } from "@/types/product";
+
+function trimProduct(p: Product): Product {
+  return {
+    id: p.id,
+    name: p.name,
+    slug: p.slug,
+    originalPrice: p.originalPrice ?? undefined,
+    price: p.price ?? undefined,
+    salePrice: p.salePrice ?? undefined,
+    thumbnailMedia: p.thumbnailMedia
+      ? ({
+          id: p.thumbnailMedia.id,
+          url: p.thumbnailMedia.url,
+          secureUrl: p.thumbnailMedia.secureUrl,
+          altText: p.thumbnailMedia.altText,
+        } as any)
+      : null,
+    image: p.image
+      ? ({
+          altText: p.image.altText,
+          media: {
+            url: p.image.media?.url,
+            secureUrl: p.image.media?.secureUrl,
+          },
+        } as any)
+      : null,
+    img: p.img ?? undefined,
+    isBestSeller: p.isBestSeller ?? undefined,
+    isNewArrival: p.isNewArrival ?? undefined,
+    status: p.status ?? undefined,
+    inventory: p.inventory
+      ? ({
+          soldOut: p.inventory.soldOut,
+        } as any)
+      : null,
+    stockSummary: p.stockSummary
+      ? ({
+          soldOut: p.stockSummary.soldOut,
+        } as any)
+      : null,
+    variants: p.variants
+      ? p.variants.map((v) => ({
+          inventory: v.inventory ? { soldOut: v.inventory.soldOut } : null,
+        }))
+      : [],
+  };
+}
+
 export default async function ShopPage() {
+  // Surgical preloads for Slide 1 LCP assets to fetch them as early as possible
+  preload("/assets/slider_1/background-mobile.webp", {
+    as: "image",
+    media: "(max-width: 767px)",
+    fetchPriority: "high",
+  } as any);
+  preload("/assets/slider_1/background.webp", {
+    as: "image",
+    media: "(min-width: 768px)",
+    fetchPriority: "high",
+  } as any);
+  preload("/assets/slider_1/boot.webp", {
+    as: "image",
+    fetchPriority: "high",
+  } as any);
+  preload("/assets/slider_1/buc-phat-sang.webp", {
+    as: "image",
+    media: "(max-width: 767px)",
+    fetchPriority: "high",
+  } as any);
+
   const slides = await getHeroSliderData();
   const [maleProducts, femaleProducts, bestSellersResult, blogPostsResult] =
     await Promise.all([
@@ -95,7 +166,9 @@ export default async function ShopPage() {
       fetchBlogPosts({ limit: 9, sort: "newest" }).catch(() => ({ data: [] })),
     ]);
 
-  const bestSellers = bestSellersResult?.data || [];
+  const bestSellers = (bestSellersResult?.data || []).map(trimProduct);
+  const trimmedMaleProducts = maleProducts.map(trimProduct);
+  const trimmedFemaleProducts = femaleProducts.map(trimProduct);
   const newsItems = (blogPostsResult?.data || [])
     .map(mapBlogPostToNewsItem)
     .sort((a, b) => b.publishedAtMs - a.publishedAtMs)
@@ -112,10 +185,10 @@ export default async function ShopPage() {
         <CategorySection initialProducts={bestSellers} />
         {/* Below-fold: lazy-loaded with Suspense boundaries */}
         <Suspense fallback={<SectionSkeleton />}>
-          <LazyBootMaleSection initialProducts={maleProducts} />
+          <LazyBootMaleSection initialProducts={trimmedMaleProducts} />
         </Suspense>
         <Suspense fallback={<SectionSkeleton />}>
-          <LazyBootFemaleSection initialProducts={femaleProducts} />
+          <LazyBootFemaleSection initialProducts={trimmedFemaleProducts} />
         </Suspense>
         <Suspense fallback={<SectionSkeleton />}>
           <LazyGuideSection />
