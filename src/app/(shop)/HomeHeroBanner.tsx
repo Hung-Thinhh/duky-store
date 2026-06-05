@@ -43,6 +43,7 @@ export function HomeHeroBanner({
       slides={initialSlides ?? HERO_SLIDES}
       trustItems={trustItems}
       autoScroll={true} // Đổi thành false nếu bạn muốn tắt tự động cuộn (auto-scroll) banner
+      autoScrollInterval={6000}
     />
   );
 }

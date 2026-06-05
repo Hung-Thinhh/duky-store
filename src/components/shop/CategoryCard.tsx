@@ -94,7 +94,7 @@ export const CategoryCard = ({
             alt={title}
             fill
             className="category-card-image object-contain object-right-bottom drop-shadow-[0_26px_40px_rgba(0,0,0,0.22)]"
-            sizes="(max-width: 768px) 60vw, 40vw"
+            sizes="(max-width: 768px) 30vw, (max-width: 1024px) 30vw, 180px"
             priority={priority}
           />
         </motion.div>

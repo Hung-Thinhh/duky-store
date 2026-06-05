@@ -1,8 +1,15 @@
 "use client";
 
 import React from "react";
-import { Header, Footer } from "@/components/layout";
+import { Header } from "@/components/layout/Header";
+import dynamic from "next/dynamic";
+
 import { useCart } from "@/context/CartContext";
+
+const Footer = dynamic(
+  () => import("@/components/layout/Footer").then((m) => m.Footer),
+  { ssr: true }
+);
 
 export default function CollectionLayout({
   children,

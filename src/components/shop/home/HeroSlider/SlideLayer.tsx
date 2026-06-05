@@ -2,7 +2,7 @@
 
 import { useRef, useEffect, useState } from "react";
 import type { CSSProperties } from "react";
-import Image, { getImageProps } from "next/image";
+import Image from "next/image";
 import { gsap } from "gsap";
 import { cn } from "@/lib/utils";
 import type { FloatAnimationConfig, LayerLayout } from "@/types/heroSlider";
@@ -135,45 +135,38 @@ export function SlideLayer({
       ? "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
       : srcMobile;
 
-    const common = {
-      alt,
-      sizes: sizes || "100vw",
-      priority: priority ?? zIndex === 0,
-      unoptimized: true,
-    };
-
-    const {
-      props: { srcSet: desktopSrcSet },
-    } = getImageProps({
-      ...common,
-      fill: true,
-      src: desktopSrc,
-    });
-
-    const {
-      props: { srcSet: mobileSrcSet, ...rest },
-    } = getImageProps({
-      ...common,
-      fill: true,
-      src: mobileSrc,
-    });
-
     return (
       <div
         ref={layerRef}
         className={cn("hero-slide-layer absolute", className)}
         style={styleVars}
       >
-        <picture className="absolute inset-0 w-full h-full">
-          <source media="(min-width: 768px)" srcSet={desktopSrcSet || desktopSrc} />
-          <source media="(max-width: 767px)" srcSet={mobileSrcSet || mobileSrc} />
-          <img
-            {...rest}
-            src={mobileSrc}
-            className="hero-slide-layer__image"
-            onError={handleImageError}
-          />
-        </picture>
+        {!isDesktopHidden && (
+          <div className="hidden md:block absolute inset-0 w-full h-full">
+            <Image
+              src={desktopSrc}
+              alt={alt}
+              fill
+              sizes={sizes || "100vw"}
+              className="hero-slide-layer__image"
+              onError={handleImageError}
+              priority={priority ?? zIndex === 0}
+            />
+          </div>
+        )}
+        {!isMobileHidden && (
+          <div className="block md:hidden absolute inset-0 w-full h-full">
+            <Image
+              src={mobileSrc}
+              alt={alt}
+              fill
+              sizes={sizes || "100vw"}
+              className="hero-slide-layer__image"
+              onError={handleImageError}
+              priority={priority ?? zIndex === 0}
+            />
+          </div>
+        )}
       </div>
     );
   }
@@ -197,7 +190,6 @@ export function SlideLayer({
         className="hero-slide-layer__image"
         onError={handleImageError}
         priority={priority ?? zIndex === 0}
-        unoptimized
       />
     </div>
   );

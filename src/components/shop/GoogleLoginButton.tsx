@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useCallback, useEffect } from 'react';
-import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
+import { GoogleLogin, CredentialResponse, GoogleOAuthProvider } from '@react-oauth/google';
 import { useAuth } from '@/context/AuthContext';
 
 interface GoogleLoginButtonProps {
@@ -71,64 +71,66 @@ const GoogleLoginButton: React.FC<GoogleLoginButtonProps> = ({
   }, []);
 
   return (
-    <div className="google-login-wrapper">
-      {isLoading && (
-        <div className="google-login-overlay">
-          <span className="google-login-loading">Đang xử lý...</span>
-        </div>
-      )}
-      {isMounted && (
-        <GoogleLogin
-          onSuccess={handleSuccess}
-          onError={handleError}
-          theme="outline"
-          size="large"
-          width={buttonWidth.toString()}
-          text="continue_with"
-          shape="rectangular"
-          logo_alignment="center"
-        />
-      )}
-      {errorMessage && (
-        <p className="google-login-error">{errorMessage}</p>
-      )}
+    <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ""}>
+      <div className="google-login-wrapper">
+        {isLoading && (
+          <div className="google-login-overlay">
+            <span className="google-login-loading">Đang xử lý...</span>
+          </div>
+        )}
+        {isMounted && (
+          <GoogleLogin
+            onSuccess={handleSuccess}
+            onError={handleError}
+            theme="outline"
+            size="large"
+            width={buttonWidth.toString()}
+            text="continue_with"
+            shape="rectangular"
+            logo_alignment="center"
+          />
+        )}
+        {errorMessage && (
+          <p className="google-login-error">{errorMessage}</p>
+        )}
 
-      <style jsx>{`
-        .google-login-wrapper {
-          position: relative;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          width: 100%;
-        }
+        <style jsx>{`
+          .google-login-wrapper {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+          }
 
-        .google-login-overlay {
-          position: absolute;
-          inset: 0;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background: rgba(255, 255, 255, 0.8);
-          border-radius: var(--radius-btn);
-          z-index: 10;
-          pointer-events: all;
-        }
+          .google-login-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: var(--radius-btn);
+            z-index: 10;
+            pointer-events: all;
+          }
 
-        .google-login-loading {
-          font-family: var(--font-main);
-          font-size: 14px;
-          color: var(--text-muted);
-        }
+          .google-login-loading {
+            font-family: var(--font-main);
+            font-size: 14px;
+            color: var(--text-muted);
+          }
 
-        .google-login-error {
-          margin-top: 8px;
-          font-family: var(--font-main);
-          font-size: 13px;
-          color: #dc2626;
-          text-align: center;
-        }
-      `}</style>
-    </div>
+          .google-login-error {
+            margin-top: 8px;
+            font-family: var(--font-main);
+            font-size: 13px;
+            color: #dc2626;
+            text-align: center;
+          }
+        `}</style>
+      </div>
+    </GoogleOAuthProvider>
   );
 };
 

@@ -82,6 +82,7 @@ const LoginTemplate: React.FC<LoginTemplateProps> = ({ onSwitchToSignup }) => {
             type="button"
             onClick={togglePasswordVisibility}
             className="password-toggle"
+            aria-label={showPassword ? "Ẩn mật khẩu" : "Hiển thị mật khẩu"}
           >
             {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
           </button>
@@ -158,7 +159,7 @@ const LoginTemplate: React.FC<LoginTemplateProps> = ({ onSwitchToSignup }) => {
         .login-subtitle {
           font-family: var(--font-main);
           font-size: 14px;
-          color: var(--text-muted);
+          color: #4b5563;
         }
 
         .login-form {
@@ -176,7 +177,7 @@ const LoginTemplate: React.FC<LoginTemplateProps> = ({ onSwitchToSignup }) => {
         .input-icon {
           position: absolute;
           left: 16px;
-          color: var(--text-muted);
+          color: #4b5563;
           display: flex;
           align-items: center;
         }
@@ -204,13 +205,16 @@ const LoginTemplate: React.FC<LoginTemplateProps> = ({ onSwitchToSignup }) => {
 
         .password-toggle {
           position: absolute;
-          right: 16px;
+          right: 0;
+          height: 100%;
+          width: 44px;
           background: none;
           border: none;
-          color: var(--text-muted);
+          color: #4b5563;
           cursor: pointer;
           display: flex;
           align-items: center;
+          justify-content: center;
           padding: 0;
         }
 
@@ -297,7 +301,7 @@ const LoginTemplate: React.FC<LoginTemplateProps> = ({ onSwitchToSignup }) => {
         .divider-text {
           font-family: var(--font-main);
           font-size: 14px;
-          color: var(--text-muted);
+          color: #4b5563;
           white-space: nowrap;
         }
 
@@ -310,7 +314,7 @@ const LoginTemplate: React.FC<LoginTemplateProps> = ({ onSwitchToSignup }) => {
           text-align: center;
           font-family: var(--font-main);
           font-size: 15px;
-          color: var(--text-muted);
+          color: #4b5563;
           display: flex;
           justify-content: center;
           gap: 6px;

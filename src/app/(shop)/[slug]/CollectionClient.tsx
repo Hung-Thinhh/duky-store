@@ -1,14 +1,19 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import React, { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { ProductCard } from "@/components/shop/ProductCard";
 import { Product } from "@/types/product";
 import { LiquidGlassCard } from "@/components/ui/liquid-glass";
 import { PackageOpen } from "lucide-react";
 import { Navpages } from "@/components/shop/Navpages";
-import { Pagination } from "@/components/shop/Pagination";
-import Filter, { FilterState } from "@/components/shop/Fillter";
+import dynamic from "next/dynamic";
+import type { FilterState } from "@/components/shop/Fillter";
+
+const Filter = dynamic(() => import("@/components/shop/Fillter"), {
+  loading: () => <div className="animate-pulse h-[400px] bg-gray-50 rounded-2xl animate-pulse" />,
+  ssr: false,
+});
 
 const PRODUCTS_PER_PAGE = 8;
 
@@ -35,27 +40,7 @@ export default function CollectionClient({
   slug,
   collectionTitle,
 }: CollectionClientProps) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-
-  // Read page from URL, default to 1 if not present or invalid
-  const queryPage = searchParams.get("page");
-  const initialPage = queryPage ? parseInt(queryPage, 10) : 1;
-  const [currentPage, setCurrentPage] = useState(isNaN(initialPage) ? 1 : initialPage);
-
-  // Sync state if URL changes (e.g. going back/forward in browser history)
-  useEffect(() => {
-    const page = searchParams.get("page");
-    if (page) {
-      const parsed = parseInt(page, 10);
-      if (!isNaN(parsed) && parsed !== currentPage) {
-        setCurrentPage(parsed);
-      }
-    } else {
-      setCurrentPage(1);
-    }
-  }, [searchParams]);
-
+  const [currentPage, setCurrentPage] = useState(1);
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
   const queryCategory = searchParams.get("category");
 
@@ -140,24 +125,12 @@ export default function CollectionClient({
     return true;
   });
 
-  // Client-side pagination
+  // Client-side pagination -> infinite slice
   const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
   const products = filteredProducts.slice(
-    (currentPage - 1) * PRODUCTS_PER_PAGE,
+    0,
     currentPage * PRODUCTS_PER_PAGE
   );
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    const params = new URLSearchParams(searchParams.toString());
-    if (page === 1) {
-      params.delete("page");
-    } else {
-      params.set("page", page.toString());
-    }
-    const queryString = params.toString();
-    router.push(`/${slug}${queryString ? `?${queryString}` : ""}`, { scroll: false });
-  };
 
   const handleFilterChange = (state: FilterState) => {
     setFilterState(state);
@@ -184,14 +157,35 @@ export default function CollectionClient({
     });
   };
 
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && currentPage < totalPages) {
+          setCurrentPage((prev) => prev + 1);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    const currentLoader = loaderRef.current;
+    if (currentLoader) {
+      observer.observe(currentLoader);
+    }
+
+    return () => {
+      if (currentLoader) {
+        observer.unobserve(currentLoader);
+      }
+    };
+  }, [currentPage, totalPages]);
+
   return (
     <section className="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 py-16 mt-8 mb-8">
       {/* Breadcrumb */}
       <Navpages
         items={[
           { label: "Trang chủ", href: "/" },
-          { label: collectionTitle, href: `/${slug}` },
-          { label: `Trang ${currentPage}` },
+          { label: collectionTitle },
         ]}
       />
 
@@ -234,19 +228,19 @@ export default function CollectionClient({
                 <h3 className="text-lg font-semibold text-gray-700 mb-2">
                   Không tìm thấy sản phẩm phù hợp
                 </h3>
-                <p className="text-sm text-gray-500 max-w-sm">
+                <p className="text-sm text-gray-600 max-w-sm">
                   Hãy thử điều chỉnh bộ lọc để xem thêm sản phẩm khác.
                 </p>
               </div>
             )}
           </div>
 
-          {/* Pagination */}
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-          />
+          {/* Loader for Infinite Scroll */}
+          {currentPage < totalPages && (
+            <div ref={loaderRef} className="flex justify-center items-center py-8">
+              <div className="w-6 h-6 border-2 border-slate-300 border-t-black rounded-full animate-spin" />
+            </div>
+          )}
         </div>
       </div>
     </section>

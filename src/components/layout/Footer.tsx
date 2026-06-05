@@ -187,6 +187,31 @@ export const Footer = () => {
                       </li>
                     </ul>
                   </div>
+                </div>
+
+                {/* Col 2: Truy cập */}
+                <div className="custom-footer-col2">
+                  <h2 className="font-bold text-[18px] pt-3 mb-4 uppercase tracking-wider text-white">
+                    Truy Cập
+                  </h2>
+                  <ul className="space-y-2">
+                    {[
+                      { label: "Trang chủ", href: "/" },
+                      { label: "Sản phẩm", href: "/san-pham" },
+                      { label: "Phối đồ", href: "/thu-vien" },
+                      { label: "Kinh nghiệm", href: "/blog" },
+                      { label: "Liên hệ", href: "/lien-he" },
+                    ].map((item) => (
+                      <li key={item.label}>
+                        <Link
+                          href={item.href}
+                          className="inline-flex items-center justify-start content text-[13px] py-1.5 text-gray-300 hover:text-white hover:scale-105 hover:translate-x-1 origin-left transition-all duration-300"
+                        >
+                          <span>{item.label}</span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
 
                   {/* Social Icons */}
                   <div className="custom-footer-col1-socials">
@@ -235,40 +260,11 @@ export const Footer = () => {
                   </div>
                 </div>
 
-                {/* Col 2: Truy cập */}
-                <div className="custom-footer-col2">
-                  <h4 className="font-bold text-[18px] mb-4 uppercase tracking-wider text-white">
-                    Truy Cập
-                  </h4>
-                  <ul className="space-y-2">
-                    {[
-                      { label: "Trang chủ", href: "/" },
-                      { label: "Sản phẩm", href: "/san-pham" },
-                      { label: "Giày boot nam", href: "/boot-nam" },
-                      { label: "Giày boot nữ", href: "/boot-nu" },
-                      { label: "Phụ kiện", href: "/phu-kien" },
-                      { label: "Unisex", href: "/unisex" },
-                      { label: "Phối đồ", href: "/thu-vien" },
-                      { label: "Kinh nghiệm", href: "/blog" },
-                      { label: "Liên hệ", href: "/lien-he" },
-                    ].map((item) => (
-                      <li key={item.label}>
-                        <Link
-                          href={item.href}
-                          className="inline-flex items-center justify-start content text-[13px] py-1.5 text-gray-300 hover:text-white hover:scale-105 hover:translate-x-1 origin-left transition-all duration-300"
-                        >
-                          <span>{item.label}</span>
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
                 {/* Col 3: Chính sách */}
                 <div className="custom-footer-col3">
-                  <h4 className="font-bold text-[18px] mb-4 uppercase tracking-wider text-white">
+                  <h2 className="font-bold text-[18px] pt-3 mb-4 uppercase tracking-wider text-white">
                     Chính Sách
-                  </h4>
+                  </h2>
                   <ul className="space-y-2">
                     {[
                       {
@@ -312,12 +308,29 @@ export const Footer = () => {
 
         {/* Bottom Section - Dark */}
         <div className="bg-black text-white py-6 px-4">
-          <div className="custom-footer-bottom text-[13px] text-gray-400">
-            <p>© 2026 Duky Store. All rights reserved.</p>
-            <span className="custom-footer-divider text-gray-600">|</span>
-            <div className="flex items-center gap-2">
-              <Diamond size={16} className="text-white" />
-              <p>Designed by Duky Agency</p>
+          <div className="max-w-7xl mx-auto flex flex-row justify-between items-center gap-6">
+            {/* Bên trái */}
+            <div className="flex-1 text-[13px] text-gray-400 md:max-w-[800px]">
+              <p className="leading-relaxed text-center md:text-left">
+                © 2026. Hộ kinh doanh Duky Store. GPDKKD: 57A8037701 do Phòng
+                Tài chính và Kế hoạch Thành phố Cần Thơ cấp ngày 24/10/2024. Địa
+                chỉ: Tầng trệt, số 122 Nguyễn Hiền, KDC 91B, P. Tân An, TP. Cần
+                Thơ. Người đại diện Hộ kinh doanh: Trần Thanh Thủy. Chịu trách
+                nhiệm sản xuất nội dung: Trần Thanh Ngân. Website: Duky Agency.
+              </p>
+            </div>
+
+            {/* Bên phải */}
+            <div className="flex items-center text-[13px] gap-3 shrink-0 text-gray-400">
+              <Diamond size={14} />
+              <Link
+                href="https://dukyagency.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Designed by Duky Agency
+              </Link>
+              {/* <p></p> */}
             </div>
           </div>
         </div>

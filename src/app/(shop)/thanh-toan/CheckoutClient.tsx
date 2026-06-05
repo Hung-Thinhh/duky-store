@@ -439,7 +439,7 @@ export function CheckoutClient() {
         </div>
       </PopupTemplate>
 
-      <section className="checkout-page">
+      <main id="main-content" className="checkout-page">
         <div className="checkout-nav-wrap">
           <Navpages
             items={[{ label: "Trang chủ", href: "/" }, { label: "Thanh toán" }]}
@@ -1108,7 +1108,7 @@ export function CheckoutClient() {
             display: block;
             text-align: right;
             font-size: 12px;
-            color: var(--text-label);
+            color: var(--text-muted);
             margin-top: 4px;
           }
 
@@ -1604,7 +1604,7 @@ export function CheckoutClient() {
             align-self: flex-start;
             font-size: 9px;
             font-weight: 600;
-            color: #f59e0b;
+            color: #92400e;
             background: #fef3c7;
             padding: 2px 6px;
             border-radius: 4px;
@@ -1660,7 +1660,7 @@ export function CheckoutClient() {
             background: var(--border-subtle);
           }
         `}</style>
-      </section>
+      </main>
     </>
   );
 }

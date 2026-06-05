@@ -43,8 +43,9 @@ export const GuideSection = () => {
   const sliderRef = React.useRef<HTMLDivElement>(null);
   const lookbookSliderRef = React.useRef<HTMLDivElement>(null);
   const [showCalculator, setShowCalculator] = React.useState(false);
-  const [lookbookImages, setLookbookImages] =
-    React.useState<GalleryImage[]>([]);
+  const [lookbookImages, setLookbookImages] = React.useState<GalleryImage[]>(
+    [],
+  );
   const [isInView, setIsInView] = React.useState(false);
 
   React.useEffect(() => {
@@ -56,7 +57,7 @@ export const GuideSection = () => {
           observer.disconnect();
         }
       },
-      { rootMargin: "200px" }
+      { rootMargin: "200px" },
     );
     observer.observe(sectionRef.current);
     return () => observer.disconnect();
@@ -84,7 +85,11 @@ export const GuideSection = () => {
 
     const track = sliderRef.current;
     const items = track.querySelectorAll(".feedback-item");
-    const trackWidth = track.scrollWidth / 3; // Since we tripled the feedbacks
+    
+    // Calculate trackWidth mathematically to avoid querying track.scrollWidth (forces reflow)
+    const itemWidth = Math.min(window.innerWidth * 0.85, 400);
+    const gap = 32; // gap-8
+    const trackWidth = FEEDBACKS.length * (itemWidth + gap);
 
     // Initial position
     gsap.set(track, { x: 0 });
@@ -93,24 +98,30 @@ export const GuideSection = () => {
     let itemsData: { element: Element; centerRelative: number }[] = [];
 
     const cachePositions = () => {
+      if (!track) return;
       const trackRect = track.getBoundingClientRect();
       const currentX = gsap.getProperty(track, "x") as number;
       trackStartLeft = trackRect.left - currentX;
 
-      itemsData = Array.from(items).map((item) => {
-        const itemRect = item.getBoundingClientRect();
-        const itemCenter = itemRect.left + itemRect.width / 2;
+      itemsData = Array.from(items).map((item, index) => {
+        const itemLeftRelative = index * (itemWidth + gap);
+        const itemCenterRelative = itemLeftRelative + itemWidth / 2;
         return {
           element: item,
-          centerRelative: itemCenter - trackRect.left,
+          centerRelative: itemCenterRelative,
         };
       });
     };
 
-    // Run caching after a short delay to ensure rendering and layout are complete
-    const timeoutId = setTimeout(() => {
-      cachePositions();
-    }, 100);
+    // Run caching after double requestAnimationFrame to ensure layout is clean and painted
+    let rafId1: number;
+    let rafId2: number;
+
+    rafId1 = requestAnimationFrame(() => {
+      rafId2 = requestAnimationFrame(() => {
+        cachePositions();
+      });
+    });
 
     window.addEventListener("resize", cachePositions);
 
@@ -163,7 +174,8 @@ export const GuideSection = () => {
     track.addEventListener("mouseleave", handleMouseLeave);
 
     return () => {
-      clearTimeout(timeoutId);
+      cancelAnimationFrame(rafId1);
+      cancelAnimationFrame(rafId2);
       window.removeEventListener("resize", cachePositions);
       track.removeEventListener("mouseenter", handleMouseEnter);
       track.removeEventListener("mouseleave", handleMouseLeave);
@@ -172,12 +184,15 @@ export const GuideSection = () => {
   }, [isInView]);
 
   React.useEffect(() => {
-    if (!isInView || !lookbookSliderRef.current || lookbookImages.length === 0) return;
+    if (!isInView || !lookbookSliderRef.current || lookbookImages.length === 0)
+      return;
 
     const track = lookbookSliderRef.current;
 
     const ctx = gsap.context(() => {
-      const trackWidth = track.scrollWidth / 3;
+      // Calculate lookbook trackWidth mathematically (item: 280px + gap: 24/16px)
+      const currentGap = window.innerWidth >= 768 ? 24 : 16;
+      const trackWidth = lookbookImages.length * (280 + currentGap);
 
       // Set initial position to -trackWidth to slide towards 0 (Left to Right)
       gsap.set(track, { x: -trackWidth });
@@ -223,7 +238,7 @@ export const GuideSection = () => {
               <h2 className="text-4xl md:text-5xl lg:text-[40px] font-semibold text-text-main leading-tight tracking-tight">
                 Chọn đúng size giày chỉ trong 30 giây
               </h2>
-              <p className="content text-sm md:text-base text-gray-500">
+              <p className="content text-sm md:text-base text-gray-600">
                 3 bước đơn giản giúp bạn chọn size vừa vặn nhất.
               </p>
               <button
@@ -314,8 +329,8 @@ export const GuideSection = () => {
               Phối đồ cùng Duky
             </h2>
             <Link
-              href="/gallery"
-              className="content flex items-center gap-2 text-sm md:text-base font-medium text-gray-500 hover:text-black transition-colors group"
+              href="/thu-vien"
+              className="content flex items-center gap-2 text-sm md:text-base font-medium text-gray-600 hover:text-black transition-colors group"
             >
               Xem thêm
               <ArrowRight
@@ -388,7 +403,10 @@ export const GuideSection = () => {
                 <div
                   key={`${fb.id}-${i}`}
                   className="feedback-item shrink-0"
-                  style={{ width: "min(85vw, 400px)", willChange: "transform, opacity, filter" }}
+                  style={{
+                    width: "min(85vw, 400px)",
+                    willChange: "transform, opacity, filter",
+                  }}
                 >
                   <FeedBackCard {...fb} />
                 </div>

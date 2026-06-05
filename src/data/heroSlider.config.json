@@ -46,7 +46,6 @@
           "alt": "Nguoi mau mang boot mua he",
           "zIndex": 2,
           "role": "model",
-          "sizes": "(max-width: 767px) 200vw, 100vw",
           "layout": {
             "desktop": {
               "top": "9.5%",
@@ -81,7 +80,6 @@
           "alt": "Boot mua he noi bat",
           "zIndex": 4,
           "role": "boot",
-          "sizes": "(min-width: 1024px) 18vw, (min-width: 768px) 180vw, 120vw",
           "layout": {
             "desktop": {
               "top": "auto",
@@ -118,7 +116,6 @@
           "alt": "Buc phat sang",
           "zIndex": 3,
           "role": "pedestal",
-          "sizes": "(min-width: 768px) 0vw, 110vw",
           "layout": {
             "desktop": {
               "display": "none"
@@ -230,7 +227,6 @@
           "alt": "Buc trung bay",
           "zIndex": 1,
           "role": "pedestal",
-          "sizes": "(max-width: 767px) 140vw, 100vw",
           "layout": {
             "desktop": {
               "top": "60%",
@@ -266,7 +262,6 @@
           "alt": "Nguoi mau nam",
           "zIndex": 2,
           "role": "model",
-          "sizes": "(max-width: 767px) 180vw, 100vw",
           "layout": {
             "desktop": {
               "top": "20%",
@@ -301,7 +296,6 @@
           "alt": "San pham boot nam",
           "zIndex": 3,
           "role": "boot",
-          "sizes": "(min-width: 1024px) 28vw, (min-width: 768px) 36vw, 52vw",
           "layout": {
             "desktop": {
               "top": "auto",
@@ -420,7 +414,6 @@
           "alt": "Nguoi mau nam",
           "zIndex": 2,
           "role": "model",
-          "sizes": "(max-width: 767px) 150vw, 100vw",
           "layout": {
             "desktop": {
               "top": "8%",
@@ -459,7 +452,6 @@
           "alt": "Sản phẩm trưng bày",
           "zIndex": 3,
           "role": "boot",
-          "sizes": "(max-width: 767px) 190vw, (max-width: 1023px) 62vw, 100vw",
           "layout": {
             "desktop": {
               "top": "auto",

@@ -24,7 +24,7 @@ export function BackButton({ className }: BackButtonProps) {
     <button
       onClick={handleBack}
       className={cn(
-        "group inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-gray-500 hover:text-black transition-colors duration-200 cursor-pointer mb-4",
+        "group inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-gray-600 hover:text-black transition-colors duration-200 cursor-pointer mb-4",
         className
       )}
     >

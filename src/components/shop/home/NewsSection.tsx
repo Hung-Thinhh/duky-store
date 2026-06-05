@@ -123,7 +123,7 @@ export const NewsSection = ({
                 <h2 className="text-4xl md:text-5xl lg:text-[40px] font-semibold text-text-main leading-tight tracking-tight">
                   Cập nhật xu hướng <br /> mới nhất
                 </h2>
-                <p className="content text-gray-500 text-sm md:text-base max-w-xs">
+                <p className="content text-gray-600 text-sm md:text-base max-w-xs">
                   Khám phá những xu hướng thời trang mới nhất, mẹo phối đồ và
                   câu chuyện từ Duky Store.
                 </p>
@@ -184,6 +184,7 @@ export const NewsSection = ({
                   {currentIndex > 0 && (
                     <button
                       onClick={() => setCurrentIndex((prev) => prev - 1)}
+                      aria-label="Tin tức trước"
                       className="hidden lg:flex absolute left-2 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/95 backdrop-blur-md border border-gray-100 shadow-[0_4px_12px_rgba(0,0,0,0.12)] items-center justify-center text-black opacity-100 lg:opacity-0 lg:group-hover/slider:opacity-100 lg:group-hover/slider:translate-x-2 transition-all duration-300 hover:bg-gray-100 hover:scale-110 active:scale-95 z-40 cursor-pointer"
                     >
                       <ChevronLeft size={22} strokeWidth={2.5} />
@@ -193,6 +194,7 @@ export const NewsSection = ({
                   {currentIndex < maxIndex && (
                     <button
                       onClick={() => setCurrentIndex((prev) => prev + 1)}
+                      aria-label="Tin tức tiếp theo"
                       className="hidden lg:flex absolute right-2 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/95 backdrop-blur-md border border-gray-100 shadow-[0_4px_12px_rgba(0,0,0,0.12)] items-center justify-center text-black opacity-100 lg:opacity-0 lg:group-hover/slider:opacity-100 lg:group-hover/slider:-translate-x-2 transition-all duration-300 hover:bg-gray-100 hover:scale-110 active:scale-95 z-40 cursor-pointer"
                     >
                       <ChevronRight size={22} strokeWidth={2.5} />
@@ -259,7 +261,7 @@ export const NewsSection = ({
                 <h2 className="text-4xl md:text-5xl lg:text-[40px] font-semibold text-text-main leading-tight tracking-tight">
                   Ưu đãi dành riêng <br /> cho bạn
                 </h2>
-                <p className="content text-gray-500 text-sm md:text-base max-w-sm">
+                <p className="content text-gray-600 text-sm md:text-base max-w-sm">
                   Đăng ký nhận bản tin để không bỏ lỡ ưu đãi độc quyền và sản
                   phẩm mới nhất.
                 </p>
@@ -318,9 +320,9 @@ export const NewsSection = ({
                     {feature.icon}
                   </div>
                   <div className="space-y-3 text-center w-full">
-                    <h4 className="content text-[11px] md:text-[12px] font-bold tracking-wider text-white uppercase leading-tight">
+                    <h3 className="content text-[11px] md:text-[12px] font-bold tracking-wider text-white uppercase leading-tight">
                       {feature.title}
-                    </h4>
+                    </h3>
                     <p className="content text-[10px] md:text-[11px] text-white/60 leading-relaxed px-1">
                       {feature.desc}
                     </p>

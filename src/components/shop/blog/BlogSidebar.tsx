@@ -135,7 +135,7 @@ export function BlogSidebar({
                       <h4 className="content text-sm font-medium text-gray-800 line-clamp-2 group-hover:text-black transition-colors">
                         {post.title}
                       </h4>
-                      <span className="text-xs text-gray-400 my-2 block">
+                      <span className="text-xs text-gray-600 my-2 block">
                         {formatDate(post.publishedAt)}
                       </span>
                     </div>

@@ -14,7 +14,9 @@ export function PolicyClient({ children }: PolicyClientProps) {
   return (
     <>
       <Header cartCount={cartCount} />
-      {children}
+      <main id="main-content">
+        {children}
+      </main>
       <Footer />
 
       <style jsx>{`

@@ -5,7 +5,7 @@ import type { CSSProperties } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { gsap } from "gsap";
-import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import type { SlideTextContent } from "@/types/heroSlider";
 
 // ─── Props ───────────────────────────────────────────────────────────────────
@@ -161,26 +161,26 @@ export const TextOverlay: React.FC<TextOverlayProps> = ({
 
         {/* CTA Buttons */}
         <div data-animate className="hero-text-actions">
-          {content.buttons.map((button, index) => (
-            <Link key={`${button.link}-${index}`} href={button.link}>
-              {button.variant === "primary" ? (
-                <Button
-                  variant="premium-black"
-                  className="hero-text-button hero-text-cta hero-text-cta-primary"
-                >
-                  {button.label}
+          {content.buttons.map((button, index) => {
+            const isPrimary = button.variant === "primary";
+            return (
+              <Link
+                key={`${button.link}-${index}`}
+                href={button.link}
+                className={cn(
+                  "px-8 py-4 font-semibold uppercase tracking-widest text-xs transition-all flex items-center justify-center gap-2 cursor-pointer transition-all duration-300 hero-text-button hero-text-cta",
+                  isPrimary
+                    ? "bg-black text-white rounded-full hover:-translate-y-1 hover:shadow-premium-black hero-text-cta-primary"
+                    : "glass-effect border-black/10 text-text-main rounded-full hover:-translate-y-1 hover:shadow-premium-glass hero-text-cta-secondary"
+                )}
+              >
+                {button.label}
+                {isPrimary && (
                   <ArrowRight size={16} className="hero-text-arrow" />
-                </Button>
-              ) : (
-                <Button
-                  variant="premium-glass"
-                  className="hero-text-button hero-text-cta hero-text-cta-secondary"
-                >
-                  {button.label}
-                </Button>
-              )}
-            </Link>
-          ))}
+                )}
+              </Link>
+            );
+          })}
         </div>
       </div>
     </div>

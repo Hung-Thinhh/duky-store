@@ -107,7 +107,7 @@ export function UserSidebar() {
         .user-sidebar .sidebar-type {
           font-family: var(--font-main);
           font-size: 12px;
-          color: #f59e0b;
+          color: #b45309;
           font-weight: 600;
           margin-top: 2px;
         }
@@ -166,7 +166,7 @@ export function UserSidebar() {
           font-family: var(--font-main);
           font-size: 14px;
           font-weight: 500;
-          color: #ef4444;
+          color: #d32f2f;
           text-decoration: none;
           transition: all 200ms cubic-bezier(0.2, 0.9, 0.2, 1);
           border: none;

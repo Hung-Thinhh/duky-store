@@ -10,7 +10,11 @@ import { BlogSidebar } from "@/components/shop/blog";
 import { BlogCard } from "@/components/shop/blog";
 import { useCart } from "@/context/CartContext";
 import { BlogPost, BlogCategory } from "@/types/blog";
-import { fetchBlogPostBySlug, fetchBlogCategories, fetchBlogPosts } from "@/lib/api";
+import {
+  fetchBlogPostBySlug,
+  fetchBlogCategories,
+  fetchBlogPosts,
+} from "@/lib/api";
 import { sanitizeBlogHtml } from "@/lib/blog-content";
 import { MOCK_BLOG_POSTS, MOCK_BLOG_CATEGORIES } from "@/data/blog";
 import { Calendar, User, ArrowLeft, Tag } from "lucide-react";
@@ -82,7 +86,9 @@ export function BlogDetailPageClient({
     }
 
     load();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [initialPost, slug]);
 
   useEffect(() => {
@@ -106,9 +112,46 @@ export function BlogDetailPageClient({
       .catch(() => setCategories(MOCK_BLOG_CATEGORIES));
 
     fetchBlogPosts({ limit: 5, sort: "newest" })
-      .then((res) => setRecentPosts(res.data.length > 0 ? res.data : MOCK_BLOG_POSTS.slice(0, 5)))
+      .then((res) =>
+        setRecentPosts(
+          res.data.length > 0 ? res.data : MOCK_BLOG_POSTS.slice(0, 5),
+        ),
+      )
       .catch(() => setRecentPosts(MOCK_BLOG_POSTS.slice(0, 5)));
   }, [initialCategories, initialRecentPosts]);
+
+  useEffect(() => {
+    if (!post) return;
+
+    const handleAnchorClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const anchor = target.closest("a");
+      if (anchor) {
+        const href = anchor.getAttribute("href");
+        if (href && href.startsWith("#")) {
+          const id = decodeURIComponent(href.substring(1));
+          const element = document.getElementById(id);
+          if (element) {
+            e.preventDefault();
+            const yOffset = -100; // Account for sticky header
+            const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+            window.scrollTo({ top: y, behavior: "smooth" });
+            window.history.pushState(null, "", href);
+          }
+        }
+      }
+    };
+
+    const container = document.querySelector(".blog-content");
+    if (container) {
+      container.addEventListener("click", handleAnchorClick);
+    }
+    return () => {
+      if (container) {
+        container.removeEventListener("click", handleAnchorClick);
+      }
+    };
+  }, [post]);
 
   if (error && !loading) {
     notFound();
@@ -120,131 +163,153 @@ export function BlogDetailPageClient({
     <>
       <Header cartCount={cartCount} />
 
-      <article className="blog-detail-page">
-        {loading ? (
-          <div className="blog-detail-skeleton">
-            <div className="skeleton-breadcrumb" />
-            <div className="skeleton-title" />
-            <div className="skeleton-meta" />
-            <div className="skeleton-cover" />
-            <div className="skeleton-body">
-              <div className="skeleton-line skeleton-line--full" />
-              <div className="skeleton-line skeleton-line--full" />
-              <div className="skeleton-line skeleton-line--3/4" />
-              <div className="skeleton-line skeleton-line--full" />
-              <div className="skeleton-line skeleton-line--1/2" />
+      <main id="main-content">
+        <article className="blog-detail-page">
+          {loading ? (
+            <div className="blog-detail-skeleton">
+              <div className="skeleton-breadcrumb" />
+              <div className="skeleton-title" />
+              <div className="skeleton-meta" />
+              <div className="skeleton-cover" />
+              <div className="skeleton-body">
+                <div className="skeleton-line skeleton-line--full" />
+                <div className="skeleton-line skeleton-line--full" />
+                <div className="skeleton-line skeleton-line--3/4" />
+                <div className="skeleton-line skeleton-line--full" />
+                <div className="skeleton-line skeleton-line--1/2" />
+              </div>
             </div>
-          </div>
-        ) : post ? (
-          <>
-            {/* Breadcrumb */}
-            <Navpages
-              items={[
-                { label: "Trang chủ", href: "/" },
-                { label: "Blog", href: "/blog" },
-                { label: post.title },
-              ]}
-            />
+          ) : post ? (
+            <>
+              {/* Breadcrumb */}
+              <Navpages
+                items={[
+                  { label: "Trang chủ", href: "/" },
+                  { label: "Blog", href: "/blog" },
+                  { label: post.title },
+                ]}
+              />
 
-            <div className="blog-detail-layout">
-              {/* Main Content */}
-              <div className="blog-detail-main">
-                {/* Categories */}
-                {post.categories.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {post.categories.map((cat) => (
-                      <Link
-                        key={cat.id}
-                        href={`/blog?category=${cat.slug}`}
-                        className="text-xs font-semibold uppercase tracking-wider text-gray-500 bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded-full transition-colors"
-                      >
-                        {cat.name}
-                      </Link>
-                    ))}
-                  </div>
-                )}
-                {/* Title */}
-                <h1 className="content text-2xl md:text-4xl font-bold text-gray-900 leading-tight mb-4">
-                  {post.title}
-                </h1>
-
-                {/* Meta */}
-                <div className="flex flex-wrap items-center gap-4 text-sm text-gray-400 mb-8 pb-6 border-b border-gray-100">
-                  {post.author && (
-                    <span className="flex items-center gap-1.5">
-                      <User size={15} />
-                      {post.author.fullName}
-                    </span>
+              <div className="blog-detail-layout">
+                {/* Main Content */}
+                <div className="blog-detail-main">
+                  {/* Categories */}
+                  {post.categories.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {post.categories.map((cat) => (
+                        <Link
+                          key={cat.id}
+                          href={`/blog?category=${cat.slug}`}
+                          className="text-xs font-semibold uppercase tracking-wider text-gray-500 bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded-full transition-colors"
+                        >
+                          {cat.name}
+                        </Link>
+                      ))}
+                    </div>
                   )}
-                  <span className="flex items-center gap-1.5">
-                    <Calendar size={15} />
-                    {formatDate(post.publishedAt)}
-                  </span>
+                  {/* Title */}
+                  <h1 className="content text-2xl md:text-4xl font-bold text-gray-900 leading-tight mb-4">
+                    {post.title}
+                  </h1>
+
+                  {/* Meta */}
+                  <div className="flex flex-wrap items-center gap-4 text-sm text-gray-400 mb-8 pb-6 border-b border-gray-100">
+                    {post.author && (
+                      <span className="flex items-center gap-1.5">
+                        <User size={15} />
+                        {post.author.fullName}
+                      </span>
+                    )}
+                    <span className="flex items-center gap-1.5">
+                      <Calendar size={15} />
+                      {formatDate(post.publishedAt)}
+                    </span>
+                  </div>
+
+                  {coverUrl && (
+                    <div className="w-full rounded-2xl overflow-hidden mb-10 flex justify-center">
+                      <img
+                        src={coverUrl}
+                        alt={post.coverMedia?.altText || post.title}
+                        className="max-w-full h-auto max-h-[600px] object-contain rounded-2xl"
+                      />
+                    </div>
+                  )}
+
+                  {/* Content */}
+                  <div
+                    className="blog-content prose prose-lg max-w-none"
+                    dangerouslySetInnerHTML={{
+                      __html: sanitizeBlogHtml(post.content),
+                    }}
+                  />
+
+                  {/* Tags */}
+                  {post.tags.length > 0 && (
+                    <div className="flex flex-wrap items-center gap-2 mt-10 pt-6 border-t border-gray-100">
+                      <Tag size={16} className="text-gray-400" />
+                      {post.tags.map((tag) => (
+                        <Link
+                          key={tag.id}
+                          href={`/blog?tag=${tag.slug}`}
+                          className="text-xs font-medium text-gray-500 bg-gray-50 hover:bg-gray-100 px-2 py-1 rounded-full border border-gray-100 transition-colors"
+                        >
+                          #{tag.name}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Related Posts */}
+                  {recentPosts.filter((p) => p.id !== post.id).length > 0 && (
+                    <section className="blog-related-section">
+                      <h2 className="text-lg font-bold text-gray-900 mb-6">
+                        Bài viết liên quan
+                      </h2>
+                      <div className="blog-related-grid">
+                        {recentPosts
+                          .filter((p) => p.id !== post.id)
+                          .slice(0, 3)
+                          .map((relatedPost) => (
+                            <BlogCard key={relatedPost.id} post={relatedPost} />
+                          ))}
+                      </div>
+                    </section>
+                  )}
                 </div>
 
-                {coverUrl && (
-                  <div className="w-full rounded-2xl overflow-hidden mb-10 bg-gray-50 flex justify-center">
-                    <img
-                      src={coverUrl}
-                      alt={post.coverMedia?.altText || post.title}
-                      className="max-w-full h-auto max-h-[600px] object-contain rounded-2xl"
-                    />
-                  </div>
-                )}
-
-                {/* Content */}
-                <div
-                  className="blog-content prose prose-lg max-w-none"
-                  dangerouslySetInnerHTML={{ __html: sanitizeBlogHtml(post.content) }}
-                />
-
-                {/* Tags */}
-                {post.tags.length > 0 && (
-                  <div className="flex flex-wrap items-center gap-2 mt-10 pt-6 border-t border-gray-100">
-                    <Tag size={16} className="text-gray-400" />
-                    {post.tags.map((tag) => (
-                      <Link
-                        key={tag.id}
-                        href={`/blog?tag=${tag.slug}`}
-                        className="text-xs font-medium text-gray-500 bg-gray-50 hover:bg-gray-100 px-2 py-1 rounded-full border border-gray-100 transition-colors"
-                      >
-                        #{tag.name}
-                      </Link>
-                    ))}
-                  </div>
-                )}
-
-                {/* Related Posts */}
-                {recentPosts.filter((p) => p.id !== post.id).length > 0 && (
-                  <section className="blog-related-section">
-                    <h2 className="text-lg font-bold text-gray-900 mb-6">Bài viết liên quan</h2>
-                    <div className="blog-related-grid">
-                      {recentPosts
-                        .filter((p) => p.id !== post.id)
-                        .slice(0, 3)
-                        .map((relatedPost) => (
-                          <BlogCard key={relatedPost.id} post={relatedPost} />
-                        ))}
-                    </div>
-                  </section>
-                )}
+                {/* Sidebar */}
+                <div className="blog-detail-sidebar">
+                  <BlogSidebar
+                    recentPosts={recentPosts
+                      .filter((p) => p.id !== post.id)
+                      .slice(0, 5)}
+                    categories={categories}
+                    activeCategory={post.categories[0]?.slug}
+                  />
+                </div>
               </div>
-
-              {/* Sidebar */}
-              <div className="blog-detail-sidebar">
-                <BlogSidebar
-                  recentPosts={recentPosts.filter((p) => p.id !== post.id).slice(0, 5)}
-                  categories={categories}
-                />
-              </div>
-            </div>
-          </>
-        ) : null}
-      </article>
+            </>
+          ) : null}
+        </article>
+      </main>
 
       <Footer />
 
       <style jsx>{`
+        .blog-detail-page,
+        .blog-detail-page :global(*) {
+          font-family: var(--font-main) !important;
+          color: #000000 !important;
+        }
+
+        .blog-detail-page :global(.bg-black),
+        .blog-detail-page :global(.bg-black *),
+        .blog-detail-page :global(.text-white),
+        .blog-detail-page :global(.text-white *) {
+          color: #ffffff !important;
+        }
+
         .blog-detail-page {
           max-width: 1440px;
           margin: 0 auto;
@@ -298,8 +363,12 @@ export function BlogDetailPageClient({
           margin-bottom: 0.75em;
         }
 
-        :global(.blog-content h2) { font-size: 1.5em; }
-        :global(.blog-content h3) { font-size: 1.25em; }
+        :global(.blog-content h2) {
+          font-size: 1.5em;
+        }
+        :global(.blog-content h3) {
+          font-size: 1.25em;
+        }
 
         :global(.blog-content p) {
           margin-bottom: 1.25em;
@@ -333,11 +402,36 @@ export function BlogDetailPageClient({
         }
 
         :global(.blog-content blockquote) {
-          border-left: 4px solid #e5e7eb;
-          padding-left: 1em;
-          margin: 1.5em 0;
-          color: #6b7280;
-          font-style: italic;
+          border-left: 4px solid #e5e7eb !important;
+          padding-left: 1.25em !important;
+          margin: 1.5em 0 !important;
+          font-style: italic !important;
+        }
+
+        /* Modern styled tables in blog content */
+        :global(.blog-content table) {
+          width: 100% !important;
+          max-width: 760px !important;
+          margin: 2.5em auto !important;
+          border-collapse: collapse !important;
+          border: 1px solid #cbd5e1 !important;
+        }
+
+        :global(.blog-content th),
+        :global(.blog-content td) {
+          padding: 14px 20px !important;
+          border: 1px solid #cbd5e1 !important;
+          background-color: #ffffff !important;
+        }
+
+        :global(.blog-content th) {
+          background-color: #f8fafc !important;
+          font-weight: 600 !important;
+          text-align: left !important;
+        }
+
+        :global(.blog-content tr:hover td) {
+          background-color: #f8fafc !important;
         }
 
         /* Skeleton */
@@ -389,13 +483,24 @@ export function BlogDetailPageClient({
           border-radius: 6px;
         }
 
-        .skeleton-line--full { width: 100%; }
-        .skeleton-line--3\\/4 { width: 75%; }
-        .skeleton-line--1\\/2 { width: 50%; }
+        .skeleton-line--full {
+          width: 100%;
+        }
+        .skeleton-line--3\\/4 {
+          width: 75%;
+        }
+        .skeleton-line--1\\/2 {
+          width: 50%;
+        }
 
         @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
+          0%,
+          100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.5;
+          }
         }
 
         /* Responsive */

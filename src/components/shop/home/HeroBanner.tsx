@@ -5,7 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "motion/react";
 import { ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 interface TrustItem {
@@ -97,25 +96,21 @@ export const HeroBanner = ({
 
             {/* CTA Buttons */}
             <div className="flex flex-wrap gap-4 pt-4">
-              <Link href={primaryBtn.link}>
-                <Button
-                  variant="premium-black"
-                  className="px-10 py-4 text-[11px] font-black tracking-widest group"
-                >
-                  {primaryBtn.text}
-                  <ArrowRight
-                    size={18}
-                    className="transition-transform group-hover:translate-x-1"
-                  />
-                </Button>
+              <Link
+                href={primaryBtn.link}
+                className="px-10 py-4 text-[11px] font-black tracking-widest uppercase transition-all flex items-center justify-center gap-2 cursor-pointer bg-black text-white rounded-full hover:-translate-y-1 hover:shadow-premium-black transition-all duration-300 group"
+              >
+                {primaryBtn.text}
+                <ArrowRight
+                  size={18}
+                  className="transition-transform group-hover:translate-x-1"
+                />
               </Link>
-              <Link href={secondaryBtn.link}>
-                <Button
-                  variant="premium-glass"
-                  className="px-10 py-4 text-[11px] font-black tracking-widest"
-                >
-                  {secondaryBtn.text}
-                </Button>
+              <Link
+                href={secondaryBtn.link}
+                className="px-10 py-4 text-[11px] font-black tracking-widest uppercase transition-all flex items-center justify-center gap-2 cursor-pointer glass-effect border border-black/10 text-text-main rounded-full hover:-translate-y-1 hover:shadow-premium-glass transition-all duration-300"
+              >
+                {secondaryBtn.text}
               </Link>
             </div>
           </motion.div>

@@ -91,7 +91,7 @@ export function Pagination({
         onClick={handlePrev}
         disabled={currentPage === 1}
         aria-label="Previous page"
-        className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-black disabled:text-gray-300 disabled:pointer-events-none transition-colors cursor-pointer"
+        className="w-10 h-10 flex items-center justify-center text-gray-600 hover:text-black disabled:text-gray-300 disabled:pointer-events-none transition-colors cursor-pointer"
       >
         <ChevronLeft size={20} strokeWidth={2.5} />
       </button>
@@ -102,7 +102,7 @@ export function Pagination({
           return (
             <span
               key={`ellipsis-${index}`}
-              className="w-10 h-10 flex items-center justify-center text-gray-400 select-none text-sm font-medium"
+              className="w-10 h-10 flex items-center justify-center text-gray-600 select-none text-sm font-medium"
             >
               ...
             </span>
@@ -120,7 +120,7 @@ export function Pagination({
               "w-10 h-10 flex items-center justify-center rounded-full text-sm font-medium transition-colors cursor-pointer",
               isCurrent
                 ? "bg-black/5 text-black"
-                : "text-gray-500 hover:text-black hover:bg-gray-50"
+                : "text-gray-600 hover:text-black hover:bg-gray-50"
             )}
           >
             {page}

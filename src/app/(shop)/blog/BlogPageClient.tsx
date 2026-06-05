@@ -105,7 +105,8 @@ export function BlogPageClient() {
     <>
       <Header cartCount={cartCount} />
 
-      <section className="blog-page">
+      <main id="main-content">
+        <section className="blog-page">
         {/* Breadcrumb */}
         <Navpages
           items={[
@@ -190,6 +191,7 @@ export function BlogPageClient() {
           </div>
         </div>
       </section>
+      </main>
 
       <Footer />
 
