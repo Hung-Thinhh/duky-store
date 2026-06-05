@@ -3,6 +3,8 @@ import { fetchBlogPosts, fetchProducts } from "@/lib/api";
 import { COLLECTION_SLUGS } from "@/lib/collection-seo";
 import type { BlogPost } from "@/types/blog";
 import type { Product } from "@/types/product";
+import fs from "fs";
+import path from "path";
 
 export const revalidate = 3600;
 
@@ -19,6 +21,53 @@ function absoluteUrl(path: string) {
 
 function toDate(value?: string | null) {
   return value ? new Date(value) : new Date();
+}
+
+// Automatically scan the app directory to discover static routes dynamically
+function scanStaticRoutes(dir: string, baseDir: string = dir): string[] {
+  const result: string[] = [];
+
+  if (!fs.existsSync(dir)) return [];
+
+  const files = fs.readdirSync(dir, { withFileTypes: true });
+
+  for (const file of files) {
+    const fullPath = path.join(dir, file.name);
+
+    if (file.isDirectory()) {
+      // Exclude Next.js internal/special folders and API routes
+      if (
+        file.name.startsWith("_") || 
+        file.name === "api" ||
+        file.name.startsWith(".")
+      ) {
+        continue;
+      }
+      result.push(...scanStaticRoutes(fullPath, baseDir));
+    } else if (
+      file.isFile() &&
+      (file.name === "page.tsx" || file.name === "page.ts" || file.name === "page.js")
+    ) {
+      const relativePath = path.relative(baseDir, dir);
+      let routePath = relativePath.replace(/\\/g, "/");
+
+      // Strip Route Groups e.g. (shop), (auth)
+      routePath = routePath
+        .split("/")
+        .filter((segment) => !/^\(.*\)$/.test(segment))
+        .join("/");
+
+      // Exclude dynamic route segments e.g. [slug]
+      if (routePath.includes("[") || routePath.includes("]")) {
+        continue;
+      }
+
+      const finalRoute = routePath ? `/${routePath}` : "/";
+      result.push(finalRoute);
+    }
+  }
+
+  return result;
 }
 
 async function fetchAllProducts() {
@@ -49,50 +98,45 @@ async function fetchAllBlogPosts() {
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
-  const staticRoutes: MetadataRoute.Sitemap = [
-    {
-      url: absoluteUrl("/"),
+
+  // Scan app directory dynamically
+  const appDirectory = path.join(process.cwd(), "src/app");
+  const scannedPaths = scanStaticRoutes(appDirectory);
+
+  // Map scanned static paths with custom SEO priorities
+  const scannedStaticRoutes: MetadataRoute.Sitemap = scannedPaths.map((route) => {
+    let priority = 0.6;
+    let changeFrequency: "daily" | "weekly" | "monthly" | "yearly" = "weekly";
+
+    if (route === "/") {
+      priority = 1.0;
+      changeFrequency = "daily";
+    } else if (route === "/san-pham" || route === "/blog") {
+      priority = 0.9;
+      changeFrequency = "daily";
+    } else if (route.includes("chinh-sach") || route.includes("quy-dinh")) {
+      priority = 0.3;
+      changeFrequency = "yearly";
+    } else if (route === "/gio-hang" || route === "/thanh-toan") {
+      priority = 0.1;
+      changeFrequency = "monthly";
+    }
+
+    return {
+      url: absoluteUrl(route),
       lastModified: now,
-      changeFrequency: "daily",
-      priority: 1,
-    },
-    {
-      url: absoluteUrl("/san-pham"),
-      lastModified: now,
-      changeFrequency: "daily",
-      priority: 0.9,
-    },
-    ...COLLECTION_SLUGS.map((slug) => ({
-      url: absoluteUrl(`/${slug}`),
-      lastModified: now,
-      changeFrequency: "weekly" as const,
-      priority: 0.8,
-    })),
-    {
-      url: absoluteUrl("/blog"),
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.7,
-    },
-    {
-      url: absoluteUrl("/thu-vien"),
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.5,
-    },
-    {
-      url: absoluteUrl("/lien-he"),
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.5,
-    },
-    {
-      url: absoluteUrl("/chinh-sach"),
-      lastModified: now,
-      changeFrequency: "yearly",
-      priority: 0.3,
-    },
-  ];
+      changeFrequency,
+      priority,
+    };
+  });
+
+  // Map collection slugs
+  const collectionRoutes: MetadataRoute.Sitemap = COLLECTION_SLUGS.map((slug) => ({
+    url: absoluteUrl(`/${slug}`),
+    lastModified: now,
+    changeFrequency: "weekly" as const,
+    priority: 0.8,
+  }));
 
   const [productsResult, blogPostsResult] = await Promise.allSettled([
     fetchAllProducts(),
@@ -124,5 +168,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           }))
       : [];
 
-  return [...staticRoutes, ...productRoutes, ...blogRoutes];
+  // Combine dynamic scanned routes, collections, products, and blogs
+  // Use a map to filter out any potential duplicate URLs
+  const allRoutes = [
+    ...scannedStaticRoutes,
+    ...collectionRoutes,
+    ...productRoutes,
+    ...blogRoutes,
+  ];
+
+  const uniqueRoutesMap = new Map<string, MetadataRoute.Sitemap[number]>();
+  for (const route of allRoutes) {
+    uniqueRoutesMap.set(route.url, route);
+  }
+
+  return Array.from(uniqueRoutesMap.values());
 }
