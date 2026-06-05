@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ProductCard } from "@/components/shop/ProductCard";
 import { Product } from "@/types/product";
 import { LiquidGlassCard } from "@/components/ui/liquid-glass";
@@ -40,6 +40,10 @@ export default function CollectionClient({
   slug,
   collectionTitle,
 }: CollectionClientProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const loaderRef = useRef<HTMLDivElement>(null);
+
   const [currentPage, setCurrentPage] = useState(1);
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
   const queryCategory = searchParams.get("category");
