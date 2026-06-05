@@ -72,7 +72,8 @@ export function ContactClient() {
     <>
       <Header cartCount={cartCount} />
 
-      <section className="contact-page">
+      <main id="main-content">
+        <section className="contact-page">
         <Navpages
           items={[{ label: "Trang chủ", href: "/" }, { label: "Liên hệ" }]}
         />
@@ -254,6 +255,7 @@ export function ContactClient() {
         {/* FAQ Section */}
         <FAQOnly className="contact-faq" />
       </section>
+      </main>
 
       <Footer />
 
@@ -290,7 +292,7 @@ export function ContactClient() {
 
         .contact-subtitle {
           font-size: 14px;
-          color: var(--text-muted);
+          color: #4b5563;
           max-width: 500px;
           margin: 0 auto;
         }
@@ -316,7 +318,7 @@ export function ContactClient() {
 
         .store-subtitle {
           font-size: 14px;
-          color: var(--text-muted);
+          color: #4b5563;
           max-width: 600px;
           margin: 0 auto;
           line-height: 1.6;
@@ -430,7 +432,7 @@ export function ContactClient() {
 
         .info-card-desc {
           font-size: 13px;
-          color: var(--text-muted);
+          color: #4b5563;
           margin-bottom: 24px;
         }
 
@@ -466,7 +468,7 @@ export function ContactClient() {
 
         .info-label {
           font-size: 11px;
-          color: var(--text-muted);
+          color: #4b5563;
           font-weight: 500;
         }
 
@@ -544,7 +546,7 @@ export function ContactClient() {
 
         .form-desc {
           font-size: 13px;
-          color: var(--text-muted);
+          color: #4b5563;
           margin-bottom: 24px;
         }
 

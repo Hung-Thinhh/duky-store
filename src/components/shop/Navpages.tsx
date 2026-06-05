@@ -24,7 +24,7 @@ export const Navpages = ({ items }: NavpagesProps) => {
       >
         {items.map((item, index) => (
           <li key={index} className="flex items-center gap-2">
-            {index > 0 && <span className="text-gray-400">/</span>}
+            {index > 0 && <span className="text-gray-500">/</span>}
             <span
               itemProp="itemListElement"
               itemScope
@@ -34,7 +34,7 @@ export const Navpages = ({ items }: NavpagesProps) => {
                 <Link
                   href={item.href}
                   itemProp="item"
-                  className="text-gray-500 hover:text-black transition-colors"
+                  className="text-gray-600 hover:text-black transition-colors"
                 >
                   <span itemProp="name">{item.label}</span>
                 </Link>

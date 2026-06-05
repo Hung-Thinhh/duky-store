@@ -75,7 +75,7 @@ const SignUpSection: React.FC = () => {
 
       {/* Right Panel - SignUp Form */}
       <div className="form-panel">
-        <button className="close-button-top" onClick={() => router.back()}>
+        <button className="close-button-top" onClick={() => router.back()} aria-label="Đóng">
           <X size={20} />
         </button>
         <div className="form-card animate-in fade-in slide-in-from-right duration-700 delay-300">
@@ -143,7 +143,7 @@ const SignUpSection: React.FC = () => {
         .welcome-desc {
           font-family: var(--font-main);
           font-size: 13px;
-          color: var(--text-muted);
+          color: #4b5563;
           line-height: 1.6;
           margin-bottom: 30px;
         }
@@ -259,15 +259,15 @@ const SignUpSection: React.FC = () => {
           position: absolute;
           top: 24px;
           right: 24px;
-          width: 36px;
-          height: 36px;
+          width: 48px;
+          height: 48px;
           border-radius: 50%;
           background: #f5f5f7;
           border: none;
           display: flex;
           align-items: center;
           justify-content: center;
-          color: var(--text-muted);
+          color: #4b5563;
           cursor: pointer;
           z-index: 10;
         }

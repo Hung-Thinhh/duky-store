@@ -176,7 +176,7 @@ export const CategorySection = ({
             </h3>
             <a
               href="/san-pham?isBestSeller=true"
-              className="group flex items-center gap-1.5 text-sm md:text-base font-medium text-gray-500 hover:text-black transition-colors"
+              className="group flex items-center gap-1.5 text-sm md:text-base font-medium text-gray-600 hover:text-black transition-colors"
             >
               Xem tất cả
               <ArrowRight
@@ -220,10 +220,7 @@ export const CategorySection = ({
                       key={product.id}
                       className="w-[220px] md:w-[240px] snap-start flex-shrink-0"
                     >
-                      <ProductCard
-                        product={product}
-                        variant="bestSeller"
-                      />
+                      <ProductCard product={product} variant="bestSeller" />
                     </div>
                   ))}
             </div>

@@ -151,7 +151,7 @@ export const BannerProduct: React.FC<BannerProductProps> = ({ slides }) => {
             src={currentSlide.image}
             alt={currentSlide.title}
             fill
-            sizes="(max-width: 1024px) 100vw, 800px"
+            sizes="(max-width: 767px) 40vw, (max-width: 1024px) 60vw, 420px"
             className="object-contain object-right-bottom p-8"
             priority
           />

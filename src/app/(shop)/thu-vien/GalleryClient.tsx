@@ -94,7 +94,9 @@ export function GalleryClient() {
     <>
       <Header cartCount={cartCount} />
 
-      <section className="gallery-page">
+      <main id="main-content">
+        <section className="gallery-page">
+        <h2 className="sr-only">Thư viện hình ảnh và Lookbook</h2>
         <Navpages
           items={[{ label: "Trang chủ", href: "/" }, { label: "Lookbook" }]}
         />
@@ -258,6 +260,8 @@ export function GalleryClient() {
         </div>
       )}
 
+      </main>
+
       <Footer />
 
       <style jsx>{`
@@ -287,7 +291,7 @@ export function GalleryClient() {
           font-family: var(--font-main);
           font-size: 14px;
           font-weight: 500;
-          color: #71717a;
+          color: #4b5563;
           padding: 8px 28px;
           border: none;
           background: transparent;

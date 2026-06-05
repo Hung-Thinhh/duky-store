@@ -72,7 +72,7 @@ export const BootFemaleSection: React.FC<{ initialProducts?: Product[] }> = ({ i
                 <p className="text-sm md:text-base text-gray-600 font-medium">
                   Tôn dáng trong từng bước đi.
                 </p>
-                <p className="text-sm md:text-base text-gray-500">
+                <p className="text-sm md:text-base text-gray-600">
                   Phong cách nữ tính, cá tính và hiện đại.
                 </p>
               </div>
@@ -90,7 +90,7 @@ export const BootFemaleSection: React.FC<{ initialProducts?: Product[] }> = ({ i
                   </div>
                   <div>
                     <p className="text-sm font-bold text-black">{badge.value}</p>
-                    <p className="content text-[10px] text-gray-500 uppercase tracking-tight font-medium">
+                    <p className="content text-[10px] text-gray-600 uppercase tracking-tight font-medium">
                       {badge.label}
                     </p>
                   </div>

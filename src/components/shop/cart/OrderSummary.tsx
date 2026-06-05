@@ -28,9 +28,9 @@ export function OrderSummary({
         <div className="w-11 h-11 rounded-full bg-white flex items-center justify-center">
           <ClipboardList size={20} className="text-black" />
         </div>
-        <h3 className="font-serif text-lg font-bold text-black tracking-tight">
+        <h2 className="font-serif text-lg font-bold text-black tracking-tight">
           Tóm tắt đơn hàng
-        </h3>
+        </h2>
       </div>
 
       {/* Summary rows */}
@@ -49,7 +49,7 @@ export function OrderSummary({
             Phí giao hàng
           </span>
           {isFreeShipping ? (
-            <span className="text-sm font-medium text-green-600">
+            <span className="text-sm font-medium text-green-700">
               Khách hàng thanh toán
             </span>
           ) : (
@@ -76,14 +76,14 @@ export function OrderSummary({
         <div className="flex bg-teal-50 border border-teal-100 rounded-2xl overflow-hidden mb-6">
           {/* Left - Icon */}
           <div className="flex items-center justify-center px-4 bg-teal-100/50">
-            <Truck size={20} className="text-teal-600" />
+            <Truck size={20} className="text-teal-700" />
           </div>
           {/* Right - Info */}
           <div className="py-4 px-4">
-            <p className="text-sm font-semibold text-teal-700">
+            <p className="text-sm font-semibold text-teal-800">
               Phí giao hàng
             </p>
-            <p className="text-xs text-teal-600 mt-0.5">
+            <p className="text-xs text-teal-700 mt-0.5">
               Được tính theo giá bên vận chuyển
             </p>
           </div>

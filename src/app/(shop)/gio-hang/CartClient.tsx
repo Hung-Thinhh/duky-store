@@ -86,8 +86,9 @@ export function CartClient() {
     <>
       <Header cartCount={cartCount} />
 
-      <section className="mt-12 pt-10 pb-20 px-2 md:px-6 overflow-x-hidden">
-        <div className="container-custom !px-1 md:!px-8">
+      <main id="main-content">
+        <section className="mt-12 pt-10 pb-20 px-2 md:px-6 overflow-x-hidden">
+          <div className="container-custom !px-1 md:!px-8">
           {/* Breadcrumb */}
           <Navpages
             items={[{ label: "Trang chủ", href: "/" }, { label: "Giỏ hàng" }]}
@@ -174,8 +175,9 @@ export function CartClient() {
         </div>
       </section>
 
-      {/* Section 2: Recommendations */}
-      <RecommendSection title="Bạn có thể thích" />
+        {/* Section 2: Recommendations */}
+        <RecommendSection title="Bạn có thể thích" />
+      </main>
 
       <Footer />
     </>

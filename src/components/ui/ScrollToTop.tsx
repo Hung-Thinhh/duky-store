@@ -37,16 +37,16 @@ export const ScrollToTop = () => {
           initial={{ opacity: 0, scale: 0.5, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.5, y: 20 }}
-          whileHover={{ 
+          whileHover={{
             y: -5,
-            transition: { duration: 0.2 }
+            transition: { duration: 0.2 },
           }}
           whileTap={{ scale: 0.9 }}
           onClick={scrollToTop}
           className={cn(
             "fixed bottom-8 right-8 z-50 p-4 rounded-full shadow-2xl",
             "bg-linear-to-br from-black via-zinc-900 to-zinc-700 text-white hover:shadow-premium-black transition-all duration-300",
-            "flex items-center justify-center group cursor-pointer border border-white/10"
+            "flex items-center justify-center group cursor-pointer border border-white/10",
           )}
           aria-label="Cuộn lên đầu trang"
         >

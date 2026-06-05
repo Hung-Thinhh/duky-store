@@ -64,9 +64,9 @@ export function CartItemRow({
       <div className="flex-1 min-w-0 ml-4 pr-10 flex flex-col justify-between">
         {/* Top: name */}
         <div>
-          <h3 className="px-2 content text-base sm:text-sm font-semibold text-black leading-snug line-clamp-2">
+          <div className="px-2 content text-base sm:text-sm font-semibold text-black leading-snug line-clamp-2">
             {item.productName}
-          </h3>
+          </div>
           {item.variantName && (
             <p className="p-2 text-xs text-slate-500 mt-1">
               {item.variantName}

@@ -2,8 +2,7 @@ import { Suspense } from "react";
 import dynamic from "next/dynamic";
 import type { Metadata } from "next";
 
-import { Footer } from "@/components/layout";
-import { CategorySection } from "@/components/shop";
+import { CategorySection } from "@/components/shop/home/CategorySection";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { buildMetadata } from "@/lib/metadata";
 import { buildWebsiteJsonLd, buildStoreJsonLd } from "@/lib/structured-data";
@@ -11,6 +10,11 @@ import { SectionSkeleton } from "@/components/shop/home/SectionSkeleton";
 import { HomeHeader } from "./HomeHeader";
 import { HomeHeroBanner } from "./HomeHeroBanner";
 import { HomeCartToast } from "./HomeCartToast";
+
+const Footer = dynamic(
+  () => import("@/components/layout/Footer").then((m) => m.Footer),
+  { ssr: true }
+);
 
 // Lazy-load below-fold sections to reduce initial bundle size.
 // These components use motion/gsap and are "use client" — dynamic import
@@ -63,6 +67,8 @@ const LazyPreFooter = dynamic(
   { loading: () => <SectionSkeleton /> },
 );
 
+import { LazySection } from "@/components/shop/home/LazySection";
+
 import { getHeroSliderData } from "@/data/heroSlider";
 import {
   fetchProductsByCategories,
@@ -82,7 +88,6 @@ export async function generateMetadata(): Promise<Metadata> {
   });
 }
 
-import { preload } from "react-dom";
 import { Product } from "@/types/product";
 
 function trimProduct(p: Product): Product {
@@ -133,27 +138,6 @@ function trimProduct(p: Product): Product {
 }
 
 export default async function ShopPage() {
-  // Surgical preloads for Slide 1 LCP assets to fetch them as early as possible
-  preload("/assets/slider_1/background-mobile.webp", {
-    as: "image",
-    media: "(max-width: 767px)",
-    fetchPriority: "high",
-  } as any);
-  preload("/assets/slider_1/background.webp", {
-    as: "image",
-    media: "(min-width: 768px)",
-    fetchPriority: "high",
-  } as any);
-  preload("/assets/slider_1/boot.webp", {
-    as: "image",
-    fetchPriority: "high",
-  } as any);
-  preload("/assets/slider_1/buc-phat-sang.webp", {
-    as: "image",
-    media: "(max-width: 767px)",
-    fetchPriority: "high",
-  } as any);
-
   const slides = await getHeroSliderData();
   const [maleProducts, femaleProducts, bestSellersResult, blogPostsResult] =
     await Promise.all([
@@ -180,29 +164,48 @@ export default async function ShopPage() {
       <JsonLd data={buildStoreJsonLd()} />
       {/* Above-fold: rendered synchronously for fast LCP */}
       <HomeHeader />
-      <HomeHeroBanner initialSlides={slides} />
-      <div className="home-page-sections">
-        <CategorySection initialProducts={bestSellers} />
-        {/* Below-fold: lazy-loaded with Suspense boundaries */}
-        <Suspense fallback={<SectionSkeleton />}>
-          <LazyBootMaleSection initialProducts={trimmedMaleProducts} />
-        </Suspense>
-        <Suspense fallback={<SectionSkeleton />}>
-          <LazyBootFemaleSection initialProducts={trimmedFemaleProducts} />
-        </Suspense>
-        <Suspense fallback={<SectionSkeleton />}>
-          <LazyGuideSection />
-        </Suspense>
-        <Suspense fallback={<SectionSkeleton />}>
-          <LazyNewsSection initialNewsItems={newsItems} />
-        </Suspense>
-        <Suspense fallback={<SectionSkeleton />}>
-          <LazyFAQSection />
-        </Suspense>
-        <Suspense fallback={<SectionSkeleton />}>
-          <LazyPreFooter />
-        </Suspense>
-      </div>
+      <main id="main-content">
+        <HomeHeroBanner initialSlides={slides} />
+        <div className="home-page-sections">
+          <CategorySection initialProducts={bestSellers} />
+          {/* Below-fold: lazy-loaded on scroll with LazySection wrapper */}
+          <LazySection fallback={<SectionSkeleton />}>
+            <Suspense fallback={<SectionSkeleton />}>
+              <LazyBootMaleSection initialProducts={trimmedMaleProducts} />
+            </Suspense>
+          </LazySection>
+
+          <LazySection fallback={<SectionSkeleton />}>
+            <Suspense fallback={<SectionSkeleton />}>
+              <LazyBootFemaleSection initialProducts={trimmedFemaleProducts} />
+            </Suspense>
+          </LazySection>
+
+          <LazySection fallback={<SectionSkeleton />}>
+            <Suspense fallback={<SectionSkeleton />}>
+              <LazyGuideSection />
+            </Suspense>
+          </LazySection>
+
+          <LazySection fallback={<SectionSkeleton />}>
+            <Suspense fallback={<SectionSkeleton />}>
+              <LazyNewsSection initialNewsItems={newsItems} />
+            </Suspense>
+          </LazySection>
+
+          <LazySection fallback={<SectionSkeleton />}>
+            <Suspense fallback={<SectionSkeleton />}>
+              <LazyFAQSection />
+            </Suspense>
+          </LazySection>
+
+          <LazySection fallback={<SectionSkeleton />}>
+            <Suspense fallback={<SectionSkeleton />}>
+              <LazyPreFooter />
+            </Suspense>
+          </LazySection>
+        </div>
+      </main>
       <Footer />
       <HomeCartToast />
     </>

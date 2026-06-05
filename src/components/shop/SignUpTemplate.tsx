@@ -108,6 +108,7 @@ const SignUpTemplate: React.FC = () => {
             type="button" 
             className="password-toggle"
             onClick={() => setShowPassword(!showPassword)}
+            aria-label={showPassword ? "Ẩn mật khẩu" : "Hiển thị mật khẩu"}
           >
             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>
@@ -129,6 +130,7 @@ const SignUpTemplate: React.FC = () => {
             type="button" 
             className="password-toggle"
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+            aria-label={showConfirmPassword ? "Ẩn mật khẩu xác nhận" : "Hiển thị mật khẩu xác nhận"}
           >
             {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>
@@ -211,7 +213,7 @@ const SignUpTemplate: React.FC = () => {
         .signup-subtitle {
           font-family: var(--font-main);
           font-size: 14px;
-          color: var(--text-muted);
+          color: #4b5563;
         }
 
         .signup-form {
@@ -229,7 +231,7 @@ const SignUpTemplate: React.FC = () => {
         .input-icon {
           position: absolute;
           left: 16px;
-          color: #888888;
+          color: #4b5563;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -258,10 +260,12 @@ const SignUpTemplate: React.FC = () => {
 
         .password-toggle {
           position: absolute;
-          right: 16px;
+          right: 0;
+          height: 100%;
+          width: 44px;
           background: none;
           border: none;
-          color: #888888;
+          color: #4b5563;
           cursor: pointer;
           display: flex;
           align-items: center;
@@ -358,7 +362,7 @@ const SignUpTemplate: React.FC = () => {
         .divider-text {
           font-family: var(--font-main);
           font-size: 13px;
-          color: var(--text-muted);
+          color: #4b5563;
           white-space: nowrap;
         }
 
@@ -371,7 +375,7 @@ const SignUpTemplate: React.FC = () => {
           text-align: center;
           font-family: var(--font-main);
           font-size: 15px;
-          color: var(--text-muted);
+          color: #4b5563;
           margin-top: 8px;
         }
 

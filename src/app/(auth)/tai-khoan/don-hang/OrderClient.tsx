@@ -46,14 +46,14 @@ function getStatusLabel(status: string): string {
 
 function getStatusColor(status: string): { color: string; bg: string } {
   switch (status) {
-    case "PENDING": return { color: "#f59e0b", bg: "#fef3c7" };
-    case "CONFIRMED": return { color: "#3b82f6", bg: "#dbeafe" };
-    case "PROCESSING": return { color: "#8b5cf6", bg: "#ede9fe" };
-    case "SHIPPING": return { color: "#f59e0b", bg: "#fef3c7" };
+    case "PENDING": return { color: "#92400e", bg: "#fef3c7" };
+    case "CONFIRMED": return { color: "#1d4ed8", bg: "#dbeafe" };
+    case "PROCESSING": return { color: "#6d28d9", bg: "#ede9fe" };
+    case "SHIPPING": return { color: "#92400e", bg: "#fef3c7" };
     case "DELIVERED":
-    case "COMPLETED": return { color: "#16a34a", bg: "#dcfce7" };
-    case "CANCELLED": return { color: "#ef4444", bg: "#fef2f2" };
-    default: return { color: "#6b7280", bg: "#f3f4f6" };
+    case "COMPLETED": return { color: "#15803d", bg: "#dcfce7" };
+    case "CANCELLED": return { color: "#b91c1c", bg: "#fef2f2" };
+    default: return { color: "#4b5563", bg: "#f3f4f6" };
   }
 }
 

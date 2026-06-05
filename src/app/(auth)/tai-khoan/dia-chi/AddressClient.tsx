@@ -372,7 +372,7 @@ export function AddressClient() {
 
                     {/* Center: Info */}
                     <div className="address-card-center">
-                      <h3 className="address-card-name">{addr.fullName}</h3>
+                      <div className="address-card-name">{addr.fullName}</div>
                       <p className="address-card-phone">SĐT: {addr.phone}</p>
                       <p className="address-card-address">
                         Địa chỉ: {formatFullAddress(addr)}
@@ -466,7 +466,7 @@ export function AddressClient() {
         }
         .sidebar-type {
           font-size: 12px;
-          color: #f59e0b;
+          color: #b45309;
           font-weight: 600;
           margin-top: 2px;
         }
@@ -517,7 +517,7 @@ export function AddressClient() {
           font-weight: 600;
         }
         .sidebar-nav-item--logout {
-          color: #ef4444;
+          color: #d32f2f;
           margin-top: 8px;
         }
         .sidebar-nav-item--logout:hover {
@@ -743,7 +743,7 @@ export function AddressClient() {
         }
 
         .address-type-badge--default {
-          color: #f59e0b;
+          color: #92400e;
           background: #fef3c7;
         }
 
@@ -827,7 +827,7 @@ export function AddressClient() {
         }
 
         .address-action-btn--delete {
-          color: #ef4444;
+          color: #d32f2f;
           border-color: #fecaca;
         }
 
@@ -881,7 +881,7 @@ export function AddressClient() {
         }
         .alert-banner--error {
           background: #fee2e2;
-          color: #ef4444;
+          color: #b91c1c;
           border: 1px solid #fecaca;
         }
 

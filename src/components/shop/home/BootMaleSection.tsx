@@ -72,7 +72,7 @@ export const BootMaleSection: React.FC<{ initialProducts?: Product[] }> = ({ ini
                 <p className="text-sm md:text-base text-gray-600 font-medium">
                   Bản lĩnh trong từng bước đi.
                 </p>
-                <p className="text-sm md:text-base text-gray-500">
+                <p className="text-sm md:text-base text-gray-600">
                   Phong cách nam tính, form chuẩn, dễ phối mọi outfit.
                 </p>
               </div>
@@ -92,7 +92,7 @@ export const BootMaleSection: React.FC<{ initialProducts?: Product[] }> = ({ ini
                     <p className="text-sm font-bold text-black">
                       {badge.value}
                     </p>
-                    <p className="text-[10px] content text-gray-500 uppercase tracking-tight font-medium">
+                    <p className="text-[10px] content text-gray-600 uppercase tracking-tight font-medium">
                       {badge.label}
                     </p>
                   </div>

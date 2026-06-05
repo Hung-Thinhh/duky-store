@@ -25,7 +25,7 @@ export const PreFooter = () => {
                   Sẵn sàng tìm đôi boot <br className="hidden md:block" />
                   hợp phong cách của bạn?
                 </h2>
-                <p className="content text-base md:text-lg text-gray-500 max-w-md">
+                <p className="content text-base md:text-lg text-gray-600 max-w-md">
                   Khám phá các mẫu boot da nam nữ đang có sẵn tại Duky Store Cần
                   Thơ.
                 </p>

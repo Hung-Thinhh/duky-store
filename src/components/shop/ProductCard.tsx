@@ -83,7 +83,7 @@ export const ProductCard = ({
         alt={product.image?.altText || product.name}
         fill
         priority={priority}
-        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 240px"
         className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
       />
       {/* Top Bar - Float over image */}
@@ -115,14 +115,14 @@ export const ProductCard = ({
       <div className="flex items-center gap-2 mt-0.5">
         <p className="text-sm text-black font-bold">{priceText}</p>
         {hasDiscount(product) && (
-          <p className="text-xs text-gray-400 line-through">
+          <p className="text-xs text-gray-600 line-through">
             {formatCurrency(product.originalPrice ?? product.price ?? 0)}
           </p>
         )}
       </div>
       {typeof rating === "number" && (
-        <div className="flex items-center gap-1 text-[10px] text-gray-400 mt-1">
-          <Star size={12} className="fill-gray-400 text-gray-400" />
+        <div className="flex items-center gap-1 text-[10px] text-gray-600 mt-1">
+          <Star size={12} className="fill-gray-600 text-gray-600" />
           <span>
             {rating.toFixed(1)}{" "}
             {typeof reviewsCount === "number" && `(${reviewsCount})`}

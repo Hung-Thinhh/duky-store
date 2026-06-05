@@ -50,24 +50,24 @@ export function BlogCard({ post, variant = "default" }: BlogCardProps) {
     return (
       <Link
         href={`/blog/${post.slug}`}
-        className="group block relative overflow-hidden rounded-2xl bg-gray-900 aspect-[16/9] md:aspect-[21/9]"
+        className="group block relative overflow-hidden rounded-2xl bg-black aspect-[16/9] md:aspect-[21/9]"
       >
         {coverUrl && (
           <Image
             src={coverUrl}
             alt={post.coverMedia?.altText || post.title}
             fill
-            className="object-contain opacity-60 group-hover:opacity-40 group-hover:scale-105 transition-all duration-500"
+            className="object-contain opacity-100 group-hover:opacity-90 group-hover:scale-105 transition-all duration-500"
             sizes="(max-width: 768px) 100vw, 900px"
             priority
           />
         )}
         {/* Date Badge */}
-        <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-sm rounded-xl px-3 py-2 text-center min-w-[52px]">
+        <div className="absolute top-4 left-4 bg-black/40 backdrop-blur-md border border-white/20 rounded-2xl px-3.5 py-2 text-center min-w-[52px]">
           <span className="block text-lg font-bold text-white leading-tight">
             {dateParts.day}
           </span>
-          <span className="block text-[10px] font-semibold uppercase text-gray-300 tracking-wider">
+          <span className="block text-[10px] font-semibold uppercase text-white tracking-wider">
             {dateParts.month}
           </span>
         </div>
@@ -112,11 +112,11 @@ export function BlogCard({ post, variant = "default" }: BlogCardProps) {
           </div>
         )}
         {/* Date Badge */}
-        <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-sm rounded-xl px-3.5 py-2 text-center min-w-[56px]">
+        <div className="absolute top-3 left-3 bg-black/40 backdrop-blur-md border border-white/20 rounded-2xl px-3.5 py-2 text-center min-w-[56px]">
           <span className="block text-xl font-bold text-white leading-tight">
             {dateParts.day}
           </span>
-          <span className="block text-[11px] font-semibold uppercase text-gray-300 tracking-wider">
+          <span className="block text-[11px] font-semibold uppercase text-white tracking-wider">
             {dateParts.month}
           </span>
         </div>
@@ -131,7 +131,7 @@ export function BlogCard({ post, variant = "default" }: BlogCardProps) {
               {post.categories.map((cat) => (
                 <span
                   key={cat.id}
-                  className="text-[10px] font-semibold uppercase tracking-wider text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full"
+                  className="text-[10px] font-semibold uppercase tracking-wider text-gray-600 bg-gray-100 px-2 py-0.5 rounded-full"
                 >
                   {cat.name}
                 </span>
@@ -146,7 +146,7 @@ export function BlogCard({ post, variant = "default" }: BlogCardProps) {
 
           {/* Excerpt */}
           {post.excerpt && (
-            <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed">
+            <p className="text-xs text-gray-600 line-clamp-2 leading-relaxed">
               {post.excerpt}
             </p>
           )}

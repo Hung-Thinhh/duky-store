@@ -32,7 +32,7 @@ const FeedBackCard: React.FC<FeedBackCardProps> = ({
             />
           </div>
           <div>
-            <h4 className="text-text-main font-bold text-base leading-tight">{name}</h4>
+            <h3 className="text-text-main font-bold text-base leading-tight">{name}</h3>
             <p className="text-text-muted text-xs mt-0.5">{location}</p>
           </div>
         </div>

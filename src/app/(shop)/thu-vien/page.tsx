@@ -52,7 +52,7 @@ export default function GalleryPage() {
         <div className="absolute inset-0 flex items-center">
           <div className="w-full max-w-[1440px] mx-auto px-6 md:px-20">
             <div className="space-y-2 md:space-y-3 max-w-sm sm:max-w-md">
-              <span className="inline-block text-[10px] md:text-xs font-medium tracking-widest text-gray-500 uppercase">
+              <span className="inline-block text-[10px] md:text-xs font-medium tracking-widest text-gray-600 uppercase">
                 {GALLERY_BANNER.badge}
               </span>
               <h1 className="leading-[1.1] tracking-tighter text-gray-900">
@@ -67,7 +67,7 @@ export default function GalleryPage() {
               </h1>
               <div className="flex items-start gap-2 md:gap-3 max-w-[170px] sm:max-w-sm">
                 <div className="w-6 sm:w-8 h-px bg-gray-900 mt-2 shrink-0" />
-                <p className="text-[11px] md:text-sm text-gray-500 leading-relaxed font-light line-clamp-3 sm:line-clamp-none">
+                <p className="text-[11px] md:text-sm text-gray-600 leading-relaxed font-light line-clamp-3 sm:line-clamp-none">
                   {GALLERY_BANNER.description}
                 </p>
               </div>

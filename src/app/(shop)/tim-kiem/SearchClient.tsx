@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { ProductCard } from "@/components/shop/ProductCard";
@@ -8,7 +8,6 @@ import { Product } from "@/types/product";
 import { LiquidGlassCard } from "@/components/ui/liquid-glass";
 import { PackageOpen } from "lucide-react";
 import { Navpages } from "@/components/shop/Navpages";
-import { Pagination } from "@/components/shop/Pagination";
 import Filter, { FilterState } from "@/components/shop/Fillter";
 import { useProducts } from "@/hooks/useProducts";
 import { Header, Footer } from "@/components/layout";
@@ -31,6 +30,9 @@ export function SearchClient() {
     priceMax: 5_000_000,
   });
 
+  const [accumulatedProducts, setAccumulatedProducts] = useState<Product[]>([]);
+  const loaderRef = useRef<HTMLDivElement>(null);
+
   // Fetch products by search query + selected category + price range
   const { products, loading, pagination } = useProducts({
     page: currentPage,
@@ -44,6 +46,51 @@ export function SearchClient() {
   });
 
   const totalPages = pagination?.totalPages ?? 1;
+
+  // Reset accumulated products and page when query changes
+  useEffect(() => {
+    setCurrentPage(1);
+    setAccumulatedProducts([]);
+  }, [query]);
+
+  // Reset accumulated products when filter state changes
+  useEffect(() => {
+    setAccumulatedProducts([]);
+  }, [filterState]);
+
+  // Accumulate products as pages load
+  useEffect(() => {
+    if (products && products.length > 0) {
+      setAccumulatedProducts((prev) => {
+        const existingIds = new Set(prev.map((p) => p.id));
+        const newProducts = products.filter((p) => !existingIds.has(p.id));
+        return [...prev, ...newProducts];
+      });
+    }
+  }, [products]);
+
+  // IntersectionObserver for Infinite Scroll
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && currentPage < totalPages && !loading) {
+          setCurrentPage((prev) => prev + 1);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    const currentLoader = loaderRef.current;
+    if (currentLoader) {
+      observer.observe(currentLoader);
+    }
+
+    return () => {
+      if (currentLoader) {
+        observer.unobserve(currentLoader);
+      }
+    };
+  }, [currentPage, totalPages, loading]);
 
   const handleFilterChange = (state: FilterState) => {
     setFilterState(state);
@@ -81,7 +128,7 @@ export function SearchClient() {
         <div className="absolute inset-0 flex items-center">
           <div className="w-full max-w-[1440px] mx-auto px-6 md:px-20">
             <div className="space-y-2 md:space-y-3 max-w-sm sm:max-w-md">
-              <span className="inline-block text-[10px] md:text-xs font-medium tracking-widest text-gray-500 uppercase">
+              <span className="inline-block text-[10px] md:text-xs font-medium tracking-widest text-gray-600 uppercase">
                 SEARCH RESULTS
               </span>
               <h1 className="leading-[1.1] tracking-tighter text-gray-900">
@@ -96,7 +143,7 @@ export function SearchClient() {
               </h1>
               <div className="flex items-start gap-2 md:gap-3 max-w-[170px] sm:max-w-sm">
                 <div className="w-6 sm:w-8 h-px bg-gray-900 mt-2 shrink-0" />
-                <p className="text-[11px] md:text-sm text-gray-500 leading-relaxed font-light line-clamp-3 sm:line-clamp-none">
+                <p className="text-[11px] md:text-sm text-gray-600 leading-relaxed font-light line-clamp-3 sm:line-clamp-none">
                   {query
                     ? `Danh sách sản phẩm phù hợp với từ khóa "${query}".`
                     : "Vui lòng nhập từ khóa tìm kiếm."}
@@ -107,8 +154,9 @@ export function SearchClient() {
         </div>
       </section>
 
-      <section className="products-page">
-        {/* Breadcrumb */}
+      <main id="main-content">
+        <section className="products-page">
+          {/* Breadcrumb */}
         <Navpages
           items={[
             { label: "Trang chủ", href: "/" },
@@ -134,7 +182,7 @@ export function SearchClient() {
           {/* Product Grid */}
           <div className="products-grid-wrap">
             <div className="products-grid-inner">
-              {loading ? (
+              {currentPage === 1 && loading && accumulatedProducts.length === 0 ? (
                 <div className="products-grid">
                   {Array.from({ length: PRODUCTS_PER_PAGE }).map((_, i) => (
                     <div key={i} className="product-skeleton">
@@ -144,18 +192,31 @@ export function SearchClient() {
                     </div>
                   ))}
                 </div>
-              ) : products.length > 0 ? (
-                <div className="products-grid">
-                  {products.map((product, index) => (
-                    <ProductCard
-                      key={product.id}
-                      product={product}
-                      isFavorite={favoriteIds.has(product.id)}
-                      onToggleFavorite={toggleFavorite}
-                      priority={index < 4}
-                    />
-                  ))}
-                </div>
+              ) : accumulatedProducts.length > 0 ? (
+                <>
+                  <div className="products-grid">
+                    {accumulatedProducts.map((product, index) => (
+                      <ProductCard
+                        key={product.id}
+                        product={product}
+                        isFavorite={favoriteIds.has(product.id)}
+                        onToggleFavorite={toggleFavorite}
+                        priority={index < 4}
+                      />
+                    ))}
+                  </div>
+                  {currentPage > 1 && loading && (
+                    <div className="products-grid mt-4">
+                      {Array.from({ length: 4 }).map((_, i) => (
+                        <div key={i} className="product-skeleton">
+                          <div className="skeleton-img" />
+                          <div className="skeleton-text skeleton-text--long" />
+                          <div className="skeleton-text skeleton-text--short" />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </>
               ) : (
                 <div className="products-empty">
                   <PackageOpen size={64} className="products-empty-icon" />
@@ -171,15 +232,16 @@ export function SearchClient() {
               )}
             </div>
 
-            {/* Pagination */}
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={setCurrentPage}
-            />
+            {/* Loader for Infinite Scroll */}
+            {currentPage < totalPages && (
+              <div ref={loaderRef} className="flex justify-center items-center py-8">
+                <div className="w-6 h-6 border-2 border-slate-300 border-t-black rounded-full animate-spin" />
+              </div>
+            )}
           </div>
         </div>
       </section>
+      </main>
 
       <Footer />
 

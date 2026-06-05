@@ -149,7 +149,8 @@ export const FAQSection = () => {
                   allowFullScreen={true}
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
-                className="absolute inset-0 transition-all duration-700 ease-in-out scale-100 group-hover:scale-102"
+                  title="Bản đồ vị trí cửa hàng Duky Store tại Cần Thơ"
+                  className="absolute inset-0 transition-all duration-700 ease-in-out scale-100 group-hover:scale-102"
                 ></iframe>
             </div>
           </div>

@@ -215,6 +215,7 @@ export const Header = ({ cartCount }: HeaderProps) => {
           <div className="flex items-center gap-6 md:gap-6">
             <button
               onClick={() => setIsSearchOpen(!isSearchOpen)}
+              aria-label="Tìm kiếm sản phẩm"
               className="text-text-main hover:scale-110 transition-transform cursor-pointer"
             >
               <Search size={22} strokeWidth={2} />
@@ -223,6 +224,7 @@ export const Header = ({ cartCount }: HeaderProps) => {
               <div className="relative hidden sm:block" ref={accountMenuRef}>
                 <button
                   onClick={() => setIsAccountMenuOpen(!isAccountMenuOpen)}
+                  aria-label="Tài khoản cá nhân"
                   className="hover:scale-110 transition-transform cursor-pointer"
                 >
                   <Avatar fullName={customer.fullName} size="desktop" />
@@ -321,6 +323,7 @@ export const Header = ({ cartCount }: HeaderProps) => {
             ) : (
               <Link
                 href="/dang-nhap"
+                aria-label="Đăng nhập tài khoản"
                 className="text-text-main hover:scale-110 transition-transform hidden sm:block cursor-pointer"
               >
                 <User size={22} strokeWidth={2} />
@@ -328,6 +331,7 @@ export const Header = ({ cartCount }: HeaderProps) => {
             )}
             <Link
               href="/gio-hang"
+              aria-label="Giỏ hàng"
               className="text-text-main hover:scale-110 transition-transform relative cursor-pointer"
             >
               <ShoppingBag size={22} strokeWidth={2} />
@@ -365,6 +369,7 @@ export const Header = ({ cartCount }: HeaderProps) => {
           {/* Mobile Menu Toggle */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
+            aria-label={isMenuOpen ? "Đóng menu" : "Mở menu"}
             className="lg:hidden p-1 text-text-main"
           >
             {isMenuOpen ? <X size={24} /> : <Menu size={24} />}

@@ -148,16 +148,17 @@ export function SettingClient() {
               <div className="profile-content">
                 <div className="profile-form">
                   <div className="form-field">
-                    <label className="form-label">Họ và tên</label>
-                    <input type="text" className="form-input" value={fullName} onChange={(e) => setFullName(e.target.value)} />
+                    <label className="form-label" htmlFor="fullName">Họ và tên</label>
+                    <input id="fullName" type="text" className="form-input" value={fullName} onChange={(e) => setFullName(e.target.value)} />
                   </div>
                   <div className="form-field">
-                    <label className="form-label">Email</label>
-                    <input type="email" className="form-input form-input--disabled" value={email} readOnly />
+                    <label className="form-label" htmlFor="email">Email</label>
+                    <input id="email" type="email" className="form-input form-input--disabled" value={email} readOnly />
                   </div>
                   <div className="form-field">
-                    <label className="form-label">Số điện thoại</label>
+                    <label className="form-label" htmlFor="phone">Số điện thoại</label>
                     <input
+                      id="phone"
                       type="tel"
                       className="form-input"
                       value={phone || ""}
@@ -197,24 +198,24 @@ export function SettingClient() {
                   )}
                   <div className="password-grid">
                     <div className="form-field">
-                      <label className="form-label">Mật khẩu hiện tại</label>
+                      <label className="form-label" htmlFor="currentPassword">Mật khẩu hiện tại</label>
                       <div className="form-input-wrap">
-                        <input type={showCurrent ? "text" : "password"} className="form-input-inner" placeholder="Nhập mật khẩu hiện tại" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} />
-                        <button type="button" className="toggle-pw" onClick={() => setShowCurrent(!showCurrent)}>{showCurrent ? <EyeOff size={16} /> : <Eye size={16} />}</button>
+                        <input id="currentPassword" type={showCurrent ? "text" : "password"} className="form-input-inner" placeholder="Nhập mật khẩu hiện tại" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} />
+                        <button type="button" className="toggle-pw" onClick={() => setShowCurrent(!showCurrent)} aria-label={showCurrent ? "Ẩn mật khẩu hiện tại" : "Hiển thị mật khẩu hiện tại"}>{showCurrent ? <EyeOff size={16} /> : <Eye size={16} />}</button>
                       </div>
                     </div>
                     <div className="form-field">
-                      <label className="form-label">Mật khẩu mới</label>
+                      <label className="form-label" htmlFor="newPassword">Mật khẩu mới</label>
                       <div className="form-input-wrap">
-                        <input type={showNew ? "text" : "password"} className="form-input-inner" placeholder="Nhập mật khẩu mới" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
-                        <button type="button" className="toggle-pw" onClick={() => setShowNew(!showNew)}>{showNew ? <EyeOff size={16} /> : <Eye size={16} />}</button>
+                        <input id="newPassword" type={showNew ? "text" : "password"} className="form-input-inner" placeholder="Nhập mật khẩu mới" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+                        <button type="button" className="toggle-pw" onClick={() => setShowNew(!showNew)} aria-label={showNew ? "Ẩn mật khẩu mới" : "Hiển thị mật khẩu mới"}>{showNew ? <EyeOff size={16} /> : <Eye size={16} />}</button>
                       </div>
                     </div>
                     <div className="form-field">
-                      <label className="form-label">Xác nhận mật khẩu mới</label>
+                      <label className="form-label" htmlFor="confirmPassword">Xác nhận mật khẩu mới</label>
                       <div className="form-input-wrap">
-                        <input type={showConfirm ? "text" : "password"} className="form-input-inner" placeholder="Nhập lại mật khẩu mới" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
-                        <button type="button" className="toggle-pw" onClick={() => setShowConfirm(!showConfirm)}>{showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}</button>
+                        <input id="confirmPassword" type={showConfirm ? "text" : "password"} className="form-input-inner" placeholder="Nhập lại mật khẩu mới" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+                        <button type="button" className="toggle-pw" onClick={() => setShowConfirm(!showConfirm)} aria-label={showConfirm ? "Ẩn mật khẩu xác nhận" : "Hiển thị mật khẩu xác nhận"}>{showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}</button>
                       </div>
                     </div>
                   </div>
@@ -244,7 +245,7 @@ export function SettingClient() {
                     <span className="pref-title">Nhận thông báo đơn hàng qua email</span>
                     <span className="pref-desc">Chúng tôi sẽ gửi thông tin đơn hàng mới nhất đến email của bạn</span>
                   </div>
-                  <button type="button" className={`toggle-switch ${emailNotif ? "toggle-switch--on" : ""}`} onClick={() => setEmailNotif(!emailNotif)}>
+                  <button type="button" role="switch" aria-checked={emailNotif} aria-label="Nhận thông báo đơn hàng qua email" className={`toggle-switch ${emailNotif ? "toggle-switch--on" : ""}`} onClick={() => setEmailNotif(!emailNotif)}>
                     <span className="toggle-knob" />
                   </button>
                 </div>
@@ -254,7 +255,7 @@ export function SettingClient() {
                     <span className="pref-title">Nhận ưu đãi và khuyến mãi</span>
                     <span className="pref-desc">Nhận các chương trình khuyến mãi và ưu đãi đặc biệt từ DUKY STORE</span>
                   </div>
-                  <button type="button" className={`toggle-switch ${promoNotif ? "toggle-switch--on" : ""}`} onClick={() => setPromoNotif(!promoNotif)}>
+                  <button type="button" role="switch" aria-checked={promoNotif} aria-label="Nhận ưu đãi và khuyến mãi" className={`toggle-switch ${promoNotif ? "toggle-switch--on" : ""}`} onClick={() => setPromoNotif(!promoNotif)}>
                     <span className="toggle-knob" />
                   </button>
                 </div>
@@ -275,13 +276,13 @@ export function SettingClient() {
         .sidebar-profile { display: flex; flex-direction: column; align-items: center; text-align: center; padding-bottom: 20px; border-bottom: 1px solid var(--border-subtle); margin-bottom: 16px; }
         .sidebar-avatar { width: 64px; height: 64px; border-radius: 50%; background: var(--bg-secondary); display: flex; align-items: center; justify-content: center; color: var(--text-muted); margin-bottom: 12px; }
         .sidebar-name { font-size: 15px; font-weight: 700; color: var(--text-main); }
-        .sidebar-type { font-size: 12px; color: #f59e0b; font-weight: 600; margin-top: 2px; }
+        .sidebar-type { font-size: 12px; color: #b45309; font-weight: 600; margin-top: 2px; }
         .sidebar-badge { display: inline-flex; align-items: center; gap: 4px; margin-top: 8px; padding: 4px 10px; border-radius: 999px; background: var(--bg-secondary); border: 1px solid var(--border-subtle); font-size: 11px; color: var(--text-muted); }
         .sidebar-nav { display: flex; flex-direction: column; gap: 4px; }
         .sidebar-nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 10px; font-size: 14px; font-weight: 500; color: var(--text-main); text-decoration: none; transition: var(--transition-fast); border: none; background: transparent; cursor: pointer; width: 100%; text-align: left; }
         .sidebar-nav-item:hover { background: var(--bg-secondary); transform: translateX(4px); }
         .sidebar-nav-item--active { background: var(--bg-secondary); font-weight: 600; }
-        .sidebar-nav-item--logout { color: #ef4444; margin-top: 8px; }
+        .sidebar-nav-item--logout { color: #d32f2f; margin-top: 8px; }
         .sidebar-nav-item--logout:hover { background: #fef2f2; }
 
         /* Main */
@@ -329,8 +330,8 @@ export function SettingClient() {
 
         /* Alert Banners & Notices */
         .alert-banner { padding: 12px 16px; border-radius: 8px; font-size: 13px; font-weight: 500; margin-bottom: 20px; width: 100%; box-sizing: border-box; }
-        .alert-banner--success { background: #dcfce7; color: #16a34a; border: 1px solid #bbf7d0; }
-        .alert-banner--error { background: #fee2e2; color: #ef4444; border: 1px solid #fecaca; }
+        .alert-banner--success { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+        .alert-banner--error { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
         .password-disabled-notice { padding: 24px; border-radius: 12px; background: var(--bg-secondary); border: 1px solid var(--border-subtle); text-align: center; color: var(--text-muted); font-size: 14px; line-height: 1.5; }
 
         /* Preferences */

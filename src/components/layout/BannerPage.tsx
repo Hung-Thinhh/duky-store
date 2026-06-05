@@ -40,7 +40,7 @@ export const BannerPage = ({ className }: BannerPageProps) => {
           </div>
 
           <div className="flex-1 overflow-hidden">
-            <h5 className="font-bold text-[14px] text-black leading-tight line-clamp-2 hover:underline cursor-pointer">
+            <p className="font-bold text-[14px] text-black leading-tight line-clamp-2 hover:underline cursor-pointer">
               <Link
                 href="https://www.facebook.com/Giaybootda.Namnu.CanTho.Dukystore"
                 target="_blank"
@@ -48,7 +48,7 @@ export const BannerPage = ({ className }: BannerPageProps) => {
               >
                 Giày boot da nam nữ Cần Thơ - Duky Store
               </Link>
-            </h5>
+            </p>
             <p className="text-[12px] text-gray-500 mt-0.5">
               11K người theo dõi • 10 đang theo dõi
             </p>
