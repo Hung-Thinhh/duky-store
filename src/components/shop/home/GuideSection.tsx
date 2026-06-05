@@ -43,8 +43,9 @@ export const GuideSection = () => {
   const sliderRef = React.useRef<HTMLDivElement>(null);
   const lookbookSliderRef = React.useRef<HTMLDivElement>(null);
   const [showCalculator, setShowCalculator] = React.useState(false);
-  const [lookbookImages, setLookbookImages] =
-    React.useState<GalleryImage[]>([]);
+  const [lookbookImages, setLookbookImages] = React.useState<GalleryImage[]>(
+    [],
+  );
   const [isInView, setIsInView] = React.useState(false);
 
   React.useEffect(() => {
@@ -56,7 +57,7 @@ export const GuideSection = () => {
           observer.disconnect();
         }
       },
-      { rootMargin: "200px" }
+      { rootMargin: "200px" },
     );
     observer.observe(sectionRef.current);
     return () => observer.disconnect();
@@ -172,7 +173,8 @@ export const GuideSection = () => {
   }, [isInView]);
 
   React.useEffect(() => {
-    if (!isInView || !lookbookSliderRef.current || lookbookImages.length === 0) return;
+    if (!isInView || !lookbookSliderRef.current || lookbookImages.length === 0)
+      return;
 
     const track = lookbookSliderRef.current;
 
@@ -314,7 +316,7 @@ export const GuideSection = () => {
               Phối đồ cùng Duky
             </h2>
             <Link
-              href="/gallery"
+              href="/thu-vien"
               className="content flex items-center gap-2 text-sm md:text-base font-medium text-gray-500 hover:text-black transition-colors group"
             >
               Xem thêm
@@ -388,7 +390,10 @@ export const GuideSection = () => {
                 <div
                   key={`${fb.id}-${i}`}
                   className="feedback-item shrink-0"
-                  style={{ width: "min(85vw, 400px)", willChange: "transform, opacity, filter" }}
+                  style={{
+                    width: "min(85vw, 400px)",
+                    willChange: "transform, opacity, filter",
+                  }}
                 >
                   <FeedBackCard {...fb} />
                 </div>

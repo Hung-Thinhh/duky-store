@@ -16,23 +16,23 @@ interface StorePhoto {
 const STORE_PHOTOS: StorePhoto[] = [
   {
     caption: "Không gian mặt tiền sang trọng tại cửa hàng Duky Store",
-    image: "/assets/outside-store.webp",
+    image: "/assets/shop-1.webp",
   },
   {
     caption: "Không gian mua sắm hiện đại và chuyên nghiệp",
-    image: "/assets/space-shop-1.webp",
+    image: "/assets/shop-2.webp",
   },
   {
     caption: "Khu vực trưng bày các sản phẩm giày da cao cấp",
-    image: "/assets/boot-products.webp",
+    image: "/assets/shop-3.webp",
   },
   {
     caption: "Góc trải nghiệm sản phẩm sang trọng và thoải mái",
-    image: "/assets/space-shop.webp",
+    image: "/assets/shop-4.webp",
   },
   {
     caption: "Nhiều mẫu áo unisex đẹp mắt có tại Duky Store",
-    image: "/assets/unisex-store.webp",
+    image: "/assets/shop-5.webp",
   },
 ];
 
