@@ -14,7 +14,7 @@ interface BannerContent {
 }
 
 const GALLERY_BANNER: BannerContent = {
-  image: "/assets/banner_lookbook.webp",
+  image: "/assets/banner-lookbook.webp",
   alt: "Lookbook - Duky Store",
   badge: "LOOKBOOK",
   titleLine1: "PHONG CÁCH",

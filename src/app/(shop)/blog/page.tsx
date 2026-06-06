@@ -28,7 +28,7 @@ interface BannerContent {
 // TODO: Replace with API call when backend is ready
 // Example: const bannerData = await fetch(`${API_URL}/api/banners/blog`).then(res => res.json());
 const MOCK_BLOG_BANNER: BannerContent = {
-  image: "/assets/banner_blog.webp",
+  image: "/assets/banner-blog.webp",
   alt: "Kinh nghiệm - Duky Store Blog",
   badge: "BLOG",
   titleLine1: "KINH NGHIỆM",
