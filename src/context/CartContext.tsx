@@ -214,10 +214,27 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const updateQuantity = useCallback(
     async (itemId: string, quantity: number): Promise<void> => {
       const sid = sessionIdRef.current;
+
+      // Optimistic update: update UI immediately
+      setCart((prev) =>
+        prev.map((item) =>
+          item.id === itemId
+            ? { ...item, quantity, lineTotal: item.unitPrice * quantity }
+            : item,
+        ),
+      );
+
       try {
         const response: CartResponse = await updateCartItemAPI(itemId, quantity, sid);
         setCart(response.items);
       } catch (error: unknown) {
+        // Rollback: refresh cart from server
+        try {
+          const response = await getCartAPI(sid);
+          setCart(response.items);
+        } catch {
+          // ignore refresh error
+        }
         const message =
           error instanceof Error
             ? error.message

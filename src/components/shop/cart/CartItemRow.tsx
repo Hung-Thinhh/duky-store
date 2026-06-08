@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { Trash2 } from "lucide-react";
 import { CartItemResponse } from "@/lib/api";
 import { formatCurrency } from "@/lib/utils";
@@ -50,7 +51,10 @@ export function CartItemRow({
       </label>
 
       {/* Product image */}
-      <div className="w-[100px] h-[120px] sm:w-[120px] sm:h-[140px] rounded-xl overflow-hidden bg-slate-50 flex-shrink-0 relative ml-2">
+      <Link
+        href={`/san-pham/${item.product?.slug}`}
+        className="w-[100px] h-[120px] sm:w-[120px] sm:h-[140px] rounded-xl overflow-hidden bg-slate-50 flex-shrink-0 relative ml-2 block"
+      >
         <Image
           src={imageUrl}
           alt={item.productName}
@@ -58,15 +62,18 @@ export function CartItemRow({
           height={140}
           className="object-cover w-full h-full"
         />
-      </div>
+      </Link>
 
       {/* Product info */}
       <div className="flex-1 min-w-0 ml-4 pr-10 flex flex-col justify-between">
         {/* Top: name */}
         <div>
-          <div className="px-2 content text-base sm:text-sm font-semibold text-black leading-snug line-clamp-2">
+          <Link
+            href={`/san-pham/${item.product?.slug}`}
+            className="px-2 content text-base sm:text-sm font-semibold text-black leading-snug line-clamp-2 hover:underline"
+          >
             {item.productName}
-          </div>
+          </Link>
           {item.variantName && (
             <p className="p-2 text-xs text-slate-500 mt-1">
               {item.variantName}
@@ -78,6 +85,7 @@ export function CartItemRow({
         <div className="flex items-center justify-between mt-4">
           <QuantitySelector
             quantity={item.quantity}
+            max={item.availableStock}
             onChange={(delta) =>
               onUpdateQuantity(item.id, item.quantity + delta)
             }

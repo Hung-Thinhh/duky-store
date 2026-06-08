@@ -75,6 +75,7 @@ export interface Product {
     soldOut: boolean;
     isLowStock: boolean;
   } | null;
+  allVariantsSoldOut?: boolean;
 
   desc?: string;
   price?: number;

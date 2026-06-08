@@ -1,29 +1,57 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Product } from "@/types/product";
 import { ProductCard } from "@/components/shop/ProductCard";
 import { useProducts } from "@/hooks/useProducts";
-
-// ─── Component ──────────────────────────────────────────────────────────────
+import { fetchProductRecommendations } from "@/lib/api";
 
 interface RecommendSectionProps {
+  productSlug?: string;
   products?: Product[];
   title?: string;
 }
 
 const RecommendSection: React.FC<RecommendSectionProps> = ({
+  productSlug,
   products: propProducts,
   title = "SẢN PHẨM TƯƠNG TỰ",
 }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const { products: fetchedProducts } = useProducts({
-    limit: 8,
-    sort: "newest",
-  });
+  const [recommendedProducts, setRecommendedProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(!!productSlug);
 
-  const products = propProducts ?? fetchedProducts;
+  const { products: fallbackProducts } = useProducts(
+    { limit: 20, sort: "newest" },
+    { enabled: !productSlug && !propProducts },
+  );
+
+  useEffect(() => {
+    if (!productSlug) return;
+
+    let cancelled = false;
+    setIsLoading(true);
+
+    fetchProductRecommendations(productSlug, 20)
+      .then((data) => {
+        if (!cancelled) setRecommendedProducts(data);
+      })
+      .catch(() => {
+        if (!cancelled) setRecommendedProducts([]);
+      })
+      .finally(() => {
+        if (!cancelled) setIsLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [productSlug]);
+
+  const products =
+    propProducts ??
+    (productSlug ? recommendedProducts : fallbackProducts);
 
   const scroll = (direction: "left" | "right") => {
     if (!scrollRef.current) return;
@@ -33,6 +61,33 @@ const RecommendSection: React.FC<RecommendSectionProps> = ({
       behavior: "smooth",
     });
   };
+
+  if (productSlug && isLoading && recommendedProducts.length === 0) {
+    return (
+      <section className="mt-8 recommend-section">
+        <div className="container-custom !px-1 md:!px-8">
+          <div className="recommend-container">
+            <div className="recommend-header">
+              <h2 className="recommend-title">{title}</h2>
+            </div>
+            <div className="recommend-carousel">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div key={i} className="recommend-card-slot">
+                  <div className="recommend-skeleton">
+                    <div className="recommend-skeleton-img" />
+                    <div className="recommend-skeleton-text recommend-skeleton-text--long" />
+                    <div className="recommend-skeleton-text recommend-skeleton-text--short" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (!products || products.length === 0) return null;
 
   return (
     <section className="mt-8 recommend-section">
@@ -94,7 +149,6 @@ const RecommendSection: React.FC<RecommendSectionProps> = ({
           box-shadow: var(--card-shadow);
         }
 
-        /* ─── Header ─── */
         .recommend-header {
           margin-bottom: 24px;
         }
@@ -107,7 +161,6 @@ const RecommendSection: React.FC<RecommendSectionProps> = ({
           letter-spacing: -0.02em;
         }
 
-        /* ─── Carousel ─── */
         .recommend-carousel-wrapper {
           position: relative;
           display: flex;
@@ -175,7 +228,39 @@ const RecommendSection: React.FC<RecommendSectionProps> = ({
           right: -18px;
         }
 
-        /* ─── Responsive ─── */
+        .recommend-skeleton {
+          background: var(--bg-card);
+          border-radius: 16px;
+          padding: 12px;
+          animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .recommend-skeleton-img {
+          aspect-ratio: 1 / 1;
+          border-radius: 12px;
+          background: var(--bg-secondary);
+          margin-bottom: 12px;
+        }
+
+        .recommend-skeleton-text {
+          height: 14px;
+          border-radius: 6px;
+          background: var(--bg-secondary);
+          margin-bottom: 8px;
+        }
+
+        .recommend-skeleton-text--long {
+          width: 75%;
+        }
+        .recommend-skeleton-text--short {
+          width: 50%;
+        }
+
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.5; }
+        }
+
         @media (max-width: 768px) {
           .recommend-section {
             padding: 0 0.5rem 40px;

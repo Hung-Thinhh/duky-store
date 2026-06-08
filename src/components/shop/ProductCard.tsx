@@ -72,6 +72,7 @@ export const ProductCard = ({
     product.status === "SOLD_OUT" ||
     product.inventory?.soldOut ||
     product.stockSummary?.soldOut ||
+    product.allVariantsSoldOut ||
     (product.variants &&
       product.variants.length > 0 &&
       product.variants.every((v: any) => v.inventory?.soldOut));
