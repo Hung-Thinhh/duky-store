@@ -26,9 +26,10 @@ export function CartItemRow({
   const imageUrl =
     item.product?.thumbnailMedia?.secureUrl ||
     item.product?.thumbnailMedia?.url;
+  const isSoldOut = item.availableStock === 0;
 
   return (
-    <div className="relative border border-slate-200 rounded-2xl p-4 sm:p-5 bg-white min-h-[180px] flex">
+    <div className={`relative border border-slate-200 rounded-2xl p-4 sm:p-5 bg-white min-h-[180px] flex ${isSoldOut ? "opacity-60" : ""}`}>
       {/* Delete button - top right corner */}
       <button
         type="button"
@@ -62,6 +63,11 @@ export function CartItemRow({
           height={140}
           className="object-cover w-full h-full"
         />
+        {isSoldOut && (
+          <span className="absolute top-2 left-2 px-2 py-1 bg-red-600/90 text-white text-[10px] font-semibold rounded-full shadow-sm">
+            Hết hàng
+          </span>
+        )}
       </Link>
 
       {/* Product info */}
@@ -77,6 +83,11 @@ export function CartItemRow({
           {item.variantName && (
             <p className="p-2 text-xs text-slate-500 mt-1">
               {item.variantName}
+            </p>
+          )}
+          {isSoldOut && (
+            <p className="px-2 text-xs text-red-500 mt-1 font-medium">
+              Sản phẩm này đã hết hàng
             </p>
           )}
         </div>

@@ -34,6 +34,7 @@ export function CartClient() {
   const displayCount = computeCartCount(cart);
   const allSelected = isAllSelected(selectedIds, cart.length);
   const hasSelection = selectedIds.size > 0;
+  const hasOutOfStock = cart.some((item) => item.availableStock === 0);
   const subtotal = cart.reduce(
     (acc, item) => acc + item.unitPrice * item.quantity,
     0,
@@ -212,6 +213,7 @@ export function CartClient() {
                     total={total}
                     itemCount={cart.length}
                     isCartEmpty={cart.length === 0}
+                    hasOutOfStock={hasOutOfStock}
                   />
                   <TrustBadges />
                   <PaymentMethodsDisplay />
