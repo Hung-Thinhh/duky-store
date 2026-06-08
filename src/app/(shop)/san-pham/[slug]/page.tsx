@@ -116,7 +116,7 @@ function buildBreadcrumbJsonLd(product: Product, slug: string) {
       {
         "@type": "ListItem",
         position: 2,
-        name: "San pham",
+        name: "Sản phẩm",
         item: absoluteUrl("/san-pham"),
       },
       {

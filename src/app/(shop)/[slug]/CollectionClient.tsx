@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ProductCard } from "@/components/shop/ProductCard";
 import { Product } from "@/types/product";
 import { LiquidGlassCard } from "@/components/ui/liquid-glass";
@@ -40,17 +40,47 @@ export default function CollectionClient({
   slug,
   collectionTitle,
 }: CollectionClientProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const loaderRef = useRef<HTMLDivElement>(null);
+
   const [currentPage, setCurrentPage] = useState(1);
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
-  const [filterState, setFilterState] = useState<FilterState>({
-    category: "Tất cả",
+  const queryCategory = searchParams.get("category");
+
+  const [filterState, setFilterState] = useState<FilterState>(() => ({
+    category: queryCategory || "Tất cả",
     sizes: [],
     colors: [],
     priceMin: 0,
     priceMax: 5_000_000,
-  });
+  }));
 
-  const loaderRef = useRef<HTMLDivElement>(null);
+  // Sync state if URL changes (e.g. going back/forward or clicking breadcrumbs)
+  useEffect(() => {
+    const page = searchParams.get("page");
+    if (page) {
+      const parsed = parseInt(page, 10);
+      if (!isNaN(parsed) && parsed !== currentPage) {
+        setCurrentPage(parsed);
+      }
+    } else {
+      setCurrentPage(1);
+    }
+
+    const cat = searchParams.get("category");
+    if (cat) {
+      if (cat !== filterState.category) {
+        setFilterState((prev) => ({ ...prev, category: cat }));
+        setCurrentPage(1);
+      }
+    } else {
+      if (filterState.category !== "Tất cả" && filterState.category !== "all") {
+        setFilterState((prev) => ({ ...prev, category: "Tất cả" }));
+        setCurrentPage(1);
+      }
+    }
+  }, [searchParams]);
 
   // Client-side filtering
   const filteredProducts = initialProducts.filter((product) => {
@@ -109,6 +139,17 @@ export default function CollectionClient({
   const handleFilterChange = (state: FilterState) => {
     setFilterState(state);
     setCurrentPage(1);
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("page");
+
+    if (state.category && state.category !== "Tất cả" && state.category !== "all") {
+      params.set("category", state.category);
+    } else {
+      params.delete("category");
+    }
+
+    const queryString = params.toString();
+    router.push(`/${slug}${queryString ? `?${queryString}` : ""}`, { scroll: false });
   };
 
   const toggleFavorite = (product: Product) => {
