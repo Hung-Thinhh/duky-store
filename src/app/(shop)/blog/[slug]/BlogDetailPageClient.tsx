@@ -55,6 +55,10 @@ export function BlogDetailPageClient({
   );
 
   useEffect(() => {
+    import("lazysizes");
+  }, []);
+
+  useEffect(() => {
     if (initialPost?.slug === slug) {
       setPost(initialPost);
       setLoading(false);
