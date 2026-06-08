@@ -6,17 +6,42 @@ import { Product } from "@/types/product";
 import { LiquidGlassCard } from "@/components/ui/liquid-glass";
 import { PackageOpen } from "lucide-react";
 import { Navpages } from "@/components/shop/Navpages";
-import Filter, { FilterState } from "@/components/shop/Fillter";
-import { useProducts } from "@/hooks/useProducts";
+import dynamic from "next/dynamic";
+import type { FilterState } from "@/components/shop/Fillter";
 import { Header, Footer } from "@/components/layout";
 import { useCart } from "@/context/CartContext";
 
+const Filter = dynamic(() => import("@/components/shop/Fillter"), {
+  loading: () => (
+    <div className="animate-pulse h-[400px] bg-gray-50 rounded-2xl" />
+  ),
+  ssr: false,
+});
+
 const PRODUCTS_PER_PAGE = 12;
 
-export function ProductsClient() {
+const COLOR_MAPPING: Record<string, string> = {
+  black: "Đen",
+  "dark-brown": "Nâu đậm",
+  brown: "Nâu",
+  tan: "Nâu nhạt",
+  gray: "Xám",
+  white: "Trắng",
+  navy: "Xanh navy",
+  burgundy: "Đỏ đô",
+  olive: "Xanh rêu",
+};
+
+interface ProductsClientProps {
+  initialProducts: Product[];
+}
+
+export function ProductsClient({ initialProducts }: ProductsClientProps) {
   const { cartCount } = useCart();
   const [currentPage, setCurrentPage] = useState(1);
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
+  const loaderRef = useRef<HTMLDivElement>(null);
+
   const [filterState, setFilterState] = useState<FilterState>({
     category: "all",
     sizes: [],
@@ -25,43 +50,73 @@ export function ProductsClient() {
     priceMax: 5_000_000,
   });
 
-  const [accumulatedProducts, setAccumulatedProducts] = useState<Product[]>([]);
-  const loaderRef = useRef<HTMLDivElement>(null);
+  // Client-side filtering
+  const filteredProducts = initialProducts.filter((product) => {
+    // Category filter
+    if (
+      filterState.category &&
+      filterState.category !== "all" &&
+      filterState.category !== "Tất cả"
+    ) {
+      const p = product as Product & { categorySlugs?: string[] };
+      if (
+        !p.categorySlugs ||
+        !p.categorySlugs.includes(filterState.category)
+      ) {
+        return false;
+      }
+    }
 
-  // Fetch products by selected category + price range
-  const { products, loading, pagination } = useProducts({
-    page: currentPage,
-    limit: PRODUCTS_PER_PAGE,
-    categorySlug:
-      filterState.category !== "all" ? filterState.category : undefined,
-    minPrice: filterState.priceMin > 0 ? filterState.priceMin : undefined,
-    maxPrice:
-      filterState.priceMax < 5_000_000 ? filterState.priceMax : undefined,
+    // Size filter
+    if (filterState.sizes && filterState.sizes.length > 0) {
+      const hasMatchingSize = product.variants?.some((variant: any) => {
+        if (!variant.sizeLabel) return false;
+        const sizeNum = parseInt(variant.sizeLabel, 10);
+        return !isNaN(sizeNum) && filterState.sizes.includes(sizeNum);
+      });
+      if (!hasMatchingSize) return false;
+    }
+
+    // Color filter
+    if (filterState.colors && filterState.colors.length > 0) {
+      const selectedColorNames = filterState.colors
+        .map((c) => COLOR_MAPPING[c])
+        .filter(Boolean);
+
+      const hasMatchingColor = product.variants?.some((variant: any) => {
+        if (!variant.colorName) return false;
+        const normalizedColor = variant.colorName.trim().toLowerCase();
+        return selectedColorNames.some(
+          (name) => name.toLowerCase() === normalizedColor
+        );
+      });
+      if (!hasMatchingColor) return false;
+    }
+
+    // Price filter
+    const price =
+      product.salePrice ?? product.originalPrice ?? product.price ?? 0;
+    if (filterState.priceMin > 0 && price < filterState.priceMin) return false;
+    if (filterState.priceMax < 5_000_000 && price > filterState.priceMax)
+      return false;
+
+    return true;
   });
 
-  const totalPages = pagination?.totalPages ?? 1;
+  // Client-side pagination -> infinite scroll slice
+  const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
+  const products = filteredProducts.slice(0, currentPage * PRODUCTS_PER_PAGE);
 
-  // Reset accumulated products when filter state changes
+  // Reset page when filter changes
   useEffect(() => {
-    setAccumulatedProducts([]);
+    setCurrentPage(1);
   }, [filterState]);
 
-  // Accumulate products as pages load
-  useEffect(() => {
-    if (products && products.length > 0) {
-      setAccumulatedProducts((prev) => {
-        const existingIds = new Set(prev.map((p) => p.id));
-        const newProducts = products.filter((p) => !existingIds.has(p.id));
-        return [...prev, ...newProducts];
-      });
-    }
-  }, [products]);
-
-  // IntersectionObserver for Infinite Scroll
+  // IntersectionObserver for infinite scroll
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && currentPage < totalPages && !loading) {
+        if (entries[0].isIntersecting && currentPage < totalPages) {
           setCurrentPage((prev) => prev + 1);
         }
       },
@@ -78,11 +133,10 @@ export function ProductsClient() {
         observer.unobserve(currentLoader);
       }
     };
-  }, [currentPage, totalPages, loading]);
+  }, [currentPage, totalPages]);
 
   const handleFilterChange = (state: FilterState) => {
     setFilterState(state);
-    setCurrentPage(1);
   };
 
   const toggleFavorite = (product: Product) => {
@@ -99,88 +153,80 @@ export function ProductsClient() {
       <Header cartCount={cartCount} />
       <main id="main-content">
         <section className="products-page">
-        {/* Breadcrumb */}
-        <Navpages
-          items={[
-            { label: "Trang chủ", href: "/" },
-            { label: "Tất cả sản phẩm" },
-          ]}
-        />
+          <Navpages
+            items={[
+              { label: "Trang chủ", href: "/" },
+              { label: "Tất cả sản phẩm" },
+            ]}
+          />
 
-        <div className="products-layout">
-          {/* Filter Sidebar */}
-          <aside className="products-filter">
-            <LiquidGlassCard
-              draggable={false}
-              blurIntensity="xl"
-              glowIntensity="lg"
-              shadowIntensity="lg"
-              borderRadius="20px"
-            >
-              <Filter onChange={handleFilterChange} className="relative z-30" />
-            </LiquidGlassCard>
-          </aside>
+          <div className="products-layout">
+            <aside className="products-filter">
+              <LiquidGlassCard
+                draggable={false}
+                blurIntensity="xl"
+                glowIntensity="lg"
+                shadowIntensity="lg"
+                borderRadius="20px"
+              >
+                <Filter
+                  onChange={handleFilterChange}
+                  className="relative z-30"
+                />
+              </LiquidGlassCard>
+            </aside>
 
-          {/* Product Grid */}
-          <div className="products-grid-wrap">
-            <div className="products-grid-inner">
-              {currentPage === 1 && loading && accumulatedProducts.length === 0 ? (
-                <div className="products-grid">
-                  {Array.from({ length: PRODUCTS_PER_PAGE }).map((_, i) => (
-                    <div key={i} className="product-skeleton">
-                      <div className="skeleton-img" />
-                      <div className="skeleton-text skeleton-text--long" />
-                      <div className="skeleton-text skeleton-text--short" />
-                    </div>
-                  ))}
-                </div>
-              ) : accumulatedProducts.length > 0 ? (
-                <>
-                  <div className="products-grid">
-                    {accumulatedProducts.map((product, index) => (
-                      <ProductCard
-                        key={product.id}
-                        product={product}
-                        isFavorite={favoriteIds.has(product.id)}
-                        onToggleFavorite={toggleFavorite}
-                        priority={index < 4}
-                      />
-                    ))}
-                  </div>
-                  {currentPage > 1 && loading && (
-                    <div className="products-grid mt-4">
-                      {Array.from({ length: 4 }).map((_, i) => (
-                        <div key={i} className="product-skeleton">
-                          <div className="skeleton-img" />
-                          <div className="skeleton-text skeleton-text--long" />
-                          <div className="skeleton-text skeleton-text--short" />
-                        </div>
+            <div className="products-grid-wrap">
+              <div className="products-grid-inner">
+                {products.length > 0 ? (
+                  <>
+                    <div className="products-grid">
+                      {products.map((product, index) => (
+                        <ProductCard
+                          key={product.id}
+                          product={product}
+                          isFavorite={favoriteIds.has(product.id)}
+                          onToggleFavorite={toggleFavorite}
+                          priority={index < 4}
+                        />
                       ))}
                     </div>
-                  )}
-                </>
-              ) : (
-                <div className="products-empty">
-                  <PackageOpen size={64} className="products-empty-icon" />
-                  <h3 className="products-empty-title">
-                    Không tìm thấy sản phẩm phù hợp
-                  </h3>
-                  <p className="products-empty-desc">
-                    Hãy thử điều chỉnh bộ lọc để xem thêm sản phẩm khác.
-                  </p>
+                    {currentPage > 1 && currentPage < totalPages && (
+                      <div className="products-grid mt-4">
+                        {Array.from({ length: 4 }).map((_, i) => (
+                          <div key={i} className="product-skeleton">
+                            <div className="skeleton-img" />
+                            <div className="skeleton-text skeleton-text--long" />
+                            <div className="skeleton-text skeleton-text--short" />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="products-empty">
+                    <PackageOpen size={64} className="products-empty-icon" />
+                    <h3 className="products-empty-title">
+                      Không tìm thấy sản phẩm phù hợp
+                    </h3>
+                    <p className="products-empty-desc">
+                      Hãy thử điều chỉnh bộ lọc để xem thêm sản phẩm khác.
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {currentPage < totalPages && (
+                <div
+                  ref={loaderRef}
+                  className="flex justify-center items-center py-8"
+                >
+                  <div className="w-6 h-6 border-2 border-slate-300 border-t-black rounded-full animate-spin" />
                 </div>
               )}
             </div>
-
-            {/* Loader for Infinite Scroll */}
-            {currentPage < totalPages && (
-              <div ref={loaderRef} className="flex justify-center items-center py-8">
-                <div className="w-6 h-6 border-2 border-slate-300 border-t-black rounded-full animate-spin" />
-              </div>
-            )}
           </div>
-        </div>
-      </section>
+        </section>
       </main>
 
       <style jsx>{`
@@ -188,23 +234,6 @@ export function ProductsClient() {
           max-width: 1440px;
           margin: 0 auto;
           padding: 40px 2rem 80px;
-        }
-
-        .products-header {
-          margin-bottom: 32px;
-        }
-
-        .products-title {
-          font-family: var(--font-accent);
-          font-size: 28px;
-          font-weight: 700;
-          color: var(--text-main);
-          margin-bottom: 8px;
-        }
-
-        .products-subtitle {
-          font-size: 14px;
-          color: var(--text-muted);
         }
 
         .products-layout {
@@ -236,7 +265,6 @@ export function ProductsClient() {
           gap: 16px;
         }
 
-        /* Skeleton */
         .product-skeleton {
           background: var(--bg-card);
           border-radius: 16px;
@@ -275,7 +303,6 @@ export function ProductsClient() {
           }
         }
 
-        /* Empty */
         .products-empty {
           display: flex;
           flex-direction: column;
@@ -303,61 +330,6 @@ export function ProductsClient() {
           max-width: 300px;
         }
 
-        /* Pagination */
-        .products-pagination {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 6px;
-          padding-top: 40px;
-        }
-
-        .pagination-btn {
-          width: 36px;
-          height: 36px;
-          border-radius: 8px;
-          border: 1px solid var(--border-subtle);
-          background: var(--bg-card);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          color: var(--text-main);
-          font-size: 14px;
-          transition: var(--transition-fast);
-        }
-
-        .pagination-btn:hover {
-          background: var(--bg-secondary);
-        }
-
-        .pagination-num {
-          width: 36px;
-          height: 36px;
-          border-radius: 8px;
-          border: 1px solid var(--border-subtle);
-          background: var(--bg-card);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 13px;
-          font-weight: 600;
-          color: var(--text-main);
-          cursor: pointer;
-          transition: var(--transition-fast);
-        }
-
-        .pagination-num:hover {
-          background: var(--bg-secondary);
-        }
-
-        .pagination-num--active {
-          background: var(--accent-black);
-          color: #fff;
-          border-color: var(--accent-black);
-        }
-
-        /* Responsive */
         @media (max-width: 1024px) {
           .products-layout {
             grid-template-columns: 1fr;
@@ -386,10 +358,6 @@ export function ProductsClient() {
           .products-grid {
             grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 12px;
-          }
-
-          .products-title {
-            font-size: 22px;
           }
         }
       `}</style>

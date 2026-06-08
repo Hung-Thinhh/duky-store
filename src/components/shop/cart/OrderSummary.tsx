@@ -10,6 +10,7 @@ interface OrderSummaryProps {
   total: number;
   itemCount: number;
   isCartEmpty: boolean;
+  hasOutOfStock?: boolean;
 }
 
 export function OrderSummary({
@@ -18,6 +19,7 @@ export function OrderSummary({
   total,
   itemCount,
   isCartEmpty,
+  hasOutOfStock = false,
 }: OrderSummaryProps) {
   const isFreeShipping = shippingFee === 0;
 
@@ -100,15 +102,25 @@ export function OrderSummary({
         </div>
       )}
 
+      {/* Out of stock warning */}
+      {hasOutOfStock && !isCartEmpty && (
+        <div className="flex items-center gap-2 bg-red-50 border border-red-100 rounded-xl px-4 py-3 mb-6">
+          <Info size={18} className="text-red-500 shrink-0" />
+          <span className="text-sm text-red-600 font-medium">
+            Vui lòng bỏ sản phẩm hết hàng để tiến hành thanh toán
+          </span>
+        </div>
+      )}
+
       {/* Checkout button */}
-      {isCartEmpty ? (
+      {isCartEmpty || hasOutOfStock ? (
         <button
           disabled
           aria-disabled="true"
           className="w-full py-3.5 min-h-[44px] rounded-full text-sm font-bold uppercase tracking-wider text-white bg-black opacity-50 cursor-not-allowed flex items-center justify-center gap-2 shadow-md"
         >
           <ShoppingCart size={16} />
-          TIẾN HÀNH THANH TOÁN
+          {hasOutOfStock ? "CÓ SẢN PHẨM HẾT HÀNG" : "TIẾN HÀNH THANH TOÁN"}
         </button>
       ) : (
         <Link

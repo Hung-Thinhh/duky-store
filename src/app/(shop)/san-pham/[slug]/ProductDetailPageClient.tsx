@@ -200,7 +200,7 @@ export default function ProductDetailPageClient({
           onQuickBuy={handleQuickBuy}
         />
         <DetailSection />
-        <RecommendSection />
+        <RecommendSection productSlug={slug} />
       </main>
       <Footer />
     </>

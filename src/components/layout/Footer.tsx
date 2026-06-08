@@ -60,9 +60,9 @@ export const Footer = () => {
         .custom-footer-col2, .custom-footer-col3 {
           flex: 1;
           width: 100%;
-          padding-top: 1rem;
-          padding-left: 1rem;
-          padding-right: 1rem;
+          padding-top: 0;
+          padding-left: 0;
+          padding-right: 0;
         }
         .custom-footer-right {
           width: 100%;
@@ -70,6 +70,7 @@ export const Footer = () => {
           justify-content: center;
           align-items: start;
           padding-top: 1rem;
+          padding-bottom: 1rem;
         }
         .custom-footer-bottom {
           display: flex;
@@ -123,6 +124,9 @@ export const Footer = () => {
           }
           .custom-footer-bottom {
             flex-direction: row;
+            align-items: flex-start;
+            justify-content: space-between;
+            text-align: left;
             gap: 1rem;
           }
           .custom-footer-divider {
@@ -307,8 +311,8 @@ export const Footer = () => {
         </div>
 
         {/* Bottom Section - Dark */}
-        <div className="bg-black text-white py-6 px-4">
-          <div className="max-w-7xl mx-auto flex flex-row justify-between items-center gap-6">
+        <div className="bg-black text-white py-6">
+          <div className="container-custom mx-auto custom-footer-bottom">
             {/* Bên trái */}
             <div className="flex-1 text-[13px] text-gray-400 md:max-w-[800px]">
               <p className="leading-relaxed text-center md:text-left">

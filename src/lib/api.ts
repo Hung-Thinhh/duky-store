@@ -81,6 +81,17 @@ export async function fetchProductBySlug(slug: string): Promise<Product> {
   return apiFetch<Product>(`/products/${slug}`);
 }
 
+export async function fetchProductRecommendations(
+  slug: string,
+  limit: number = 8,
+): Promise<Product[]> {
+  const result = await apiFetch<{ data: Product[] }>(
+    `/products/${slug}/recommendations`,
+    { limit },
+  );
+  return result.data;
+}
+
 // ─── Product Variant types ───────────────────────────────────────────────────
 export interface ProductVariant {
   id: string;
@@ -127,6 +138,7 @@ export interface CartItemResponse {
   unitPrice: number;
   quantity: number;
   lineTotal: number;
+  availableStock: number;
   product: {
     id: string;
     name: string;

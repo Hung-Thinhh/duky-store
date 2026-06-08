@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { Trash2 } from "lucide-react";
 import { CartItemResponse } from "@/lib/api";
 import { formatCurrency } from "@/lib/utils";
@@ -25,9 +26,10 @@ export function CartItemRow({
   const imageUrl =
     item.product?.thumbnailMedia?.secureUrl ||
     item.product?.thumbnailMedia?.url;
+  const isSoldOut = item.availableStock === 0;
 
   return (
-    <div className="relative border border-slate-200 rounded-2xl p-4 sm:p-5 bg-white min-h-[180px] flex">
+    <div className={`relative border border-slate-200 rounded-2xl p-4 sm:p-5 bg-white min-h-[180px] flex ${isSoldOut ? "opacity-60" : ""}`}>
       {/* Delete button - top right corner */}
       <button
         type="button"
@@ -50,7 +52,10 @@ export function CartItemRow({
       </label>
 
       {/* Product image */}
-      <div className="w-[100px] h-[120px] sm:w-[120px] sm:h-[140px] rounded-xl overflow-hidden bg-slate-50 flex-shrink-0 relative ml-2">
+      <Link
+        href={`/san-pham/${item.product?.slug}`}
+        className="w-[100px] h-[120px] sm:w-[120px] sm:h-[140px] rounded-xl overflow-hidden bg-slate-50 flex-shrink-0 relative ml-2 block"
+      >
         <Image
           src={imageUrl}
           alt={item.productName}
@@ -58,18 +63,31 @@ export function CartItemRow({
           height={140}
           className="object-cover w-full h-full"
         />
-      </div>
+        {isSoldOut && (
+          <span className="absolute top-2 left-2 px-2 py-1 bg-red-600/90 text-white text-[10px] font-semibold rounded-full shadow-sm">
+            Hết hàng
+          </span>
+        )}
+      </Link>
 
       {/* Product info */}
       <div className="flex-1 min-w-0 ml-4 pr-10 flex flex-col justify-between">
         {/* Top: name */}
         <div>
-          <div className="px-2 content text-base sm:text-sm font-semibold text-black leading-snug line-clamp-2">
+          <Link
+            href={`/san-pham/${item.product?.slug}`}
+            className="px-2 content text-base sm:text-sm font-semibold text-black leading-snug line-clamp-2 hover:underline"
+          >
             {item.productName}
-          </div>
+          </Link>
           {item.variantName && (
             <p className="p-2 text-xs text-slate-500 mt-1">
               {item.variantName}
+            </p>
+          )}
+          {isSoldOut && (
+            <p className="px-2 text-xs text-red-500 mt-1 font-medium">
+              Sản phẩm này đã hết hàng
             </p>
           )}
         </div>
@@ -78,6 +96,7 @@ export function CartItemRow({
         <div className="flex items-center justify-between mt-4">
           <QuantitySelector
             quantity={item.quantity}
+            max={item.availableStock}
             onChange={(delta) =>
               onUpdateQuantity(item.id, item.quantity + delta)
             }
