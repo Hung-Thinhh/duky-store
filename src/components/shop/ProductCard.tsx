@@ -75,7 +75,7 @@ export const ProductCard = ({
     product.allVariantsSoldOut ||
     (product.variants &&
       product.variants.length > 0 &&
-      product.variants.every((v: any) => v.inventory?.soldOut));
+      product.variants.every((v: any) => !v.inventory || v.inventory.soldOut));
 
   const Media = (
     <div className="relative w-full aspect-square rounded-xl overflow-hidden mb-3 bg-gray-50/50 cursor-pointer">

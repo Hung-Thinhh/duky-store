@@ -29,6 +29,11 @@ export const TextOverlay: React.FC<TextOverlayProps> = ({
   isActive,
   transitionDuration = 800,
 }) => {
+  // Early return if no text content
+  if (!content.badge && !content.title && !content.tagline && content.buttons.length === 0) {
+    return null;
+  }
+
   const containerRef = useRef<HTMLDivElement>(null);
   const timelineRef = useRef<gsap.core.Timeline | null>(null);
   const hasAnimatedIn = useRef(false);

@@ -737,9 +737,7 @@ export function CheckoutClient() {
                       {quickBuyError}{" "}
                       <Link
                         href={
-                          quickBuySlug
-                            ? `/san-pham/${quickBuySlug}`
-                            : "/bst"
+                          quickBuySlug ? `/san-pham/${quickBuySlug}` : "/bst"
                         }
                         className="order-summary__link"
                       >
@@ -952,13 +950,13 @@ export function CheckoutClient() {
           .checkout-page {
             max-width: 1440px;
             margin: 0 auto;
-            margin-top: 24px;
-            padding: 40px 2rem 80px;
+            margin-top: 32px;
+            padding: 0 2rem 80px;
           }
 
           .checkout-nav-wrap {
             max-width: 1440px;
-            margin: 24px auto 0;
+            margin: 0 auto;
             padding: 0 2rem;
           }
 
@@ -1509,7 +1507,7 @@ export function CheckoutClient() {
           /* ===== Responsive ===== */
           @media (max-width: 600px) {
             .checkout-page {
-              padding: 20px 16px 60px;
+              padding: 0 16px 60px;
             }
 
             .checkout-form {

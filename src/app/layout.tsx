@@ -69,9 +69,9 @@ export const metadata: Metadata = {
     images: [DEFAULT_OG_IMAGE],
   },
   icons: {
-    icon: "/assets/logo_header.webp",
-    shortcut: "/assets/logo_header.webp",
-    apple: "/assets/logo_header.webp",
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/favicon.ico",
   },
 };
 

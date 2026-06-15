@@ -144,11 +144,30 @@ const TABS: { key: TabKey; label: string }[] = [
 
 interface DetailSectionProps {
   data?: DetailData;
+  description?: string;
 }
 
-const DetailSection: React.FC<DetailSectionProps> = ({ data = MOCK_DETAIL }) => {
+const DetailSection: React.FC<DetailSectionProps> = ({ data = MOCK_DETAIL, description }) => {
   const [activeTab, setActiveTab] = useState<TabKey>('description');
   const [showSizeCalc, setShowSizeCalc] = useState(false);
+
+  const renderDescription = () => {
+    if (!description) {
+      return <p className="detail-desc-text">{data.description}</p>;
+    }
+
+    const hasHtml = /<\/?[a-z][\s\S]*>/i.test(description);
+    if (hasHtml) {
+      return (
+        <div
+          className="detail-desc-text html-content"
+          dangerouslySetInnerHTML={{ __html: description }}
+        />
+      );
+    }
+
+    return <p className="detail-desc-text">{description}</p>;
+  };
 
   return (
     <section className="detail-section">
@@ -171,8 +190,8 @@ const DetailSection: React.FC<DetailSectionProps> = ({ data = MOCK_DETAIL }) => 
           <div className="detail-description-layout">
             {/* Left: Description & Features */}
             <div className="detail-desc-left">
-              <h3 className="detail-desc-title">{data.title}</h3>
-              <p className="detail-desc-text">{data.description}</p>
+              {!description && <h3 className="detail-desc-title">{data.title}</h3>}
+              {renderDescription()}
 
               <div className="detail-features">
                 {data.features.map((feature, index) => (
@@ -187,21 +206,6 @@ const DetailSection: React.FC<DetailSectionProps> = ({ data = MOCK_DETAIL }) => 
                   </div>
                 ))}
               </div>
-            </div>
-
-            {/* Middle: Specs Table */}
-            <div className="detail-desc-middle">
-              <h4 className="detail-specs-title">THÔNG TIN SẢN PHẨM</h4>
-              <table className="detail-specs-table">
-                <tbody>
-                  {data.specs.map((spec, index) => (
-                    <tr key={index} className="detail-specs-row">
-                      <td className="detail-specs-label">{spec.label}</td>
-                      <td className="detail-specs-value">{spec.value}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
             </div>
 
             {/* Right: Size Guide */}
@@ -319,10 +323,10 @@ const DetailSection: React.FC<DetailSectionProps> = ({ data = MOCK_DETAIL }) => 
           box-shadow: var(--card-shadow);
         }
 
-        /* ─── Description Layout (3 columns) ─── */
+        /* ─── Description Layout (stacked vertically) ─── */
         .detail-description-layout {
-          display: grid;
-          grid-template-columns: 1fr 1fr 1fr;
+          display: flex;
+          flex-direction: column;
           gap: 32px;
         }
 
@@ -343,9 +347,96 @@ const DetailSection: React.FC<DetailSectionProps> = ({ data = MOCK_DETAIL }) => 
 
         .detail-desc-text {
           font-family: var(--font-main);
-          font-size: 13px;
-          color: var(--text-muted);
-          line-height: 1.7;
+          font-size: 15px;
+          color: #2d2d2d;
+          line-height: 1.9;
+        }
+
+        :global(.html-content h1) {
+          font-family: var(--font-accent) !important;
+          font-size: 24px !important;
+          font-weight: 700 !important;
+          color: var(--text-main) !important;
+          line-height: 1.35 !important;
+          margin-top: 0 !important;
+          margin-bottom: 20px !important;
+        }
+
+        :global(.html-content h2) {
+          font-family: var(--font-accent) !important;
+          font-size: 20px !important;
+          font-weight: 700 !important;
+          color: var(--text-main) !important;
+          line-height: 1.4 !important;
+          margin-top: 28px !important;
+          margin-bottom: 14px !important;
+        }
+
+        :global(.html-content h3) {
+          font-family: var(--font-accent) !important;
+          font-size: 18px !important;
+          font-weight: 700 !important;
+          color: var(--text-main) !important;
+          line-height: 1.4 !important;
+          margin-top: 24px !important;
+          margin-bottom: 12px !important;
+        }
+
+        :global(.html-content p) {
+          font-family: var(--font-main) !important;
+          font-size: 15px !important;
+          color: #2d2d2d !important;
+          line-height: 1.9 !important;
+          margin-bottom: 18px !important;
+        }
+
+        :global(.html-content figure) {
+          max-width: 480px !important;
+          width: 100% !important;
+          margin: 28px auto !important;
+          float: none !important;
+        }
+
+        :global(.html-content img) {
+          max-width: 480px !important;
+          width: 100% !important;
+          height: auto !important;
+          display: block !important;
+          margin: 0 auto !important;
+          border-radius: 12px !important;
+        }
+
+        :global(.html-content figcaption) {
+          margin-top: 10px !important;
+          text-align: center !important;
+          font-size: 13px !important;
+          color: var(--text-muted) !important;
+          font-style: italic !important;
+        }
+
+        :global(.html-content ul) {
+          list-style-type: disc !important;
+          padding-left: 24px !important;
+          margin-bottom: 18px !important;
+        }
+
+        :global(.html-content ol) {
+          list-style-type: decimal !important;
+          padding-left: 24px !important;
+          margin-bottom: 18px !important;
+        }
+
+        :global(.html-content li) {
+          font-family: var(--font-main) !important;
+          font-size: 15px !important;
+          color: #2d2d2d !important;
+          line-height: 1.9 !important;
+          margin-bottom: 8px !important;
+        }
+
+        :global(.html-content li p) {
+          margin-bottom: 0 !important;
+          display: inline !important;
         }
 
         .detail-features {
@@ -393,11 +484,7 @@ const DetailSection: React.FC<DetailSectionProps> = ({ data = MOCK_DETAIL }) => 
           line-height: 1.5;
         }
 
-        /* Middle Column - Specs */
-        .detail-desc-middle {
-          border-left: 1px solid var(--border-subtle);
-          padding-left: 32px;
-        }
+
 
         .detail-specs-title {
           font-family: var(--font-main);
@@ -436,10 +523,10 @@ const DetailSection: React.FC<DetailSectionProps> = ({ data = MOCK_DETAIL }) => 
           font-weight: 600;
         }
 
-        /* Right Column - Size Guide */
+        /* Right Column - Size Guide (stacked below description) */
         .detail-desc-right {
-          border-left: 1px solid var(--border-subtle);
-          padding-left: 32px;
+          border-top: 1px solid var(--border-subtle);
+          padding-top: 32px;
         }
 
         .detail-size-title {
@@ -458,6 +545,7 @@ const DetailSection: React.FC<DetailSectionProps> = ({ data = MOCK_DETAIL }) => 
         }
 
         .detail-size-table-wrapper {
+          max-width: 600px;
           max-height: 180px;
           overflow-y: auto;
           margin-bottom: 20px;
@@ -625,17 +713,11 @@ const DetailSection: React.FC<DetailSectionProps> = ({ data = MOCK_DETAIL }) => 
           line-height: 1.5;
         }
 
-        /* ─── Responsive ─── */
         @media (max-width: 1024px) {
           .detail-description-layout {
-            grid-template-columns: 1fr;
             gap: 24px;
           }
-          .detail-desc-middle,
           .detail-desc-right {
-            border-left: none;
-            padding-left: 0;
-            border-top: 1px solid var(--border-subtle);
             padding-top: 24px;
           }
           .detail-commitments {

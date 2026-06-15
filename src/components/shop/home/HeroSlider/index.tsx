@@ -34,7 +34,7 @@ interface HeroSliderProps {
 const DEFAULT_AUTO_SCROLL_INTERVAL = 4000;
 const MIN_AUTO_SCROLL_INTERVAL = 3000;
 const MAX_AUTO_SCROLL_INTERVAL = 10000;
-const DEFAULT_TRANSITION_DURATION = 800;
+const DEFAULT_TRANSITION_DURATION = 1500;
 const DESKTOP_BREAKPOINT = 1024;
 
 // ─── Component ───────────────────────────────────────────────────────────────
@@ -54,7 +54,38 @@ export function HeroSlider({
   className,
   autoScroll = true,
 }: HeroSliderProps) {
-  // ─── Validate & Clamp Props ──────────────────────────────────────────────
+  const [viewport, setViewport] = useState<"desktop" | "tablet" | "mobile">(
+    "desktop",
+  );
+  const [scaleFactor, setScaleFactor] = useState(1);
+  const [sliderHeight, setSliderHeight] = useState(900);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const w = window.innerWidth;
+      setIsMobile(w < 1024);
+      if (w < 768) {
+        setViewport("mobile");
+        const sf = w / 390;
+        setScaleFactor(sf);
+        setSliderHeight(664 * sf);
+      } else if (w < 1024) {
+        setViewport("tablet");
+        const sf = w / 768;
+        setScaleFactor(sf);
+        setSliderHeight(954 * sf);
+      } else {
+        setViewport("desktop");
+        const sf = w / 1920;
+        setScaleFactor(sf);
+        setSliderHeight(900 * sf);
+      }
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const clampedInterval = Math.min(
     Math.max(autoScrollInterval, MIN_AUTO_SCROLL_INTERVAL),
@@ -89,60 +120,6 @@ export function HeroSlider({
     const firstContainer = slideContainersRef.current.get(0);
     if (firstContainer) {
       gsap.set(firstContainer, { opacity: 1 });
-
-      const isMobile = window.innerWidth < 1024;
-
-      const bg = firstContainer.querySelector(".layer-bg");
-      const model = firstContainer.querySelector(".layer-model");
-      const boot = firstContainer.querySelector(".layer-boot");
-
-      if (isMobile) {
-        // Render layers statically on mobile to prevent LCP animation delay
-        if (bg) gsap.set(bg, { opacity: 1, scale: 1 });
-        if (model) gsap.set(model, { opacity: 1, x: 0 });
-        if (boot) gsap.set(boot, { opacity: 1, x: 0 });
-        return;
-      }
-
-      const tl = gsap.timeline();
-
-      if (bg) {
-        // Keep background visible at opacity: 1 immediately to optimize LCP
-        gsap.set(bg, { opacity: 1, scale: 1.02 });
-        tl.to(bg, {
-          scale: 1,
-          duration: 0.6,
-          ease: "power2.out",
-        });
-      }
-
-      if (model) {
-        gsap.set(model, { opacity: 0, x: 20 });
-        tl.to(
-          model,
-          {
-            opacity: 1,
-            x: 0,
-            duration: 0.6,
-            ease: "power2.out",
-          },
-          "-=0.4",
-        );
-      }
-
-      if (boot) {
-        gsap.set(boot, { opacity: 0, x: 30 });
-        tl.to(
-          boot,
-          {
-            opacity: 1,
-            x: 0,
-            duration: 0.6,
-            ease: "power2.out",
-          },
-          "-=0.4",
-        );
-      }
     }
   }, []);
 
@@ -188,58 +165,17 @@ export function HeroSlider({
         ease: "power2.inOut",
       });
 
-      // Prepare next container
-      gsap.set(nextContainer, { opacity: 1 });
-
-      // Find layers of the next slide
-      const nextBg = nextContainer.querySelector(".layer-bg");
-      const nextBoot = nextContainer.querySelector(".layer-boot");
-      const nextModel = nextContainer.querySelector(".layer-model");
-
-      // Setup starting state for layers (hidden & displaced)
-      if (nextBg) gsap.set(nextBg, { opacity: 0, scale: 1.08 });
-      if (nextModel) gsap.set(nextModel, { opacity: 0, x: 50 });
-      if (nextBoot) gsap.set(nextBoot, { opacity: 0, x: 80 });
-
-      // Animate background zoom in
+      // Prepare and fade in next container
+      gsap.set(nextContainer, { opacity: 0 });
       tl.to(
-        nextBg,
+        nextContainer,
         {
           opacity: 1,
-          scale: 1,
-          duration: durationSec * 0.6,
-          ease: "power2.out",
+          duration: durationSec * 0.5,
+          ease: "power2.inOut",
         },
-        `-=${durationSec * 0.25}`, // Start zoom as current fades out
+        `-=${durationSec * 0.25}`,
       );
-
-      // Animate model sliding in from right
-      if (nextModel) {
-        tl.to(
-          nextModel,
-          {
-            opacity: 1,
-            x: 0,
-            duration: durationSec * 0.6,
-            ease: "power2.out",
-          },
-          `-=${durationSec * 0.45}`,
-        );
-      }
-
-      // Animate boot sliding in from right
-      if (nextBoot) {
-        tl.to(
-          nextBoot,
-          {
-            opacity: 1,
-            x: 0,
-            duration: durationSec * 0.6,
-            ease: "power2.out",
-          },
-          `-=${durationSec * 0.45}`,
-        );
-      }
 
       transitionTimelineRef.current = tl;
     },
@@ -389,14 +325,23 @@ export function HeroSlider({
 
   const activeSlide = validSlides[currentSlide] ?? validSlides[0];
 
+  const canonicalSize =
+    viewport === "mobile"
+      ? { width: 390, height: 664 }
+      : viewport === "tablet"
+        ? { width: 768, height: 954 }
+        : { width: 1920, height: 900 };
+
   return (
     <section
       ref={sliderRef}
       id="hero"
       className={cn(
-        "group/slider relative overflow-hidden w-full h-[100dvh] lg:h-screen",
+        "group/slider relative overflow-hidden w-full",
+        !hasMounted && "h-[100dvh] lg:h-screen",
         className,
       )}
+      style={hasMounted ? { height: `${sliderHeight}px` } : undefined}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onTouchStart={onTouchStart}
@@ -416,52 +361,60 @@ export function HeroSlider({
             ref={setSlideContainerRef(index)}
             className="hero-slide absolute inset-0 w-full h-full"
             data-slide-id={slide.id}
-            style={{ opacity: isActive ? 1 : 0 }}
+            style={{
+              opacity: isActive ? 1 : 0,
+              pointerEvents: isActive ? "auto" : "none",
+            }}
             aria-hidden={!isActive}
           >
-            {slide.layers.map((layer, layerIndex) => {
-              // Assign class names for identification during transition
-              let layerClass = "layer-bg";
-              if (layer.role === "boot") layerClass = "layer-boot";
-              else if (layer.role === "model") layerClass = "layer-model";
-              else if (layer.role === "pedestal") layerClass = "layer-pedestal";
-              else if (layer.role === "background") layerClass = "layer-bg";
-              else if (layer.zIndex === 1) layerClass = "layer-boot";
-              else if (layer.zIndex === 2) layerClass = "layer-model";
-
-              return (
-                <SlideLayer
-                  key={`${slide.id}-layer-${layerIndex}`}
-                  src={layer.src}
-                  srcMobile={layer.srcMobile}
-                  alt={layer.alt}
-                  zIndex={layer.zIndex}
-                  className={layerClass}
-                  layout={layer.layout}
-                  floatConfig={
-                    layer.float ?? {
-                      duration: 4,
-                      delay: 0,
-                      displacement: 8,
-                      ease: "sine.inOut",
-                    }
-                  }
-                  isActive={isActive}
-                  priority={index === 0}
-                  sizes={layer.sizes}
-                />
-              );
-            })}
+            <div
+              className="absolute overflow-hidden"
+              style={
+                hasMounted
+                  ? ({
+                      width: `${canonicalSize.width}px`,
+                      height: `${canonicalSize.height}px`,
+                      transform: `scale(${scaleFactor})`,
+                      transformOrigin: "top left",
+                      left: "0",
+                      top: "0",
+                      "--slide-w": `${canonicalSize.width}px`,
+                      "--slide-h": `${canonicalSize.height}px`,
+                    } as React.CSSProperties)
+                  : ({ width: "100%", height: "100%" } as React.CSSProperties)
+              }
+            >
+              {(slide.layers[viewport] ?? []).map((layer, layerIndex) => {
+                return (
+                  <SlideLayer
+                    key={`${slide.id}-layer-${layerIndex}-${isActive ? "active" : "inactive"}`}
+                    layer={layer}
+                    isActive={isActive}
+                    viewport={viewport}
+                    priority={index === 0}
+                  />
+                );
+              })}
+            </div>
           </div>
         );
       })}
 
-      {/* Text overlay for active slide */}
-      <TextOverlay
-        content={activeSlide.text}
-        isActive={!isTransitioning}
-        transitionDuration={transitionDuration}
-      />
+      {/* Text overlay for active slide — skip if slide has positioned text/button layers */}
+      {(() => {
+        const layersForViewport = activeSlide.layers[viewport] ?? [];
+        const hasPositionedText = layersForViewport.some(
+          (l) => l.type === "text" || l.type === "button",
+        );
+        if (hasPositionedText) return null;
+        return (
+          <TextOverlay
+            content={activeSlide.text}
+            isActive={!isTransitioning}
+            transitionDuration={transitionDuration}
+          />
+        );
+      })()}
 
       {/* Side navigation (desktop only, revealed on hover) */}
       {validSlides.length > 1 && (

@@ -18,7 +18,7 @@ export const Navpages = ({ items }: NavpagesProps) => {
     <nav aria-label="Breadcrumb" className="mb-8">
       <BackButton />
       <ol
-        className="flex items-center gap-2 text-sm"
+        className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm"
         itemScope
         itemType="https://schema.org/BreadcrumbList"
       >

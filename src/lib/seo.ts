@@ -59,9 +59,10 @@ export function buildPageMetadata({
 }: SeoMetadataInput): Metadata {
   const canonical = absoluteUrl(path);
   const imageUrl = absoluteUrl(image);
+  const fullTitle = title.includes(SITE_NAME) ? title : `${title} | ${SITE_NAME}`;
 
   return {
-    title,
+    title: { absolute: fullTitle },
     description,
     alternates: {
       canonical,
@@ -71,7 +72,7 @@ export function buildPageMetadata({
       follow: true,
     },
     openGraph: {
-      title,
+      title: fullTitle,
       description,
       url: canonical,
       siteName: SITE_NAME,
@@ -79,14 +80,14 @@ export function buildPageMetadata({
       images: [
         {
           url: imageUrl,
-          alt: title,
+          alt: fullTitle,
         },
       ],
       locale: "vi_VN",
     },
     twitter: {
       card: "summary_large_image",
-      title,
+      title: fullTitle,
       description,
       images: [imageUrl],
     },
@@ -94,8 +95,9 @@ export function buildPageMetadata({
 }
 
 export function buildNoIndexMetadata(title: string): Metadata {
+  const fullTitle = title.includes(SITE_NAME) ? title : `${title} | ${SITE_NAME}`;
   return {
-    title,
+    title: { absolute: fullTitle },
     robots: {
       index: false,
       follow: true,

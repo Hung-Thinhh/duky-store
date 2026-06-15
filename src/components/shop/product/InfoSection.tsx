@@ -77,6 +77,14 @@ const PRODUCT_SPECS = [
   { label: 'Xuất xứ', value: 'Trung Quốc' },
 ];
 
+const CATEGORY_URLS: Record<string, string> = {
+  "Boot Nam": "/boot-nam",
+  "Boot Nữ": "/boot-nu",
+  "Phụ kiện": "/phu-kien",
+  "Unisex": "/unisex",
+  "Sản phẩm": "/san-pham",
+};
+
 // ─── Component ──────────────────────────────────────────────────────────────
 
 export interface VariantData {
@@ -227,7 +235,12 @@ const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, varia
     return sizeMatch && colorMatch;
   });
 
-  const variantPrice = matchedVariant?.salePrice ?? matchedVariant?.price ?? null;
+  const variantPrice =
+    matchedVariant?.salePrice !== null &&
+    matchedVariant?.salePrice !== undefined &&
+    matchedVariant.salePrice > 0
+      ? matchedVariant.salePrice
+      : matchedVariant?.price ?? null;
   const variantOriginalPrice = matchedVariant?.price ?? null;
   const availableQuantity = matchedVariant?.inventory?.availableQuantity ?? null;
 
@@ -339,14 +352,14 @@ const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, varia
   }, [product.images.length, isHovered]);
 
   return (
-    <section className="info-section">
+    <section className="info-section mt-8">
       {/* Breadcrumb */}
       <Navpages
-        items={product.breadcrumb.map((item, index) => ({
-          label: item,
-          ...(index === 0 ? { href: '/' } : {}),
-          ...(index > 0 && index < product.breadcrumb.length - 1 ? { href: '#' } : {}),
-        }))}
+        items={product.breadcrumb.map((item, index) => {
+          if (index === 0) return { label: item, href: '/' };
+          if (index === product.breadcrumb.length - 1) return { label: item };
+          return { label: item, href: CATEGORY_URLS[item] || '#' };
+        })}
       />
 
       <div className="info-content">
@@ -413,16 +426,18 @@ const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, varia
             <button className="thumbnail-nav" onClick={handlePrevImage} aria-label="Cuộn trái">
               <ChevronLeft size={16} />
             </button>
-            {product.images.map((img, index) => (
-              <button
-                key={index}
-                className={`thumbnail-item ${index === selectedImage ? 'thumbnail-active' : ''}`}
-                onClick={() => setSelectedImage(index)}
-                aria-label={`Xem ảnh ${index + 1}`}
-              >
-                <Image src={img} alt={`Thumbnail ${index + 1}`} width={80} height={80} className="thumbnail-img" />
-              </button>
-            ))}
+            <div className="thumbnails-scroll-container">
+              {product.images.map((img, index) => (
+                <button
+                  key={index}
+                  className={`thumbnail-item ${index === selectedImage ? 'thumbnail-active' : ''}`}
+                  onClick={() => setSelectedImage(index)}
+                  aria-label={`Xem ảnh ${index + 1}`}
+                >
+                  <Image src={img} alt={`Thumbnail ${index + 1}`} width={80} height={80} className="thumbnail-img" />
+                </button>
+              ))}
+            </div>
             <button className="thumbnail-nav" onClick={handleNextImage} aria-label="Cuộn phải">
               <ChevronRight size={16} />
             </button>
@@ -628,9 +643,8 @@ const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, varia
         .info-section {
           width: 100%;
           max-width: 1440px;
-          margin: 0 auto;
-          padding: 24px 2rem 0;
-          margin-top: 80px;
+          margin: 32px auto 0;
+          padding: 0 2rem 0;
         }
 
         /* ─── Breadcrumb ─── */
@@ -663,12 +677,16 @@ const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, varia
           display: flex;
           gap: 40px;
           align-items: flex-start;
+          width: 100%;
+          max-width: 100%;
+          min-width: 0;
         }
 
         /* ─── Gallery ─── */
         .info-gallery {
           flex: 1;
           max-width: 55%;
+          min-width: 0;
         }
 
         .gallery-main {
@@ -782,6 +800,21 @@ const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, varia
           gap: 10px;
           margin-top: 16px;
           padding: 0 4px;
+          width: 100%;
+        }
+
+        .thumbnails-scroll-container {
+          display: flex;
+          gap: 10px;
+          overflow-x: auto;
+          scrollbar-width: none; /* Firefox */
+          -ms-overflow-style: none; /* IE 10+ */
+          flex: 1;
+          min-width: 0;
+        }
+
+        .thumbnails-scroll-container::-webkit-scrollbar {
+          display: none; /* Chrome, Safari, Opera */
         }
 
         .thumbnail-nav {
@@ -833,6 +866,7 @@ const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, varia
         .info-details-wrapper {
           flex: 1;
           max-width: 45%;
+          min-width: 0;
           background: var(--bg-card);
           border-radius: var(--radius-section);
           padding: 32px;
@@ -1155,11 +1189,17 @@ const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, varia
             max-width: 100%;
             width: 100%;
           }
+          .thumbnail-nav {
+            display: none !important;
+          }
         }
 
         @media (max-width: 640px) {
           .info-section {
-            padding: 16px 1rem 0;
+            padding: 0 1rem 0;
+          }
+          .info-details-wrapper {
+            padding: 24px 16px;
           }
           .info-product-name {
             font-size: 20px;
@@ -1173,9 +1213,13 @@ const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, varia
           .gallery-thumbnails {
             gap: 6px;
           }
+          .thumbnails-scroll-container {
+            gap: 6px;
+          }
           .thumbnail-item {
             width: 56px;
             height: 56px;
+            padding: 2px;
           }
           .info-actions-secondary {
             flex-direction: column;

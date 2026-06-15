@@ -268,13 +268,13 @@ export const NewsSection = ({
               </div>
 
               <div className="space-y-3">
-                <div className="max-w-[450px] flex flex-row items-center gap-3 p-1.5 bg-white/50 backdrop-blur-sm rounded-full border border-black/5 focus-within:bg-white focus-within:border-black/10 transition-all duration-300">
+                <div className="max-w-[450px] flex flex-row items-center gap-1.5 sm:gap-3 p-1 sm:p-1.5 bg-white/50 backdrop-blur-sm rounded-full border border-black/5 focus-within:bg-white focus-within:border-black/10 transition-all duration-300">
                   <input
                     type="email"
                     placeholder="Nhập email của bạn"
-                    className="content flex-1 bg-transparent px-6 py-4 text-sm focus:outline-none autofill:shadow-[inset_0_0_0px_1000px_white] autofill:text-fill-black"
+                    className="content flex-1 bg-transparent px-4 sm:px-4 py-3 sm:py-4 text-xs sm:text-sm focus:outline-none autofill:shadow-[inset_0_0_0px_1000px_white] autofill:text-fill-black"
                   />
-                  <button className="content bg-black text-white px-8 py-4 rounded-full text-xs font-bold hover:bg-neutral-800 transition-colors cursor-pointer whitespace-nowrap">
+                  <button className="content bg-black text-white px-4 sm:px-8 py-3 sm:py-4 rounded-full text-[10px] sm:text-xs font-bold hover:bg-neutral-800 transition-colors cursor-pointer whitespace-nowrap">
                     ĐĂNG KÝ
                   </button>
                 </div>

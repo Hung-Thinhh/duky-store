@@ -108,7 +108,7 @@ export default function CollectionPageClient({
         </div>
       </section>
 
-      <section className="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 py-16 mt-8 mb-8">
+      <section className="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 mt-8 mb-8">
         <Navpages
           items={[
             { label: "Trang chủ", href: "/" },
@@ -183,27 +183,30 @@ export default function CollectionPageClient({
               <div className="flex items-center justify-center gap-2 pt-10">
                 {currentPage > 1 && (
                   <button
-                    onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
+                    onClick={() =>
+                      setCurrentPage((page) => Math.max(1, page - 1))
+                    }
                     className="w-9 h-9 flex items-center justify-center rounded-md border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors cursor-pointer"
                   >
                     &lt;
                   </button>
                 )}
-                {Array.from({ length: totalPages }, (_, index) => index + 1).map(
-                  (page) => (
-                    <button
-                      key={page}
-                      onClick={() => setCurrentPage(page)}
-                      className={`w-9 h-9 flex items-center justify-center rounded-md text-sm font-medium transition-colors cursor-pointer ${
-                        currentPage === page
-                          ? "bg-black text-white"
-                          : "border border-gray-200 text-gray-600 hover:bg-gray-50"
-                      }`}
-                    >
-                      {page}
-                    </button>
-                  ),
-                )}
+                {Array.from(
+                  { length: totalPages },
+                  (_, index) => index + 1,
+                ).map((page) => (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={`w-9 h-9 flex items-center justify-center rounded-md text-sm font-medium transition-colors cursor-pointer ${
+                      currentPage === page
+                        ? "bg-black text-white"
+                        : "border border-gray-200 text-gray-600 hover:bg-gray-50"
+                    }`}
+                  >
+                    {page}
+                  </button>
+                ))}
                 {currentPage < totalPages && (
                   <button
                     onClick={() =>

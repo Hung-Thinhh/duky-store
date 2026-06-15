@@ -10,13 +10,15 @@ import { PackageOpen } from "lucide-react";
 import { Navpages } from "@/components/shop/Navpages";
 import Filter, { FilterState } from "@/components/shop/Fillter";
 import { useProducts } from "@/hooks/useProducts";
-import { Header, Footer } from "@/components/layout";
-import { useCart } from "@/context/CartContext";
+import { CatalogBannerSlots } from "@/lib/api";
 
 const PRODUCTS_PER_PAGE = 12;
 
-export function SearchClient() {
-  const { cartCount } = useCart();
+interface SearchClientProps {
+  bannerSlot?: CatalogBannerSlots | null;
+}
+
+export function SearchClient({ bannerSlot }: SearchClientProps) {
   const searchParams = useSearchParams();
   const query = searchParams.get("q") || "";
 
@@ -106,56 +108,173 @@ export function SearchClient() {
     });
   };
 
+  const hasBanner = !!(bannerSlot?.desktop?.image || bannerSlot?.tablet?.image || bannerSlot?.mobile?.image);
+
   return (
     <>
-      <Header cartCount={cartCount} />
 
       {/* Hero Banner */}
-      <section
-        className="relative w-full"
-        style={{ width: "100vw", marginLeft: "calc(-50vw + 50%)" }}
-      >
-        <Image
-          src="/assets/banner_products.webp"
-          alt="Tìm kiếm sản phẩm - Duky Store"
-          width={1920}
-          height={1080}
-          sizes="100vw"
-          className="w-full h-[260px] sm:h-[320px] md:h-auto object-cover"
-          priority
-        />
-        {/* Text overlay */}
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full max-w-[1440px] mx-auto px-6 md:px-20">
-            <div className="space-y-2 md:space-y-3 max-w-sm sm:max-w-md">
-              <span className="inline-block text-[10px] md:text-xs font-medium tracking-widest text-gray-600 uppercase">
-                SEARCH RESULTS
-              </span>
-              <h1 className="leading-[1.1] tracking-tighter text-gray-900">
-                <span className="block text-[24px] sm:text-[36px] md:text-[52px] lg:text-[64px] font-semibold">
-                  KẾT QUẢ TÌM KIẾM
-                </span>
-                <span className="block text-[20px] sm:text-[30px] md:text-[44px] lg:text-[56px] font-medium italic -mt-1 md:-mt-2">
-                  <span className="font-montserrat not-italic font-semibold tracking-wide bg-gradient-to-br from-zinc-500 via-zinc-300 to-zinc-700 bg-clip-text text-transparent inline-block ml-1 md:ml-2">
-                    {query ? `"${query.toUpperCase()}"` : "SẢN PHẨM"}
-                  </span>
-                </span>
-              </h1>
-              <div className="flex items-start gap-2 md:gap-3 max-w-[170px] sm:max-w-sm">
-                <div className="w-6 sm:w-8 h-px bg-gray-900 mt-2 shrink-0" />
-                <p className="text-[11px] md:text-sm text-gray-600 leading-relaxed font-light line-clamp-3 sm:line-clamp-none">
-                  {query
-                    ? `Danh sách sản phẩm phù hợp với từ khóa "${query}".`
-                    : "Vui lòng nhập từ khóa tìm kiếm."}
-                </p>
+      {hasBanner && (
+        <section
+          className="relative w-full"
+          style={{ width: "100vw", marginLeft: "calc(-50vw + 50%)" }}
+        >
+          {/* Desktop image layout */}
+          {bannerSlot?.desktop?.image && (
+            <div className="hidden md:block w-full relative">
+              <Image
+                src={bannerSlot.desktop.image}
+                alt={bannerSlot.desktop.titleLine1 || "Tìm kiếm sản phẩm - Duky Store"}
+                width={1920}
+                height={1080}
+                sizes="100vw"
+                className="w-full h-auto object-cover"
+                priority
+              />
+              {/* Desktop Text Overlay */}
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full max-w-[1440px] mx-auto px-6 md:px-20">
+                  <div className="space-y-2 md:space-y-3 max-w-sm sm:max-w-md">
+                    {bannerSlot.desktop.badge && (
+                      <span className="inline-block text-[10px] md:text-xs font-medium tracking-widest text-gray-500 uppercase">
+                        {bannerSlot.desktop.badge}
+                      </span>
+                    )}
+                    {(bannerSlot.desktop.titleLine1 || bannerSlot.desktop.titleLine2) && (
+                      <h1 className="leading-[1.1] tracking-tighter text-gray-900">
+                        {bannerSlot.desktop.titleLine1 && (
+                          <span className="block text-[24px] sm:text-[36px] md:text-[52px] lg:text-[64px] font-semibold">
+                            {bannerSlot.desktop.titleLine1}
+                          </span>
+                        )}
+                        {bannerSlot.desktop.titleLine2 && (
+                          <span className="block text-[20px] sm:text-[30px] md:text-[44px] lg:text-[56px] font-medium italic -mt-1 md:-mt-2">
+                            <span className="font-montserrat not-italic font-semibold tracking-wide bg-gradient-to-br from-zinc-500 via-zinc-300 to-zinc-700 bg-clip-text text-transparent inline-block ml-1 md:ml-2">
+                              {bannerSlot.desktop.titleLine2}
+                            </span>
+                          </span>
+                        )}
+                      </h1>
+                    )}
+                    {bannerSlot.desktop.description && (
+                      <div className="flex items-start gap-2 md:gap-3 max-w-[170px] sm:max-w-sm">
+                        <div className="w-6 sm:w-8 h-px bg-gray-900 mt-2 shrink-0" />
+                        <p className="text-[11px] md:text-sm text-gray-500 leading-relaxed font-light line-clamp-3 sm:line-clamp-none">
+                          {bannerSlot.desktop.description}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
+          )}
 
-      <main id="main-content">
-        <section className="products-page">
+          {/* Tablet image layout */}
+          {bannerSlot?.tablet?.image && (
+            <div className="hidden sm:block md:hidden w-full relative">
+              <Image
+                src={bannerSlot.tablet.image}
+                alt={bannerSlot.tablet.titleLine1 || "Tìm kiếm sản phẩm - Duky Store"}
+                width={1024}
+                height={576}
+                sizes="100vw"
+                className="w-full h-[320px] object-cover"
+                priority
+              />
+              {/* Tablet Text Overlay */}
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full max-w-[1024px] mx-auto px-6 md:px-20">
+                  <div className="space-y-2 md:space-y-3 max-w-sm sm:max-w-md">
+                    {bannerSlot.tablet.badge && (
+                      <span className="inline-block text-[10px] md:text-xs font-medium tracking-widest text-gray-500 uppercase">
+                        {bannerSlot.tablet.badge}
+                      </span>
+                    )}
+                    {(bannerSlot.tablet.titleLine1 || bannerSlot.tablet.titleLine2) && (
+                      <h1 className="leading-[1.1] tracking-tighter text-gray-900">
+                        {bannerSlot.tablet.titleLine1 && (
+                          <span className="block text-[24px] sm:text-[36px] font-semibold">
+                            {bannerSlot.tablet.titleLine1}
+                          </span>
+                        )}
+                        {bannerSlot.tablet.titleLine2 && (
+                          <span className="block text-[20px] sm:text-[30px] font-medium italic -mt-1">
+                            <span className="font-montserrat not-italic font-semibold tracking-wide bg-gradient-to-br from-zinc-500 via-zinc-300 to-zinc-700 bg-clip-text text-transparent inline-block ml-1">
+                              {bannerSlot.tablet.titleLine2}
+                            </span>
+                          </span>
+                        )}
+                      </h1>
+                    )}
+                    {bannerSlot.tablet.description && (
+                      <div className="flex items-start gap-2 max-w-[170px] sm:max-w-sm">
+                        <div className="w-6 sm:w-8 h-px bg-gray-900 mt-2 shrink-0" />
+                        <p className="text-[11px] text-gray-500 leading-relaxed font-light line-clamp-3 sm:line-clamp-none">
+                          {bannerSlot.tablet.description}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Mobile image layout */}
+          {bannerSlot?.mobile?.image && (
+            <div className="block sm:hidden w-full relative">
+              <Image
+                src={bannerSlot.mobile.image}
+                alt={bannerSlot.mobile.titleLine1 || "Tìm kiếm sản phẩm - Duky Store"}
+                width={640}
+                height={360}
+                sizes="100vw"
+                className="w-full h-[260px] object-cover"
+                priority
+              />
+              {/* Mobile Text Overlay */}
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full max-w-[640px] mx-auto px-6">
+                  <div className="space-y-2 max-w-[170px]">
+                    {bannerSlot.mobile.badge && (
+                      <span className="inline-block text-[10px] font-medium tracking-widest text-gray-500 uppercase">
+                        {bannerSlot.mobile.badge}
+                      </span>
+                    )}
+                    {(bannerSlot.mobile.titleLine1 || bannerSlot.mobile.titleLine2) && (
+                      <h1 className="leading-[1.1] tracking-tighter text-gray-900">
+                        {bannerSlot.mobile.titleLine1 && (
+                          <span className="block text-[24px] font-semibold">
+                            {bannerSlot.mobile.titleLine1}
+                          </span>
+                        )}
+                        {bannerSlot.mobile.titleLine2 && (
+                          <span className="block text-[20px] font-medium italic -mt-1">
+                            <span className="font-montserrat not-italic font-semibold tracking-wide bg-gradient-to-br from-zinc-500 via-zinc-300 to-zinc-700 bg-clip-text text-transparent inline-block ml-1">
+                              {bannerSlot.mobile.titleLine2}
+                            </span>
+                          </span>
+                        )}
+                      </h1>
+                    )}
+                    {bannerSlot.mobile.description && (
+                      <div className="flex items-start gap-2 max-w-[170px]">
+                        <div className="w-6 h-px bg-gray-900 mt-2 shrink-0" />
+                        <p className="text-[11px] text-gray-500 leading-relaxed font-light line-clamp-3">
+                          {bannerSlot.mobile.description}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </section>
+      )}
+
+      <section className="products-page mt-8">
           {/* Breadcrumb */}
         <Navpages
           items={[
@@ -241,15 +360,12 @@ export function SearchClient() {
           </div>
         </div>
       </section>
-      </main>
-
-      <Footer />
 
       <style jsx>{`
         .products-page {
           max-width: 1440px;
-          margin: 0 auto;
-          padding: 40px 2rem 80px;
+          margin: 32px auto 0;
+          padding: 0 2rem 80px;
         }
 
         .products-layout {
@@ -371,7 +487,7 @@ export function SearchClient() {
 
         @media (max-width: 640px) {
           .products-page {
-            padding: 24px 1rem 60px;
+            padding: 0 1rem 60px;
           }
 
           .products-grid {

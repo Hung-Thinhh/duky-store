@@ -542,3 +542,35 @@ export function mapBlogPostToNewsItem(post: BlogPost): NewsItem {
     publishedAtMs: validDate ? validDate.getTime() : 0,
   };
 }
+
+export interface CatalogSlot {
+  image?: string;
+  badge?: string;
+  titleLine1?: string;
+  titleLine2?: string;
+  description?: string;
+}
+
+export interface CatalogBannerSlots {
+  desktop: CatalogSlot;
+  tablet: CatalogSlot;
+  mobile: CatalogSlot;
+}
+
+export async function fetchCatalogBanners(): Promise<Record<string, CatalogBannerSlots> | null> {
+  try {
+    const res = await fetch(`${API_URL}/homepage`, { next: { revalidate: 60 } });
+    if (!res.ok) return null;
+    const json = await res.json();
+    const sections = json?.DT?.data ?? json?.DT ?? [];
+    const catalogSection = sections.find(
+      (s: any) => s.type === "CUSTOM" && s.title === "Banner Catalog" && s.status === "PUBLISHED",
+    );
+    if (catalogSection?.metadata?.slots) {
+      return catalogSection.metadata.slots as Record<string, CatalogBannerSlots>;
+    }
+  } catch (error) {
+    console.error("Error fetching catalog banners:", error);
+  }
+  return null;
+}

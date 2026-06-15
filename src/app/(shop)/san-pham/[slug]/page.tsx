@@ -102,7 +102,31 @@ function buildProductJsonLd(product: Product, slug: string) {
   };
 }
 
+function getCategoryInfo(product: Product) {
+  const categorySlugs = (product as any).categorySlugs;
+  const isAccessory =
+    categorySlugs?.includes("phu-kien") ||
+    ["Thắt lưng", "Ví da", "Tất", "Chăm sóc giày", "Dây giày"].includes(product.category ?? "") ||
+    (product.gender === "unisex" && ["Thắt lưng", "Ví da", "Tất", "Chăm sóc giày", "Dây giày"].some(cat => (product.category || "").includes(cat))) ||
+    product.category === "Phụ kiện";
+
+  if (isAccessory) {
+    return { name: "Phụ kiện", url: "/phu-kien" };
+  }
+
+  if (product.gender === "male") {
+    return { name: "Boot Nam", url: "/boot-nam" };
+  } else if (product.gender === "female") {
+    return { name: "Boot Nữ", url: "/boot-nu" };
+  } else if (product.gender === "unisex") {
+    return { name: "Unisex", url: "/unisex" };
+  }
+
+  return { name: "Sản phẩm", url: "/san-pham" };
+}
+
 function buildBreadcrumbJsonLd(product: Product, slug: string) {
+  const categoryInfo = getCategoryInfo(product);
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -116,8 +140,8 @@ function buildBreadcrumbJsonLd(product: Product, slug: string) {
       {
         "@type": "ListItem",
         position: 2,
-        name: "Sản phẩm",
-        item: absoluteUrl("/san-pham"),
+        name: categoryInfo.name,
+        item: absoluteUrl(categoryInfo.url),
       },
       {
         "@type": "ListItem",
@@ -141,8 +165,10 @@ export async function generateMetadata({
     const canonical = productCanonical(product, slug);
     const image = absoluteUrl(getProductImageUrl(product));
 
+    const titleObj = title.includes(SITE_NAME) ? { absolute: title } : title;
+
     return {
-      title,
+      title: titleObj,
       description,
       alternates: {
         canonical,

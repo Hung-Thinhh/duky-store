@@ -4,11 +4,9 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Header, Footer } from "@/components/layout";
 import { Navpages } from "@/components/shop/Navpages";
 import { BlogSidebar } from "@/components/shop/blog";
 import { BlogCard } from "@/components/shop/blog";
-import { useCart } from "@/context/CartContext";
 import { BlogPost, BlogCategory } from "@/types/blog";
 import {
   fetchBlogPostBySlug,
@@ -42,8 +40,6 @@ export function BlogDetailPageClient({
   initialCategories = [],
   initialRecentPosts = [],
 }: BlogDetailPageClientProps) {
-  const { cartCount } = useCart();
-
   const [post, setPost] = useState<BlogPost | null>(initialPost);
   const [loading, setLoading] = useState(!initialPost);
   const [error, setError] = useState(false);
@@ -138,7 +134,10 @@ export function BlogDetailPageClient({
           if (element) {
             e.preventDefault();
             const yOffset = -100; // Account for sticky header
-            const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+            const y =
+              element.getBoundingClientRect().top +
+              window.pageYOffset +
+              yOffset;
             window.scrollTo({ top: y, behavior: "smooth" });
             window.history.pushState(null, "", href);
           }
@@ -165,10 +164,8 @@ export function BlogDetailPageClient({
 
   return (
     <>
-      <Header cartCount={cartCount} />
-
       <main id="main-content">
-        <article className="blog-detail-page">
+        <article className="blog-detail-page mt-8">
           {loading ? (
             <div className="blog-detail-skeleton">
               <div className="skeleton-breadcrumb" />
@@ -189,7 +186,7 @@ export function BlogDetailPageClient({
               <Navpages
                 items={[
                   { label: "Trang chủ", href: "/" },
-                  { label: "Blog", href: "/blog" },
+                  { label: "Kinh nghiệm", href: "/blog" },
                   { label: post.title },
                 ]}
               />
@@ -242,7 +239,7 @@ export function BlogDetailPageClient({
 
                   {/* Content */}
                   <div
-                    className="blog-content prose prose-lg max-w-none"
+                    className="blog-content"
                     dangerouslySetInnerHTML={{
                       __html: sanitizeBlogHtml(post.content),
                     }}
@@ -298,27 +295,21 @@ export function BlogDetailPageClient({
         </article>
       </main>
 
-      <Footer />
-
       <style jsx>{`
         .blog-detail-page,
         .blog-detail-page :global(*) {
           font-family: var(--font-main) !important;
-          color: #000000 !important;
         }
 
-        .blog-detail-page :global(.bg-black),
-        .blog-detail-page :global(.bg-black *),
-        .blog-detail-page :global(.text-white),
-        .blog-detail-page :global(.text-white *) {
-          color: #ffffff !important;
+        :global(.blog-content),
+        :global(.blog-content *) {
+          color: #000000 !important;
         }
 
         .blog-detail-page {
           max-width: 1440px;
-          margin: 0 auto;
-          padding: 40px 2rem 80px;
-          margin-top: 80px;
+          margin: 32px auto 0;
+          padding: 0 2rem 80px;
         }
 
         .blog-detail-layout {
@@ -350,51 +341,68 @@ export function BlogDetailPageClient({
           gap: 20px;
         }
 
-        /* Prose styles for blog content */
+        /* ============================================
+           Blog Content Styles
+           ============================================ */
+
         :global(.blog-content) {
           font-size: 16px;
           line-height: 1.8;
-          color: #374151;
+          color: #000000;
         }
 
-        :global(.blog-content h1),
-        :global(.blog-content h2),
-        :global(.blog-content h3),
-        :global(.blog-content h4) {
-          color: #111827;
+        /* --- Headings --- */
+        :global(.blog-content h2) {
+          font-size: 1.5rem;
           font-weight: 700;
+          color: #000000;
           margin-top: 2em;
           margin-bottom: 0.75em;
+          line-height: 1.3;
         }
 
-        :global(.blog-content h2) {
-          font-size: 1.5em;
-        }
         :global(.blog-content h3) {
-          font-size: 1.25em;
+          font-size: 1.25rem;
+          font-weight: 600;
+          color: #000000;
+          margin-top: 1.5em;
+          margin-bottom: 0.5em;
+          line-height: 1.4;
         }
 
+        :global(.blog-content h4) {
+          font-size: 1.1rem;
+          font-weight: 600;
+          color: #000000;
+          margin-top: 1.25em;
+          margin-bottom: 0.5em;
+        }
+
+        /* --- Paragraphs & Inline --- */
         :global(.blog-content p) {
           margin-bottom: 1.25em;
+          line-height: 1.8;
         }
 
-        :global(.blog-content img) {
-          border-radius: 12px;
-          margin: 2em 0;
-          width: 100%;
-          height: auto;
+        :global(.blog-content strong),
+        :global(.blog-content b) {
+          font-weight: 700;
+          color: #000000;
         }
 
         :global(.blog-content a) {
-          color: #000;
+          color: #000000;
           text-decoration: underline;
           text-underline-offset: 3px;
+          text-decoration-color: rgba(0, 0, 0, 0.3);
+          transition: text-decoration-color 0.2s;
         }
 
         :global(.blog-content a:hover) {
-          opacity: 0.7;
+          text-decoration-color: #000000;
         }
 
+        /* --- Lists --- */
         :global(.blog-content ul),
         :global(.blog-content ol) {
           padding-left: 1.5em;
@@ -403,39 +411,111 @@ export function BlogDetailPageClient({
 
         :global(.blog-content li) {
           margin-bottom: 0.5em;
+          line-height: 1.7;
         }
 
+        :global(.blog-content ul li) {
+          list-style-type: disc;
+        }
+
+        :global(.blog-content ol li) {
+          list-style-type: decimal;
+        }
+
+        /* --- Images (standalone, không trong figure) --- */
+        :global(.blog-content img:not(figure img)) {
+          max-width: 75%;
+          height: auto;
+          display: block;
+          margin: 1.5em auto;
+          border-radius: 12px;
+        }
+
+        /* --- Figure container (Dashboard editor) --- */
+        :global(.blog-content figure) {
+          width: 75%;
+          margin: 1.5em auto;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+        }
+
+        /* --- Images trong figure --- */
+        :global(.blog-content figure img) {
+          max-width: 100%;
+          width: 100%;
+          height: auto;
+          display: block;
+          margin: 0;
+          border-radius: 12px;
+        }
+
+        :global(.blog-content figcaption) {
+          font-size: 0.875rem;
+          color: #6b7280;
+          margin-top: 0.5em;
+        }
+
+        /* --- Blockquotes --- */
         :global(.blog-content blockquote) {
-          border-left: 4px solid #e5e7eb !important;
-          padding-left: 1.25em !important;
-          margin: 1.5em 0 !important;
-          font-style: italic !important;
+          border-left: 3px solid #d1d5db;
+          padding-left: 1.25em;
+          margin: 1.5em 0;
+          color: #6b7280;
         }
 
-        /* Modern styled tables in blog content */
+        /* --- Code --- */
+        :global(.blog-content code) {
+          background: #f3f4f6;
+          padding: 2px 6px;
+          border-radius: 4px;
+          font-size: 0.9em;
+          font-family: ui-monospace, monospace;
+        }
+
+        :global(.blog-content pre) {
+          background: #1f2937;
+          color: #e5e7eb;
+          padding: 1rem;
+          border-radius: 8px;
+          overflow-x: auto;
+          margin: 1.5em 0;
+        }
+
+        :global(.blog-content pre code) {
+          background: none;
+          padding: 0;
+          border-radius: 0;
+          font-size: 0.875rem;
+        }
+
+        /* --- Tables --- */
         :global(.blog-content table) {
-          width: 100% !important;
-          max-width: 760px !important;
-          margin: 2.5em auto !important;
-          border-collapse: collapse !important;
-          border: 1px solid #cbd5e1 !important;
+          width: 100%;
+          border-collapse: collapse;
+          margin: 1.5em 0;
+          font-size: 0.9375rem;
         }
 
         :global(.blog-content th),
         :global(.blog-content td) {
-          padding: 14px 20px !important;
-          border: 1px solid #cbd5e1 !important;
-          background-color: #ffffff !important;
+          padding: 10px 14px;
+          border: 1px solid #e5e7eb;
+          text-align: left;
         }
 
         :global(.blog-content th) {
-          background-color: #f8fafc !important;
-          font-weight: 600 !important;
-          text-align: left !important;
+          background: #f9fafb;
+          font-weight: 600;
+          color: #111827;
         }
 
-        :global(.blog-content tr:hover td) {
-          background-color: #f8fafc !important;
+        /* --- Horizontal rule --- */
+        :global(.blog-content hr) {
+          border: none;
+          border-top: 1px solid #e5e7eb;
+          margin: 2em 0;
         }
 
         /* Skeleton */
@@ -523,12 +603,84 @@ export function BlogDetailPageClient({
         }
 
         @media (max-width: 640px) {
+          /* Container */
           .blog-detail-page {
-            padding: 24px 1rem 60px;
+            padding: 0 12px 60px;
+            overflow-x: hidden;
+          }
+
+          .blog-detail-layout {
+            grid-template-columns: 1fr;
+            gap: 24px;
           }
 
           .blog-related-grid {
             grid-template-columns: 1fr;
+          }
+
+          /* Blog content */
+          :global(.blog-content) {
+            font-size: 15px;
+            line-height: 1.7;
+            overflow-wrap: break-word;
+            word-break: break-word;
+          }
+
+          /* Headings */
+          :global(.blog-content h2) {
+            font-size: 1.25rem;
+            margin-top: 1.5em;
+          }
+
+          :global(.blog-content h3) {
+            font-size: 1.1rem;
+          }
+
+          /* Ảnh standalone */
+          :global(.blog-content img:not(figure img)) {
+            max-width: 100%;
+            margin: 1em auto;
+            border-radius: 8px;
+          }
+
+          /* Figure */
+          :global(.blog-content figure) {
+            width: 100%;
+            margin: 1em auto;
+          }
+
+          :global(.blog-content figure img) {
+            border-radius: 8px;
+          }
+
+          /* Lists */
+          :global(.blog-content ul),
+          :global(.blog-content ol) {
+            padding-left: 1.25em;
+          }
+
+          /* Tables */
+          :global(.blog-content table) {
+            font-size: 0.875rem;
+          }
+
+          :global(.blog-content th),
+          :global(.blog-content td) {
+            padding: 8px 10px;
+            word-break: break-word;
+          }
+
+          /* Code */
+          :global(.blog-content pre) {
+            padding: 0.75rem;
+            font-size: 0.8125rem;
+            border-radius: 6px;
+          }
+
+          /* Blockquote */
+          :global(.blog-content blockquote) {
+            padding-left: 0.75em;
+            margin: 1em 0;
           }
         }
       `}</style>

@@ -8,8 +8,6 @@ import { PackageOpen } from "lucide-react";
 import { Navpages } from "@/components/shop/Navpages";
 import dynamic from "next/dynamic";
 import type { FilterState } from "@/components/shop/Fillter";
-import { Header, Footer } from "@/components/layout";
-import { useCart } from "@/context/CartContext";
 
 const Filter = dynamic(() => import("@/components/shop/Fillter"), {
   loading: () => (
@@ -37,7 +35,6 @@ interface ProductsClientProps {
 }
 
 export function ProductsClient({ initialProducts }: ProductsClientProps) {
-  const { cartCount } = useCart();
   const [currentPage, setCurrentPage] = useState(1);
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
   const loaderRef = useRef<HTMLDivElement>(null);
@@ -95,7 +92,9 @@ export function ProductsClient({ initialProducts }: ProductsClientProps) {
 
     // Price filter
     const price =
-      product.salePrice ?? product.originalPrice ?? product.price ?? 0;
+      product.salePrice != null && product.salePrice > 0
+        ? product.salePrice
+        : product.originalPrice ?? product.price ?? 0;
     if (filterState.priceMin > 0 && price < filterState.priceMin) return false;
     if (filterState.priceMax < 5_000_000 && price > filterState.priceMax)
       return false;
@@ -150,9 +149,7 @@ export function ProductsClient({ initialProducts }: ProductsClientProps) {
 
   return (
     <>
-      <Header cartCount={cartCount} />
-      <main id="main-content">
-        <section className="products-page">
+      <section className="products-page mt-8">
           <Navpages
             items={[
               { label: "Trang chủ", href: "/" },
@@ -227,13 +224,12 @@ export function ProductsClient({ initialProducts }: ProductsClientProps) {
             </div>
           </div>
         </section>
-      </main>
 
       <style jsx>{`
         .products-page {
           max-width: 1440px;
-          margin: 0 auto;
-          padding: 40px 2rem 80px;
+          margin: 32px auto 0;
+          padding: 0 2rem 80px;
         }
 
         .products-layout {
@@ -352,7 +348,7 @@ export function ProductsClient({ initialProducts }: ProductsClientProps) {
 
         @media (max-width: 640px) {
           .products-page {
-            padding: 24px 1rem 60px;
+             padding: 0 1rem 60px;
           }
 
           .products-grid {
@@ -361,7 +357,6 @@ export function ProductsClient({ initialProducts }: ProductsClientProps) {
           }
         }
       `}</style>
-      <Footer />
     </>
   );
 }

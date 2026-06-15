@@ -1,18 +1,27 @@
-import type { Metadata } from "next";
-import { buildPageMetadata } from "@/lib/seo";
+"use client";
 
-export const metadata: Metadata = buildPageMetadata({
-  title: "Lien He Duky Store",
-  description:
-    "Lien he Duky Store de duoc tu van size giay boot, chinh sach bao hanh, doi size va ho tro dat hang.",
-  path: "/lien-he",
-  image: "/assets/logo-duky-fashion.webp",
-});
+import React from "react";
+import { Header } from "@/components/layout/Header";
+import dynamic from "next/dynamic";
+import { useCart } from "@/context/CartContext";
+
+const Footer = dynamic(
+  () => import("@/components/layout/Footer").then((m) => m.Footer),
+  { ssr: true },
+);
 
 export default function ContactLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return children;
+  const { cartCount } = useCart();
+
+  return (
+    <>
+      <Header cartCount={cartCount} />
+      <main className="pb-32">{children}</main>
+      <Footer />
+    </>
+  );
 }

@@ -116,6 +116,17 @@ interface HeaderProps {
 }
 
 export const Header = ({ cartCount }: HeaderProps) => {
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isContactOpen, setIsContactOpen] = useState(false);
@@ -168,10 +179,18 @@ export const Header = ({ cartCount }: HeaderProps) => {
   ];
 
   return (
-    <header className="fixed top-1 left-0 right-0 z-50 px-6 md:px-10">
+    <header
+      className={cn(
+        "sticky left-0 right-0 z-50 transition-all duration-500 w-full",
+        isScrolled ? "top-3 px-6 md:px-10" : "top-0 px-0",
+      )}
+    >
       <div
         className={cn(
-          "max-w-[1440px] mx-auto glass-effect rounded-full shadow-2xl transition-all duration-500 flex items-center justify-between px-6 md:px-10 py-2 md:py-4 bg-white/70 backdrop-blur-lg !overflow-visible relative",
+          "transition-all duration-500 flex items-center justify-between !overflow-visible relative mx-auto",
+          isScrolled
+            ? "max-w-[1440px] glass-effect rounded-full shadow-2xl px-6 md:px-10 py-3 md:py-4 bg-white/70 backdrop-blur-lg"
+            : "w-full max-w-full rounded-none border-b border-gray-200/40 px-6 md:px-10 py-3 md:py-4 bg-white/90 backdrop-blur-md",
         )}
       >
         {/* Logo - Left */}

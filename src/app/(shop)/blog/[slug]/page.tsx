@@ -120,7 +120,7 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
   };
   const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     { name: "Trang chủ", url: "/" },
-    { name: "Blog", url: "/blog" },
+    { name: "Kinh nghiệm", url: "/blog" },
     { name: data.post.title, url: `/blog/${data.post.slug}` },
   ]);
 

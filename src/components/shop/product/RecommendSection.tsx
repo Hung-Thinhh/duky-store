@@ -50,8 +50,7 @@ const RecommendSection: React.FC<RecommendSectionProps> = ({
   }, [productSlug]);
 
   const products =
-    propProducts ??
-    (productSlug ? recommendedProducts : fallbackProducts);
+    propProducts ?? (productSlug ? recommendedProducts : fallbackProducts);
 
   const scroll = (direction: "left" | "right") => {
     if (!scrollRef.current) return;
@@ -257,8 +256,13 @@ const RecommendSection: React.FC<RecommendSectionProps> = ({
         }
 
         @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
+          0%,
+          100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.5;
+          }
         }
 
         @media (max-width: 768px) {

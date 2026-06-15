@@ -34,17 +34,18 @@ describe("validateSlides", () => {
     expect(result[1].id).toBe("s2");
   });
 
-  it("filters out slides with empty title", () => {
+  it("allows slides with empty title", () => {
     const slides = [
       makeValidSlide({ id: "valid" }),
       makeValidSlide({
-        id: "invalid",
+        id: "empty-title",
         text: { badge: "", title: "", tagline: "", buttons: [] },
       }),
     ];
     const result = validateSlides(slides);
-    expect(result).toHaveLength(1);
+    expect(result).toHaveLength(2);
     expect(result[0].id).toBe("valid");
+    expect(result[1].id).toBe("empty-title");
   });
 
   it("filters out slides with no layers", () => {
@@ -144,10 +145,10 @@ describe("generateFloatConfigs", () => {
     expect(uniquePairs.size).toBe(configs.length);
   });
 
-  it("all configs have ease set to sine.inOut", () => {
+  it("all configs have direction set to down", () => {
     const configs = generateFloatConfigs(5);
     for (const config of configs) {
-      expect(config.ease).toBe("sine.inOut");
+      expect(config.direction).toBe("down");
     }
   });
 });

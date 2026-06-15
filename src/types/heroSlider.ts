@@ -4,7 +4,14 @@ export interface FloatAnimationConfig {
   duration: number;
   delay: number;
   displacement: number;
-  ease: string;
+  direction: "down" | "up" | "right" | "left";
+  ease?: string;
+}
+
+export interface EntranceAnimationConfig {
+  type: "fade" | "slide-up" | "slide-down" | "slide-left" | "slide-right";
+  duration: number;
+  delay: number;
 }
 
 export interface LayerViewportLayout {
@@ -17,23 +24,53 @@ export interface LayerViewportLayout {
   objectFit?: "cover" | "contain";
   objectPosition?: string;
   display?: string;
+  fontSize?: number;
 }
 
 export interface LayerLayout {
-  desktop?: LayerViewportLayout;
-  tablet?: LayerViewportLayout;
-  mobile?: LayerViewportLayout;
+  desktop: LayerViewportLayout;
+  tablet: LayerViewportLayout;
+  mobile: LayerViewportLayout;
 }
 
 export interface LayerConfig {
-  src: string;
+  type?: "image" | "text" | "button";
+  src?: string;
   srcMobile?: string;
-  alt: string;
+  alt?: string;
   zIndex: number;
-  role?: "background" | "pedestal" | "model" | "boot";
   layout?: LayerLayout;
+  left?: string;
+  top?: string;
+  width?: string;
+  height?: string;
+  display?: string;
+  objectFit?: "cover" | "contain";
+  objectPosition?: string;
   float?: FloatAnimationConfig;
+  entranceAnimation?: EntranceAnimationConfig;
   sizes?: string;
+  // Text fields
+  content?: string;
+  fontSize?: number;
+  fontWeight?: number;
+  color?: string;
+  fontFamily?: "montserrat" | "playfair";
+  textAlign?: "left" | "center" | "right";
+  textShadow?: string;
+  letterSpacing?: number;
+  lineHeight?: number;
+  // Button fields
+  label?: string;
+  link?: string;
+  variant?: "primary" | "secondary";
+  buttonColor?: string;
+  textColor?: string;
+  // Gradient fields
+  useGradient?: boolean;
+  gradientType?: "linear" | "radial";
+  gradientAngle?: number;
+  gradientStops?: Array<{ id?: string; color: string; position: number }>;
 }
 
 export interface CTAButton {
@@ -75,7 +112,11 @@ export interface SlideAnimationConfig {
 
 export interface SlideConfig {
   id: string;
-  layers: LayerConfig[];
+  layers: {
+    desktop: LayerConfig[];
+    tablet: LayerConfig[];
+    mobile: LayerConfig[];
+  };
   text: SlideTextContent;
   animation?: SlideAnimationConfig;
 }

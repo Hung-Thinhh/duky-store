@@ -15,10 +15,9 @@ export interface PageMetadataInput {
 export function buildMetadata(input: PageMetadataInput): Metadata {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://dukystore.com";
 
-  const fullTitle =
-    input.path === "/" || input.title.includes("Duky Store")
-      ? input.title
-      : `${input.title} | Duky Store`;
+  const fullTitle = input.title.includes("Duky Store")
+    ? input.title
+    : `${input.title} | Duky Store`;
   const canonicalUrl = `${siteUrl}${input.path}`;
 
   const defaultImage = "/assets/logo_header.webp";
@@ -30,7 +29,7 @@ export function buildMetadata(input: PageMetadataInput): Metadata {
 
   return {
     metadataBase: new URL(siteUrl),
-    title: fullTitle,
+    title: { absolute: fullTitle },
     description: input.description,
     alternates: { canonical: canonicalUrl },
     openGraph: {

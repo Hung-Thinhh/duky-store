@@ -23,13 +23,32 @@ const FLOAT_DISPLACEMENT_MAX = 15;
  */
 function isValidSlide(slide: SlideConfig): boolean {
   if (!slide) return false;
-  if (!slide.text?.title || slide.text.title.trim().length === 0) return false;
-  if (!Array.isArray(slide.layers) || slide.layers.length === 0) return false;
+  if (!slide.layers) return false;
 
-  const hasValidLayer = slide.layers.some(
-    (layer) => layer.src && layer.src.trim().length > 0
+  // Legacy flat array format
+  if (Array.isArray(slide.layers)) {
+    if (slide.layers.length === 0) return false;
+    const hasValidLayer = slide.layers.some(
+      (layer) => (layer.src && layer.src.trim().length > 0) || layer.type === "text" || layer.type === "button"
+    );
+    return hasValidLayer;
+  }
+
+  // New split viewport structure
+  const desktop = slide.layers.desktop ?? [];
+  const tablet = slide.layers.tablet ?? [];
+  const mobile = slide.layers.mobile ?? [];
+
+  const allLayers = [...desktop, ...tablet, ...mobile];
+  if (allLayers.length === 0) return false;
+
+  // A slide is valid if it has at least one layer with a source or some content/label
+  return allLayers.some(
+    (layer) =>
+      (layer.src && layer.src.trim().length > 0) ||
+      (layer.content && layer.content.trim().length > 0) ||
+      (layer.label && layer.label.trim().length > 0)
   );
-  return hasValidLayer;
 }
 
 /**
@@ -116,7 +135,7 @@ export function generateFloatConfigs(
         Math.max(displacement, FLOAT_DISPLACEMENT_MIN),
         FLOAT_DISPLACEMENT_MAX
       ),
-      ease: "sine.inOut",
+      direction: "down" as const,
     });
   }
 

@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { Header, Footer } from "@/components/layout";
+
 import { Navpages } from "@/components/shop/Navpages";
 import { Pagination } from "@/components/shop/Pagination";
 import { BlogCard, BlogSidebar } from "@/components/shop/blog";
 import { useBlogPosts } from "@/hooks/useBlogPosts";
-import { useCart } from "@/context/CartContext";
+
 import { BlogCategory } from "@/types/blog";
 import { fetchBlogCategories, fetchBlogPosts } from "@/lib/api";
 import { MOCK_BLOG_CATEGORIES, MOCK_BLOG_POSTS } from "@/data/blog";
@@ -16,7 +16,6 @@ import { FileText } from "lucide-react";
 const POSTS_PER_PAGE = 10;
 
 export function BlogPageClient() {
-  const { cartCount } = useCart();
   const router = useRouter();
   const searchParams = useSearchParams();
   const rawCategory = searchParams.get("category") || undefined;
@@ -41,7 +40,9 @@ export function BlogPageClient() {
   // Read page from URL, default to 1 if not present or invalid
   const queryPage = searchParams.get("page");
   const initialPage = queryPage ? parseInt(queryPage, 10) : 1;
-  const [currentPage, setCurrentPage] = useState(isNaN(initialPage) ? 1 : initialPage);
+  const [currentPage, setCurrentPage] = useState(
+    isNaN(initialPage) ? 1 : initialPage,
+  );
 
   // Sync state if URL changes (e.g. going back/forward in browser history)
   useEffect(() => {
@@ -65,10 +66,14 @@ export function BlogPageClient() {
       params.set("page", page.toString());
     }
     const queryString = params.toString();
-    router.push(`/blog${queryString ? `?${queryString}` : ""}`, { scroll: false });
+    router.push(`/blog${queryString ? `?${queryString}` : ""}`, {
+      scroll: false,
+    });
   };
   const [categories, setCategories] = useState<BlogCategory[]>([]);
-  const [recentPosts, setRecentPosts] = useState<ReturnType<typeof useBlogPosts>["posts"]>([]);
+  const [recentPosts, setRecentPosts] = useState<
+    ReturnType<typeof useBlogPosts>["posts"]
+  >([]);
   const [sidebarLoading, setSidebarLoading] = useState(true);
 
   // Fetch main posts list
@@ -91,8 +96,12 @@ export function BlogPageClient() {
         })
         .catch(() => setCategories(MOCK_BLOG_CATEGORIES)),
       fetchBlogPosts({ limit: 5, sort: "newest" })
-        .then((res) => setRecentPosts(res.data.length > 0 ? res.data : MOCK_BLOG_POSTS.slice(0, 5)))
-        .catch(() => setRecentPosts(MOCK_BLOG_POSTS.slice(0, 5)))
+        .then((res) =>
+          setRecentPosts(
+            res.data.length > 0 ? res.data : MOCK_BLOG_POSTS.slice(0, 5),
+          ),
+        )
+        .catch(() => setRecentPosts(MOCK_BLOG_POSTS.slice(0, 5))),
     ]).finally(() => {
       setSidebarLoading(false);
     });
@@ -103,103 +112,97 @@ export function BlogPageClient() {
 
   return (
     <>
-      <Header cartCount={cartCount} />
+      <section id="main-content" className="blog-page mt-8">
+          {/* Breadcrumb */}
+          <Navpages
+            items={[
+              { label: "Trang chủ", href: "/" },
+              { label: "Kinh nghiệm" },
+            ]}
+          />
 
-      <main id="main-content">
-        <section className="blog-page">
-        {/* Breadcrumb */}
-        <Navpages
-          items={[
-            { label: "Trang chủ", href: "/" },
-            { label: "Blog" },
-          ]}
-        />
-
-        {/* Featured Post */}
-        {loading ? (
-          <div className="blog-featured">
-            <div className="blog-skeleton-featured">
-              <div className="blog-skeleton-featured-badge" />
-              <div className="blog-skeleton-featured-content">
-                <div className="blog-skeleton-featured-tag" />
-                <div className="blog-skeleton-featured-line blog-skeleton-featured-line--title" />
-                <div className="blog-skeleton-featured-line blog-skeleton-featured-line--desc-1" />
-                <div className="blog-skeleton-featured-line blog-skeleton-featured-line--desc-2" />
+          {/* Featured Post */}
+          {loading ? (
+            <div className="blog-featured">
+              <div className="blog-skeleton-featured">
+                <div className="blog-skeleton-featured-badge" />
+                <div className="blog-skeleton-featured-content">
+                  <div className="blog-skeleton-featured-tag" />
+                  <div className="blog-skeleton-featured-line blog-skeleton-featured-line--title" />
+                  <div className="blog-skeleton-featured-line blog-skeleton-featured-line--desc-1" />
+                  <div className="blog-skeleton-featured-line blog-skeleton-featured-line--desc-2" />
+                </div>
               </div>
             </div>
-          </div>
-        ) : featuredPost ? (
-          <div className="blog-featured">
-            <BlogCard post={featuredPost} variant="featured" />
-          </div>
-        ) : null}
+          ) : featuredPost ? (
+            <div className="blog-featured">
+              <BlogCard post={featuredPost} variant="featured" />
+            </div>
+          ) : null}
 
-        {/* Main Content */}
-        <div className="blog-layout">
-          {/* Posts List */}
-          <div className="blog-posts">
-            {loading ? (
-              <div className="blog-skeleton-list">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <div key={i} className="blog-skeleton-card">
-                    <div className="blog-skeleton-img" />
-                    <div className="blog-skeleton-content">
-                      <div className="blog-skeleton-line blog-skeleton-line--short" />
-                      <div className="blog-skeleton-line blog-skeleton-line--long" />
-                      <div className="blog-skeleton-line blog-skeleton-line--long" />
-                      <div className="blog-skeleton-line blog-skeleton-line--medium" />
+          {/* Main Content */}
+          <div className="blog-layout">
+            {/* Posts List */}
+            <div className="blog-posts">
+              {loading ? (
+                <div className="blog-skeleton-list">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <div key={i} className="blog-skeleton-card">
+                      <div className="blog-skeleton-img" />
+                      <div className="blog-skeleton-content">
+                        <div className="blog-skeleton-line blog-skeleton-line--short" />
+                        <div className="blog-skeleton-line blog-skeleton-line--long" />
+                        <div className="blog-skeleton-line blog-skeleton-line--long" />
+                        <div className="blog-skeleton-line blog-skeleton-line--medium" />
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            ) : listPosts.length > 0 ? (
-              <div className="blog-list">
-                {listPosts.map((post) => (
-                  <BlogCard key={post.id} post={post} />
-                ))}
-              </div>
-            ) : posts.length === 0 ? (
-              <div className="blog-empty">
-                <FileText size={56} className="text-gray-300 mb-4" />
-                <h3 className="text-lg font-semibold text-gray-700 mb-2">
-                  Chưa có bài viết nào
-                </h3>
-                <p className="text-sm text-gray-500">
-                  Hãy quay lại sau để xem những bài viết mới nhất.
-                </p>
-              </div>
-            ) : null}
+                  ))}
+                </div>
+              ) : listPosts.length > 0 ? (
+                <div className="blog-list">
+                  {listPosts.map((post) => (
+                    <BlogCard key={post.id} post={post} />
+                  ))}
+                </div>
+              ) : posts.length === 0 ? (
+                <div className="blog-empty">
+                  <FileText size={56} className="text-gray-300 mb-4" />
+                  <h3 className="text-lg font-semibold text-gray-700 mb-2">
+                    Chưa có bài viết nào
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    Hãy quay lại sau để xem những bài viết mới nhất.
+                  </p>
+                </div>
+              ) : null}
 
-            {/* Pagination */}
-            {!loading && (
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={handlePageChange}
+              {/* Pagination */}
+              {!loading && (
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                />
+              )}
+            </div>
+
+            {/* Sidebar */}
+            <div className="blog-sidebar">
+              <BlogSidebar
+                recentPosts={recentPosts}
+                categories={categories}
+                activeCategory={categorySlug}
+                loading={sidebarLoading}
               />
-            )}
+            </div>
           </div>
-
-          {/* Sidebar */}
-          <div className="blog-sidebar">
-            <BlogSidebar
-              recentPosts={recentPosts}
-              categories={categories}
-              activeCategory={categorySlug}
-              loading={sidebarLoading}
-            />
-          </div>
-        </div>
       </section>
-      </main>
-
-      <Footer />
 
       <style jsx>{`
         .blog-page {
           max-width: 1440px;
-          margin: 0 auto;
-          padding: 40px 2rem 80px;
+          margin: 32px auto 0;
+          padding: 0 2rem 80px;
         }
 
         .blog-header {
@@ -359,13 +362,24 @@ export function BlogPageClient() {
           background: var(--bg-secondary, #f5f5f5);
         }
 
-        .blog-skeleton-line--short { width: 30%; }
-        .blog-skeleton-line--medium { width: 60%; }
-        .blog-skeleton-line--long { width: 90%; }
+        .blog-skeleton-line--short {
+          width: 30%;
+        }
+        .blog-skeleton-line--medium {
+          width: 60%;
+        }
+        .blog-skeleton-line--long {
+          width: 90%;
+        }
 
         @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
+          0%,
+          100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.5;
+          }
         }
 
         /* Pagination */
@@ -392,7 +406,9 @@ export function BlogPageClient() {
           transition: all 0.2s;
         }
 
-        .blog-pagination-btn:hover { background: var(--bg-secondary, #f5f5f5); }
+        .blog-pagination-btn:hover {
+          background: var(--bg-secondary, #f5f5f5);
+        }
 
         .blog-pagination-num {
           width: 36px;
@@ -410,7 +426,9 @@ export function BlogPageClient() {
           transition: all 0.2s;
         }
 
-        .blog-pagination-num:hover { background: var(--bg-secondary, #f5f5f5); }
+        .blog-pagination-num:hover {
+          background: var(--bg-secondary, #f5f5f5);
+        }
 
         .blog-pagination-num--active {
           background: var(--accent-black, #000);
@@ -437,7 +455,7 @@ export function BlogPageClient() {
 
         @media (max-width: 640px) {
           .blog-page {
-            padding: 24px 1rem 60px;
+            padding: 0 1rem 60px;
           }
 
           .blog-title {

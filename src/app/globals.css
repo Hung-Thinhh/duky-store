@@ -129,6 +129,13 @@
 /* ============================================================
    BASE ELEMENT STYLES
    ============================================================ */
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden !important;
+}
+
 body {
   font-family: var(--font-main);
   color: var(--text-main);
@@ -136,7 +143,6 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE/Edge */
 }
@@ -660,6 +666,10 @@ img {
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
 }
+.py-3 {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}
 .py-4 {
   padding-top: 1rem;
   padding-bottom: 1rem;
@@ -964,6 +974,77 @@ img {
   font-weight: 300;
 }
 
+/* Hero slide wrapper maintains design aspect-ratio and covers the parent container */
+.hero-slide-wrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  container-type: size;
+  overflow: hidden;
+
+  /* Desktop default aspect ratio (1920x900) */
+  --canvas-ratio: 1920/900;
+  aspect-ratio: var(--canvas-ratio);
+
+  width: 100%;
+  height: 100%;
+}
+
+@media (min-aspect-ratio: 1920/900) {
+  .hero-slide-wrapper {
+    width: 100%;
+    height: auto;
+  }
+}
+
+@media (max-aspect-ratio: 1920/900) {
+  .hero-slide-wrapper {
+    width: auto;
+    height: 100%;
+  }
+}
+
+/* Tablet aspect ratio (768x954) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .hero-slide-wrapper {
+    --canvas-ratio: 768/954;
+    aspect-ratio: var(--canvas-ratio);
+  }
+}
+@media (min-width: 768px) and (max-width: 1023px) and (min-aspect-ratio: 768/954) {
+  .hero-slide-wrapper {
+    width: 100%;
+    height: auto;
+  }
+}
+@media (min-width: 768px) and (max-width: 1023px) and (max-aspect-ratio: 768/954) {
+  .hero-slide-wrapper {
+    width: auto;
+    height: 100%;
+  }
+}
+
+/* Mobile aspect ratio (390x664) */
+@media (max-width: 767px) {
+  .hero-slide-wrapper {
+    --canvas-ratio: 390/664;
+    aspect-ratio: var(--canvas-ratio);
+  }
+}
+@media (max-width: 767px) and (min-aspect-ratio: 390/664) {
+  .hero-slide-wrapper {
+    width: 100%;
+    height: auto;
+  }
+}
+@media (max-width: 767px) and (max-aspect-ratio: 390/664) {
+  .hero-slide-wrapper {
+    width: auto;
+    height: 100%;
+  }
+}
+
 /* Hero slider layer geometry driven by per-layer config (no shared coordinates). */
 .hero-slide-layer {
   display: var(--layer-display, block);
@@ -976,7 +1057,7 @@ img {
 }
 
 .hero-slide-layer__image {
-  object-fit: var(--layer-object-fit, cover);
+  object-fit: var(--layer-object-fit, contain);
   object-position: var(--layer-object-position, center);
 }
 
@@ -1128,7 +1209,7 @@ img {
   }
 
   .hero-slide-layer__image {
-    object-fit: var(--layer-object-fit-md, var(--layer-object-fit, cover));
+    object-fit: var(--layer-object-fit-md, var(--layer-object-fit, contain));
     object-position: var(
       --layer-object-position-md,
       var(--layer-object-position, center)
@@ -1256,7 +1337,7 @@ img {
   .hero-slide-layer__image {
     object-fit: var(
       --layer-object-fit-sm,
-      var(--layer-object-fit-md, var(--layer-object-fit, cover))
+      var(--layer-object-fit-md, var(--layer-object-fit, contain))
     );
     object-position: var(
       --layer-object-position-sm,
@@ -1281,6 +1362,96 @@ img {
 .hero-trust-bar {
   animation: trustBarBob 4.5s ease-in-out infinite;
   will-change: transform;
+}
+
+/* ─── Hero Slider: Dashboard entrance animations ─────────────────────── */
+
+@keyframes hero-entrance-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes hero-entrance-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(calc(1.2 * var(--slide-h, 100vh)));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes hero-entrance-slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(calc(-1.2 * var(--slide-h, 100vh)));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes hero-entrance-slide-left {
+  from {
+    opacity: 0;
+    transform: translateX(calc(-1.2 * var(--slide-w, 100vw)));
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes hero-entrance-slide-right {
+  from {
+    opacity: 0;
+    transform: translateX(calc(1.2 * var(--slide-w, 100vw)));
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ─── Hero Slider: Dashboard float animations ────────────────────────── */
+
+@keyframes hero-float-down {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(var(--float-d, 8px));
+  }
+}
+@keyframes hero-float-up {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(var(--float-d, -8px));
+  }
+}
+@keyframes hero-float-right {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(var(--float-d, 8px));
+  }
+}
+@keyframes hero-float-left {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(var(--float-d, -8px));
+  }
 }
 
 .hero-trust-bar .glass-effect {

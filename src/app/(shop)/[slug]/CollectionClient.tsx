@@ -11,22 +11,24 @@ import dynamic from "next/dynamic";
 import type { FilterState } from "@/components/shop/Fillter";
 
 const Filter = dynamic(() => import("@/components/shop/Fillter"), {
-  loading: () => <div className="animate-pulse h-[400px] bg-gray-50 rounded-2xl animate-pulse" />,
+  loading: () => (
+    <div className="animate-pulse h-[400px] bg-gray-50 rounded-2xl animate-pulse" />
+  ),
   ssr: false,
 });
 
 const PRODUCTS_PER_PAGE = 8;
 
 const COLOR_MAPPING: Record<string, string> = {
-  "black": "Đen",
+  black: "Đen",
   "dark-brown": "Nâu đậm",
-  "brown": "Nâu",
-  "tan": "Nâu nhạt",
-  "gray": "Xám",
-  "white": "Trắng",
-  "navy": "Xanh navy",
-  "burgundy": "Đỏ đô",
-  "olive": "Xanh rêu",
+  brown: "Nâu",
+  tan: "Nâu nhạt",
+  gray: "Xám",
+  white: "Trắng",
+  navy: "Xanh navy",
+  burgundy: "Đỏ đô",
+  olive: "Xanh rêu",
 };
 
 interface CollectionClientProps {
@@ -116,25 +118,26 @@ export default function CollectionClient({
         if (!variant.colorName) return false;
         const normalizedColor = variant.colorName.trim().toLowerCase();
         return selectedColorNames.some(
-          (name) => name.toLowerCase() === normalizedColor
+          (name) => name.toLowerCase() === normalizedColor,
         );
       });
       if (!hasMatchingColor) return false;
     }
 
     // Price filter
-    const price = product.salePrice ?? product.originalPrice ?? product.price ?? 0;
+    const price =
+      product.salePrice != null && product.salePrice > 0
+        ? product.salePrice
+        : (product.originalPrice ?? product.price ?? 0);
     if (filterState.priceMin > 0 && price < filterState.priceMin) return false;
-    if (filterState.priceMax < 5_000_000 && price > filterState.priceMax) return false;
+    if (filterState.priceMax < 5_000_000 && price > filterState.priceMax)
+      return false;
     return true;
   });
 
   // Client-side pagination -> infinite slice
   const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
-  const products = filteredProducts.slice(
-    0,
-    currentPage * PRODUCTS_PER_PAGE
-  );
+  const products = filteredProducts.slice(0, currentPage * PRODUCTS_PER_PAGE);
 
   const handleFilterChange = (state: FilterState) => {
     setFilterState(state);
@@ -142,14 +145,20 @@ export default function CollectionClient({
     const params = new URLSearchParams(searchParams.toString());
     params.delete("page");
 
-    if (state.category && state.category !== "Tất cả" && state.category !== "all") {
+    if (
+      state.category &&
+      state.category !== "Tất cả" &&
+      state.category !== "all"
+    ) {
       params.set("category", state.category);
     } else {
       params.delete("category");
     }
 
     const queryString = params.toString();
-    router.push(`/${slug}${queryString ? `?${queryString}` : ""}`, { scroll: false });
+    router.push(`/${slug}${queryString ? `?${queryString}` : ""}`, {
+      scroll: false,
+    });
   };
 
   const toggleFavorite = (product: Product) => {
@@ -168,7 +177,7 @@ export default function CollectionClient({
           setCurrentPage((prev) => prev + 1);
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.1 },
     );
 
     const currentLoader = loaderRef.current;
@@ -184,13 +193,10 @@ export default function CollectionClient({
   }, [currentPage, totalPages]);
 
   return (
-    <section className="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 py-16 mt-8 mb-8">
+    <section className="max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 mt-8 mb-8">
       {/* Breadcrumb */}
       <Navpages
-        items={[
-          { label: "Trang chủ", href: "/" },
-          { label: collectionTitle },
-        ]}
+        items={[{ label: "Trang chủ", href: "/" }, { label: collectionTitle }]}
       />
 
       <div className="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-8">
@@ -241,7 +247,10 @@ export default function CollectionClient({
 
           {/* Loader for Infinite Scroll */}
           {currentPage < totalPages && (
-            <div ref={loaderRef} className="flex justify-center items-center py-8">
+            <div
+              ref={loaderRef}
+              className="flex justify-center items-center py-8"
+            >
               <div className="w-6 h-6 border-2 border-slate-300 border-t-black rounded-full animate-spin" />
             </div>
           )}

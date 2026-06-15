@@ -3,13 +3,10 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
-import { Header, Footer } from "@/components/layout";
 import { Navpages } from "@/components/shop/Navpages";
-import { useCart } from "@/context/CartContext";
 import { fetchGalleryImages, GalleryImage } from "@/lib/api";
 
 export function GalleryClient() {
-  const { cartCount } = useCart();
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
@@ -92,13 +89,10 @@ export function GalleryClient() {
 
   return (
     <>
-      <Header cartCount={cartCount} />
-
-      <main id="main-content">
-        <section className="gallery-page">
+      <section className="gallery-page mt-8">
         <h2 className="sr-only">Thư viện hình ảnh và Lookbook</h2>
         <Navpages
-          items={[{ label: "Trang chủ", href: "/" }, { label: "Lookbook" }]}
+          items={[{ label: "Trang chủ", href: "/" }, { label: "Phối đồ" }]}
         />
 
         {/* Tabs Bar */}
@@ -260,15 +254,13 @@ export function GalleryClient() {
         </div>
       )}
 
-      </main>
 
-      <Footer />
 
       <style jsx>{`
         .gallery-page {
           max-width: 1440px;
-          margin: 0 auto;
-          padding: 32px 2rem 80px;
+          margin: 32px auto 0;
+          padding: 0 2rem 80px;
         }
 
         .gallery-tabs-container {
@@ -613,7 +605,7 @@ export function GalleryClient() {
 
         @media (max-width: 640px) {
           .gallery-page {
-            padding: 24px 1rem 60px;
+            padding: 0 1rem 60px;
           }
           .masonry-grid {
             column-count: 2;

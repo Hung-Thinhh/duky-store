@@ -132,7 +132,7 @@ export const FAQSection = () => {
                 href="https://www.google.com/maps/place/122+%C4%90.+Nguy%E1%BB%85n+Hi%E1%BB%81n,+Khu+d%C3%A2n+c%C6%B0+91B,+T%C3%A2n+An,+C%E1%BA%A7n+Th%C6%A1+94000,+Vietnam/@10.023035,105.755797,1823m/data=!3m1!1e3!4m6!3m5!1s0x31a088487f863ae3:0x704afb4eb3949570!8m2!3d10.0230345!4d105.7557973!16s%2Fg%2F11sp94nd66?hl=vi"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="content group w-[300px] inline-flex items-center justify-center gap-2 bg-black text-white px-4 py-4 rounded-full text-xs font-bold hover:bg-neutral-900 transition-all duration-300 shadow-xl shadow-black/10 hover:shadow-black/20"
+                className="content group w-full max-w-[300px] inline-flex items-center justify-center gap-2 bg-black text-white px-4 py-4 rounded-full text-xs font-bold hover:bg-neutral-900 transition-all duration-300 shadow-xl shadow-black/10 hover:shadow-black/20"
               >
                 Chỉ đường đến cửa hàng
                 <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" />

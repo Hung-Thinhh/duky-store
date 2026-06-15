@@ -10,7 +10,7 @@ const Footer = dynamic(
   { ssr: true },
 );
 
-export default function GalleryLayout({
+export default function ProductsLayout({
   children,
 }: {
   children: React.ReactNode;

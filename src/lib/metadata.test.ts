@@ -20,7 +20,7 @@ describe("buildMetadata", () => {
     };
 
     const metadata = buildMetadata(input);
-    expect(metadata.title).toBe("Boot Nam | Duky Store");
+    expect(metadata.title).toEqual({ absolute: "Boot Nam | Duky Store" });
   });
 
   it("generates Open Graph tags with all required fields", () => {

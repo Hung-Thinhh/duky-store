@@ -3,9 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
-import { Header, Footer } from "@/components/layout";
 import { Navpages } from "@/components/shop/Navpages";
-import { useCart } from "@/context/CartContext";
 import { FAQOnly } from "@/components/shop/home/FAQOnly";
 
 interface StorePhoto {
@@ -43,7 +41,6 @@ const STORE_SECTION_HEADER = {
 };
 
 export function ContactClient() {
-  const { cartCount } = useCart();
   const [form, setForm] = useState({
     fullName: "",
     email: "",
@@ -70,200 +67,197 @@ export function ContactClient() {
 
   return (
     <>
-      <Header cartCount={cartCount} />
+      <section className="contact-page mt-8">
+          <Navpages
+            items={[{ label: "Trang chủ", href: "/" }, { label: "Liên hệ" }]}
+          />
 
-      <main id="main-content">
-        <section className="contact-page">
-        <Navpages
-          items={[{ label: "Trang chủ", href: "/" }, { label: "Liên hệ" }]}
-        />
-
-        {/* Company Store Section */}
-        <div className="store-section">
-          <div className="store-header">
-            <h2 className="text-4xl md:text-5xl lg:text-[40px] font-semibold text-black leading-tight tracking-tight py-2">
-              {STORE_SECTION_HEADER.title}
-            </h2>
-            <p className="store-subtitle">{STORE_SECTION_HEADER.subtitle}</p>
-          </div>
-
-          <div className="store-grid store-grid-top">
-            {STORE_PHOTOS.slice(0, 2).map((photo, index) => (
-              <div key={index} className="store-card">
-                <div className="store-img-wrap">
-                  <Image
-                    src={photo.image}
-                    alt={photo.caption}
-                    width={600}
-                    height={375}
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    className="store-img"
-                    priority
-                  />
-                </div>
-                <div className="store-info">
-                  <h3 className="store-photo-caption">{photo.caption}</h3>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="store-grid store-grid-bottom">
-            {STORE_PHOTOS.slice(2).map((photo, index) => (
-              <div key={index} className="store-card">
-                <div className="store-img-wrap">
-                  <Image
-                    src={photo.image}
-                    alt={photo.caption}
-                    width={400}
-                    height={300}
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                    className="store-img"
-                  />
-                </div>
-                <div className="store-info">
-                  <h3 className="store-photo-caption">{photo.caption}</h3>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="contact-layout">
-          {/* Left: Contact Info */}
-          <div className="contact-info">
-            <div className="info-card">
-              <div className="info-card-header">
-                <h2 className="text-4xl md:text-5xl lg:text-[40px] font-semibold text-black leading-tight tracking-tight">
-                  Thông tin liên hệ
-                </h2>
-              </div>
-              <p className="info-card-desc">
-                Liên hệ với chúng tôi qua các kênh dưới đây hoặc gửi tin nhắn
-                trực tiếp.
-              </p>
-
-              <div className="info-list">
-                <div className="info-item">
-                  <div className="info-icon">
-                    <MapPin size={18} />
-                  </div>
-                  <div className="info-content">
-                    <span className="info-label">Địa chỉ</span>
-                    <span className="info-value">
-                      122 Nguyễn Hiền, KDC 91B, P. Tân An, TP. Cần Thơ
-                    </span>
-                  </div>
-                </div>
-
-                <div className="info-item">
-                  <div className="info-icon">
-                    <Phone size={18} />
-                  </div>
-                  <div className="info-content">
-                    <span className="info-label">Số điện thoại</span>
-                    <span className="info-value">0939.654.574</span>
-                  </div>
-                </div>
-
-                <div className="info-item">
-                  <div className="info-icon">
-                    <Mail size={18} />
-                  </div>
-                  <div className="info-content">
-                    <span className="info-label">Email</span>
-                    <span className="info-value">dukystore.info@gmail.com</span>
-                  </div>
-                </div>
-
-                <div className="info-item">
-                  <div className="info-icon">
-                    <Clock size={18} />
-                  </div>
-                  <div className="info-content">
-                    <span className="info-label">Giờ làm việc</span>
-                    <span className="info-value">
-                      9:00 - 21:00 (Thứ 2 - Chủ nhật)
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Social Links */}
-              <div className="social-links">
-                <a
-                  href="https://zalo.me/0939654574"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="social-btn social-btn--zalo"
-                  aria-label="Zalo"
-                >
-                  <Image
-                    src="/assets/icons/Zalo.svg"
-                    alt="Zalo"
-                    width={22}
-                    height={22}
-                  />
-                </a>
-                <a
-                  href="https://www.instagram.com/duky.store"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="social-btn social-btn--instagram"
-                  aria-label="Instagram"
-                >
-                  <Image
-                    src="/assets/icons/Instagram.svg"
-                    alt="Instagram"
-                    width={22}
-                    height={22}
-                  />
-                </a>
-                <a
-                  href="https://www.tiktok.com/@duky.store"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="social-btn social-btn--tiktok"
-                  aria-label="TikTok"
-                >
-                  <Image
-                    src="/assets/icons/Tiktok.svg"
-                    alt="TikTok"
-                    width={22}
-                    height={22}
-                  />
-                </a>
-              </div>
+          {/* Company Store Section */}
+          <div className="store-section">
+            <div className="store-header">
+              <h2 className="text-4xl md:text-5xl lg:text-[40px] font-semibold text-black leading-tight tracking-tight py-2">
+                {STORE_SECTION_HEADER.title}
+              </h2>
+              <p className="store-subtitle">{STORE_SECTION_HEADER.subtitle}</p>
             </div>
 
-            {/* Map */}
-            <div className="map-card">
-              <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3929.0!2d105.7558!3d10.0230!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a088487f863ae3%3A0x704afb4eb3949570!2s122%20%C4%90.%20Nguy%E1%BB%85n%20Hi%E1%BB%81n%2C%20KDC%2091B%2C%20T%C3%A2n%20An%2C%20C%E1%BA%A7n%20Th%C6%A1!5e0!3m2!1svi!2s!4v1700000000000!5m2!1svi!2s"
-                width="100%"
-                height="100%"
-                style={{ border: 0, borderRadius: 16, minHeight: 300 }}
-                allowFullScreen
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                title="Duky Store Location"
-              />
+            <div className="store-grid store-grid-top">
+              {STORE_PHOTOS.slice(0, 2).map((photo, index) => (
+                <div key={index} className="store-card">
+                  <div className="store-img-wrap">
+                    <Image
+                      src={photo.image}
+                      alt={photo.caption}
+                      width={600}
+                      height={375}
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      className="store-img"
+                      priority
+                    />
+                  </div>
+                  <div className="store-info">
+                    <h3 className="store-photo-caption">{photo.caption}</h3>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="store-grid store-grid-bottom">
+              {STORE_PHOTOS.slice(2).map((photo, index) => (
+                <div key={index} className="store-card">
+                  <div className="store-img-wrap">
+                    <Image
+                      src={photo.image}
+                      alt={photo.caption}
+                      width={400}
+                      height={300}
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="store-img"
+                    />
+                  </div>
+                  <div className="store-info">
+                    <h3 className="store-photo-caption">{photo.caption}</h3>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
 
-        {/* FAQ Section */}
-        <FAQOnly className="contact-faq" />
-      </section>
-      </main>
+          <div className="contact-layout">
+            {/* Left: Contact Info */}
+            <div className="contact-info">
+              <div className="info-card">
+                <div className="info-card-header">
+                  <h2 className="text-4xl md:text-5xl lg:text-[40px] font-semibold text-black leading-tight tracking-tight">
+                    Thông tin liên hệ
+                  </h2>
+                </div>
+                <p className="info-card-desc">
+                  Liên hệ với chúng tôi qua các kênh dưới đây hoặc gửi tin nhắn
+                  trực tiếp.
+                </p>
 
-      <Footer />
+                <div className="info-list">
+                  <div className="info-item">
+                    <div className="info-icon">
+                      <MapPin size={18} />
+                    </div>
+                    <div className="info-content">
+                      <span className="info-label">Địa chỉ</span>
+                      <span className="info-value">
+                        122 Nguyễn Hiền, KDC 91B, P. Tân An, TP. Cần Thơ
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="info-item">
+                    <div className="info-icon">
+                      <Phone size={18} />
+                    </div>
+                    <div className="info-content">
+                      <span className="info-label">Số điện thoại</span>
+                      <span className="info-value">0939.654.574</span>
+                    </div>
+                  </div>
+
+                  <div className="info-item">
+                    <div className="info-icon">
+                      <Mail size={18} />
+                    </div>
+                    <div className="info-content">
+                      <span className="info-label">Email</span>
+                      <span className="info-value">
+                        dukystore.info@gmail.com
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="info-item">
+                    <div className="info-icon">
+                      <Clock size={18} />
+                    </div>
+                    <div className="info-content">
+                      <span className="info-label">Giờ làm việc</span>
+                      <span className="info-value">
+                        9:00 - 21:00 (Thứ 2 - Chủ nhật)
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Social Links */}
+                <div className="social-links">
+                  <a
+                    href="https://zalo.me/0939654574"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="social-btn social-btn--zalo"
+                    aria-label="Zalo"
+                  >
+                    <Image
+                      src="/assets/icons/Zalo.svg"
+                      alt="Zalo"
+                      width={22}
+                      height={22}
+                    />
+                  </a>
+                  <a
+                    href="https://www.instagram.com/duky.store"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="social-btn social-btn--instagram"
+                    aria-label="Instagram"
+                  >
+                    <Image
+                      src="/assets/icons/Instagram.svg"
+                      alt="Instagram"
+                      width={22}
+                      height={22}
+                    />
+                  </a>
+                  <a
+                    href="https://www.tiktok.com/@duky.store"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="social-btn social-btn--tiktok"
+                    aria-label="TikTok"
+                  >
+                    <Image
+                      src="/assets/icons/Tiktok.svg"
+                      alt="TikTok"
+                      width={22}
+                      height={22}
+                    />
+                  </a>
+                </div>
+              </div>
+
+              {/* Map */}
+              <div className="map-card">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3929.0!2d105.7558!3d10.0230!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a088487f863ae3%3A0x704afb4eb3949570!2s122%20%C4%90.%20Nguy%E1%BB%85n%20Hi%E1%BB%81n%2C%20KDC%2091B%2C%20T%C3%A2n%20An%2C%20C%E1%BA%A7n%20Th%C6%A1!5e0!3m2!1svi!2s!4v1700000000000!5m2!1svi!2s"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0, borderRadius: 16, minHeight: 300 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="Duky Store Location"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* FAQ Section */}
+          <FAQOnly className="contact-faq" />
+        </section>
+
 
       <style jsx>{`
         .contact-page {
           max-width: 1440px;
-          margin: 0 auto;
-          padding: 32px 2rem 56px;
+          margin: 32px auto 0;
+          padding: 0 2rem 56px;
         }
 
         .contact-faq {
@@ -648,7 +642,7 @@ export function ContactClient() {
 
         @media (max-width: 640px) {
           .contact-page {
-            padding: 24px 1rem 60px;
+            padding: 0 1rem 60px;
           }
 
           .form-row {

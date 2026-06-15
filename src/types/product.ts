@@ -78,6 +78,7 @@ export interface Product {
   allVariantsSoldOut?: boolean;
 
   desc?: string;
+  description?: string | null;
   price?: number;
   formattedPrice?: string;
   img?: string;
@@ -118,12 +119,19 @@ export function getAllProductImageUrls(product: Product): string[] {
 }
 
 export function getDisplayPrice(product: Product): number {
-  return product.salePrice ?? product.originalPrice ?? product.price ?? 0;
+  if (product.salePrice != null && product.salePrice > 0) {
+    return product.salePrice;
+  }
+  return product.originalPrice ?? product.price ?? 0;
 }
 
 export function hasDiscount(product: Product): boolean {
   const original = product.originalPrice ?? product.price ?? 0;
-  return product.salePrice != null && product.salePrice < original;
+  return (
+    product.salePrice != null &&
+    product.salePrice > 0 &&
+    product.salePrice < original
+  );
 }
 
 export interface CartItem extends Product {

@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import { fetchProducts } from "@/lib/api";
+import { fetchProducts, fetchCatalogBanners } from "@/lib/api";
 import { buildMetadata } from "@/lib/metadata";
 import { buildBreadcrumbJsonLd } from "@/lib/structured-data";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -15,8 +15,6 @@ export const revalidate = 60;
 const PARENT_CATEGORIES = ["boot-nam", "boot-nu", "phu-kien", "unisex"];
 
 // ─── Collection metadata (hero banners, titles) ─────────────────────────────
-// TODO: Replace with API call when backend is ready
-// Example: const bannerData = await fetch(`${API_URL}/banners/collection/${slug}`).then(res => res.json());
 const COLLECTION_META: Record<
   string,
   {
@@ -34,7 +32,7 @@ const COLLECTION_META: Record<
   }
 > = {
   "boot-nam": {
-    title: "Giày Boot Nam Cao Cấp",
+    title: "Boot Nam",
     description:
       "Bộ sưu tập giày boot nam cao cấp - Da thật, thiết kế tinh tế.",
     heroImage: "/assets/banner_boot_nam.webp",
@@ -50,7 +48,7 @@ const COLLECTION_META: Record<
     },
   },
   "boot-nu": {
-    title: "Giày Boot Nữ Cao Cấp",
+    title: "Boot Nữ",
     description: "Bộ sưu tập giày boot nữ - Thanh lịch, quyến rũ.",
     heroImage: "/assets/banner_boot_nu.webp",
     heroTitle: "GIÀY BOOT\nNỮ CAO CẤP",
@@ -64,7 +62,7 @@ const COLLECTION_META: Record<
     },
   },
   "phu-kien": {
-    title: "Phụ Kiện",
+    title: "Phụ kiện",
     description: "Phụ kiện thời trang cao cấp.",
     heroImage: "/assets/banner_phukien.webp",
     heroTitle: "PHỤ KIỆN\nCAO CẤP",
@@ -122,11 +120,19 @@ export async function generateMetadata({
     });
   }
 
+  // Fetch dynamic metadata if available
+  const catalogBanners = await fetchCatalogBanners();
+  const dbSlot = catalogBanners?.[slug];
+
+  const title = meta.title;
+  const description = dbSlot?.desktop?.description ?? meta.description;
+  const image = dbSlot?.desktop?.image ?? meta.heroImage;
+
   return buildMetadata({
-    title: meta.title,
-    description: meta.description,
+    title,
+    description,
     path: `/${slug}`,
-    image: meta.heroImage,
+    image,
   });
 }
 
@@ -153,6 +159,10 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
     notFound();
   }
 
+  // Fetch dynamic catalog banner config from DB
+  const catalogBanners = await fetchCatalogBanners();
+  const dbSlot = catalogBanners?.[slug];
+
   // Fetch products: for parent categories, include children
   const isParentCategory = PARENT_CATEGORIES.includes(slug);
   let products: Product[];
@@ -174,52 +184,173 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
     { name: meta.title, url: `/${slug}` },
   ]);
 
+  const hasBanner = !!(dbSlot?.desktop?.image || dbSlot?.tablet?.image || dbSlot?.mobile?.image);
+
   return (
     <>
       {/* JSON-LD Structured Data */}
       <JsonLd data={breadcrumbData} />
 
       {/* ═══ SECTION 1: Hero Banner ═══ */}
-      <section
-        className="relative w-full"
-        style={{ width: "100vw", marginLeft: "calc(-50vw + 50%)" }}
-      >
-        <Image
-          src={meta.heroImage}
-          alt={meta.heroTitle}
-          width={1920}
-          height={1080}
-          sizes="100vw"
-          className="w-full h-[260px] sm:h-[320px] md:h-auto object-cover"
-          priority
-        />
-        {/* Text overlay */}
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full max-w-[1440px] mx-auto px-6 md:px-20">
-            <div className="space-y-2 md:space-y-3 max-w-sm sm:max-w-md">
-              <span className="inline-block text-[10px] md:text-xs font-medium tracking-widest text-gray-600 uppercase">
-                {meta.banner.badge}
-              </span>
-              <h1 className="leading-[1.1] tracking-tighter text-gray-900">
-                <span className="block text-[24px] sm:text-[36px] md:text-[52px] lg:text-[64px] font-semibold">
-                  {meta.banner.titleLine1}
-                </span>
-                <span className="block text-[20px] sm:text-[30px] md:text-[44px] lg:text-[56px] font-medium italic -mt-1 md:-mt-2">
-                  <span className="font-montserrat not-italic font-semibold tracking-wide bg-gradient-to-br from-zinc-500 via-zinc-300 to-zinc-700 bg-clip-text text-transparent inline-block ml-1 md:ml-2">
-                    {meta.banner.titleLine2}
-                  </span>
-                </span>
-              </h1>
-              <div className="flex items-start gap-2 md:gap-3 max-w-[170px] sm:max-w-sm">
-                <div className="w-6 sm:w-8 h-px bg-gray-900 mt-2 shrink-0" />
-                <p className="text-[11px] md:text-sm text-gray-600 leading-relaxed font-light line-clamp-3 sm:line-clamp-none">
-                  {meta.banner.description}
-                </p>
+      {hasBanner && (
+        <section
+          className="relative w-full"
+          style={{ width: "100vw", marginLeft: "calc(-50vw + 50%)" }}
+        >
+          {/* Desktop image layout */}
+          {dbSlot?.desktop?.image && (
+            <div className="hidden md:block w-full relative">
+              <Image
+                src={dbSlot.desktop.image}
+                alt={dbSlot.desktop.titleLine1 || meta.heroTitle}
+                width={1920}
+                height={1080}
+                sizes="100vw"
+                className="w-full h-auto object-cover"
+                priority
+              />
+              {/* Desktop Text Overlay */}
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full max-w-[1440px] mx-auto px-6 md:px-20">
+                  <div className="space-y-2 md:space-y-3 max-w-sm sm:max-w-md">
+                    {dbSlot.desktop.badge && (
+                      <span className="inline-block text-[10px] md:text-xs font-medium tracking-widest text-gray-600 uppercase">
+                        {dbSlot.desktop.badge}
+                      </span>
+                    )}
+                    {(dbSlot.desktop.titleLine1 || dbSlot.desktop.titleLine2) && (
+                      <h1 className="leading-[1.1] tracking-tighter text-gray-900">
+                        {dbSlot.desktop.titleLine1 && (
+                          <span className="block text-[24px] sm:text-[36px] md:text-[52px] lg:text-[64px] font-semibold">
+                            {dbSlot.desktop.titleLine1}
+                          </span>
+                        )}
+                        {dbSlot.desktop.titleLine2 && (
+                          <span className="block text-[20px] sm:text-[30px] md:text-[44px] lg:text-[56px] font-medium italic -mt-1 md:-mt-2">
+                            <span className="font-montserrat not-italic font-semibold tracking-wide bg-gradient-to-br from-zinc-500 via-zinc-300 to-zinc-700 bg-clip-text text-transparent inline-block ml-1 md:ml-2">
+                              {dbSlot.desktop.titleLine2}
+                            </span>
+                          </span>
+                        )}
+                      </h1>
+                    )}
+                    {dbSlot.desktop.description && (
+                      <div className="flex items-start gap-2 md:gap-3 max-w-[170px] sm:max-w-sm">
+                        <div className="w-6 sm:w-8 h-px bg-gray-900 mt-2 shrink-0" />
+                        <p className="text-[11px] md:text-sm text-gray-600 leading-relaxed font-light line-clamp-3 sm:line-clamp-none">
+                          {dbSlot.desktop.description}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
+          )}
+
+          {/* Tablet image layout */}
+          {dbSlot?.tablet?.image && (
+            <div className="hidden sm:block md:hidden w-full relative">
+              <Image
+                src={dbSlot.tablet.image}
+                alt={dbSlot.tablet.titleLine1 || meta.heroTitle}
+                width={1024}
+                height={576}
+                sizes="100vw"
+                className="w-full h-[320px] object-cover"
+                priority
+              />
+              {/* Tablet Text Overlay */}
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full max-w-[1024px] mx-auto px-6 md:px-20">
+                  <div className="space-y-2 md:space-y-3 max-w-sm sm:max-w-md">
+                    {dbSlot.tablet.badge && (
+                      <span className="inline-block text-[10px] md:text-xs font-medium tracking-widest text-gray-600 uppercase">
+                        {dbSlot.tablet.badge}
+                      </span>
+                    )}
+                    {(dbSlot.tablet.titleLine1 || dbSlot.tablet.titleLine2) && (
+                      <h1 className="leading-[1.1] tracking-tighter text-gray-900">
+                        {dbSlot.tablet.titleLine1 && (
+                          <span className="block text-[24px] sm:text-[36px] font-semibold">
+                            {dbSlot.tablet.titleLine1}
+                          </span>
+                        )}
+                        {dbSlot.tablet.titleLine2 && (
+                          <span className="block text-[20px] sm:text-[30px] font-medium italic -mt-1">
+                            <span className="font-montserrat not-italic font-semibold tracking-wide bg-gradient-to-br from-zinc-500 via-zinc-300 to-zinc-700 bg-clip-text text-transparent inline-block ml-1">
+                              {dbSlot.tablet.titleLine2}
+                            </span>
+                          </span>
+                        )}
+                      </h1>
+                    )}
+                    {dbSlot.tablet.description && (
+                      <div className="flex items-start gap-2 max-w-[170px] sm:max-w-sm">
+                        <div className="w-6 sm:w-8 h-px bg-gray-900 mt-2 shrink-0" />
+                        <p className="text-[11px] text-gray-600 leading-relaxed font-light line-clamp-3 sm:line-clamp-none">
+                          {dbSlot.tablet.description}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Mobile image layout */}
+          {dbSlot?.mobile?.image && (
+            <div className="block sm:hidden w-full relative">
+              <Image
+                src={dbSlot.mobile.image}
+                alt={dbSlot.mobile.titleLine1 || meta.heroTitle}
+                width={640}
+                height={360}
+                sizes="100vw"
+                className="w-full h-[260px] object-cover"
+                priority
+              />
+              {/* Mobile Text Overlay */}
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full max-w-[640px] mx-auto px-6">
+                  <div className="space-y-2 max-w-[170px]">
+                    {dbSlot.mobile.badge && (
+                      <span className="inline-block text-[10px] font-medium tracking-widest text-gray-600 uppercase">
+                        {dbSlot.mobile.badge}
+                      </span>
+                    )}
+                    {(dbSlot.mobile.titleLine1 || dbSlot.mobile.titleLine2) && (
+                      <h1 className="leading-[1.1] tracking-tighter text-gray-900">
+                        {dbSlot.mobile.titleLine1 && (
+                          <span className="block text-[24px] font-semibold">
+                            {dbSlot.mobile.titleLine1}
+                          </span>
+                        )}
+                        {dbSlot.mobile.titleLine2 && (
+                          <span className="block text-[20px] font-medium italic -mt-1">
+                            <span className="font-montserrat not-italic font-semibold tracking-wide bg-gradient-to-br from-zinc-500 via-zinc-300 to-zinc-700 bg-clip-text text-transparent inline-block ml-1">
+                              {dbSlot.mobile.titleLine2}
+                            </span>
+                          </span>
+                        )}
+                      </h1>
+                    )}
+                    {dbSlot.mobile.description && (
+                      <div className="flex items-start gap-2 max-w-[170px]">
+                        <div className="w-6 h-px bg-gray-900 mt-2 shrink-0" />
+                        <p className="text-[11px] text-gray-600 leading-relaxed font-light line-clamp-3">
+                          {dbSlot.mobile.description}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </section>
+      )}
 
       {/* ═══ SECTION 2: Product Showcase (Client Component) ═══ */}
       <Suspense

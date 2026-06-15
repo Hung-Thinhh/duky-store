@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Header, Footer } from "@/components/layout";
+
 import InfoSection, {
   ProductDetail,
   VariantData,
@@ -31,13 +31,36 @@ function formatCurrency(value: number): string {
   return `${value.toLocaleString("vi-VN")} VND`;
 }
 
+function getCategoryInfo(product: Product) {
+  const categorySlugs = (product as any).categorySlugs;
+  const isAccessory =
+    categorySlugs?.includes("phu-kien") ||
+    ["Thắt lưng", "Ví da", "Tất", "Chăm sóc giày", "Dây giày"].includes(product.category ?? "") ||
+    (product.gender === "unisex" && ["Thắt lưng", "Ví da", "Tất", "Chăm sóc giày", "Dây giày"].some(cat => (product.category || "").includes(cat))) ||
+    product.category === "Phụ kiện";
+
+  if (isAccessory) {
+    return { name: "Phụ kiện", url: "/phu-kien" };
+  }
+
+  if (product.gender === "male") {
+    return { name: "Boot Nam", url: "/boot-nam" };
+  } else if (product.gender === "female") {
+    return { name: "Boot Nữ", url: "/boot-nu" };
+  } else if (product.gender === "unisex") {
+    return { name: "Unisex", url: "/unisex" };
+  }
+
+  return { name: "Sản phẩm", url: "/san-pham" };
+}
+
 export default function ProductDetailPageClient({
   slug,
   initialProduct,
   initialVariants,
 }: ProductDetailPageClientProps) {
   const router = useRouter();
-  const { cartCount, addToCart } = useCart();
+  const { addToCart } = useCart();
   const [product, setProduct] = useState<Product | null>(initialProduct);
   const [variants, setVariants] = useState<ProductVariant[]>(initialVariants);
   const [loading, setLoading] = useState(false);
@@ -71,41 +94,33 @@ export default function ProductDetailPageClient({
 
   if (loading) {
     return (
-      <>
-        <Header cartCount={cartCount} />
-        <main
-          style={{
-            minHeight: "60vh",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            marginTop: 80,
-          }}
-        >
-          <p style={{ color: "#888", fontSize: 16 }}>Dang tai san pham...</p>
-        </main>
-        <Footer />
-      </>
+      <div
+        style={{
+          minHeight: "60vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          marginTop: 80,
+        }}
+      >
+        <p style={{ color: "#888", fontSize: 16 }}>Dang tai san pham...</p>
+      </div>
     );
   }
 
   if (!product) {
     return (
-      <>
-        <Header cartCount={cartCount} />
-        <main
-          style={{
-            minHeight: "60vh",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            marginTop: 80,
-          }}
-        >
-          <p style={{ color: "#888", fontSize: 16 }}>Khong tim thay san pham.</p>
-        </main>
-        <Footer />
-      </>
+      <div
+        style={{
+          minHeight: "60vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          marginTop: 80,
+        }}
+      >
+        <p style={{ color: "#888", fontSize: 16 }}>Khong tim thay san pham.</p>
+      </div>
     );
   }
 
@@ -114,6 +129,7 @@ export default function ProductDetailPageClient({
   const hasDiscount =
     product.salePrice !== null &&
     product.salePrice !== undefined &&
+    product.salePrice > 0 &&
     product.salePrice < originalPrice;
   const discountPercent = hasDiscount
     ? Math.round((1 - displayPrice / originalPrice) * 100)
@@ -133,12 +149,14 @@ export default function ProductDetailPageClient({
     .map((variant) => variant.colorName as string)
     .filter((color, idx, arr) => arr.indexOf(color) === idx);
 
+  const categoryInfo = getCategoryInfo(product);
+
   const productDetail: ProductDetail = {
     id: product.id,
     name: product.name,
-    category: "",
+    category: categoryInfo.name,
     collection: "",
-    breadcrumb: ["Trang chủ", product.name],
+    breadcrumb: ["Trang chủ", categoryInfo.name, product.name],
     rating: 4.9,
     reviewsCount: 0,
     soldCount: 0,
@@ -160,7 +178,11 @@ export default function ProductDetailPageClient({
   const handleQuickBuy = (variantId: string, quantity: number) => {
     const selectedVariant = variants.find((variant) => variant.id === variantId);
     const variantPrice =
-      selectedVariant?.salePrice ?? selectedVariant?.price ?? displayPrice;
+      selectedVariant?.salePrice !== null &&
+      selectedVariant?.salePrice !== undefined &&
+      selectedVariant.salePrice > 0
+        ? selectedVariant.salePrice
+        : selectedVariant?.price ?? displayPrice;
     const variantLabel = [
       selectedVariant?.sizeLabel ? `Size: ${selectedVariant.sizeLabel}` : "",
       selectedVariant?.colorName ? `Mau: ${selectedVariant.colorName}` : "",
@@ -191,18 +213,14 @@ export default function ProductDetailPageClient({
 
   return (
     <>
-      <Header cartCount={cartCount} />
-      <main>
-        <InfoSection
-          product={productDetail}
-          variants={variants as VariantData[]}
-          onAddToCart={handleAddToCart}
-          onQuickBuy={handleQuickBuy}
-        />
-        <DetailSection />
-        <RecommendSection productSlug={slug} />
-      </main>
-      <Footer />
+      <InfoSection
+        product={productDetail}
+        variants={variants as VariantData[]}
+        onAddToCart={handleAddToCart}
+        onQuickBuy={handleQuickBuy}
+      />
+      <DetailSection description={product.description ?? undefined} />
+      <RecommendSection productSlug={slug} />
     </>
   );
 }

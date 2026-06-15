@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import React, { useState, useRef, useEffect } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { gsap } from 'gsap';
-import { cn } from '@/lib/utils';
+import React, { useState, useRef, useEffect } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { gsap } from "gsap";
+import { cn } from "@/lib/utils";
 
 export interface Slide {
   id: number;
@@ -40,35 +40,53 @@ export const BannerProduct: React.FC<BannerProductProps> = ({ slides }) => {
     isAnimating.current = true;
 
     // Fade out first
-    gsap.to(containerRef.current ? containerRef.current.querySelectorAll(".slide-content > *") : [], {
-      y: -20,
-      opacity: 0,
-      stagger: 0.05,
-      duration: 0.3,
-      ease: "power3.in",
-      onComplete: () => {
-        setCurrentIndex(index);
-      }
-    });
-    gsap.to(containerRef.current ? containerRef.current.querySelector(".slide-image") : null, {
-      x: -30,
-      opacity: 0,
-      duration: 0.3,
-      ease: "power3.in"
-    });
+    gsap.to(
+      containerRef.current
+        ? containerRef.current.querySelectorAll(".slide-content > *")
+        : [],
+      {
+        y: -20,
+        opacity: 0,
+        stagger: 0.05,
+        duration: 0.3,
+        ease: "power3.in",
+        onComplete: () => {
+          setCurrentIndex(index);
+        },
+      },
+    );
+    gsap.to(
+      containerRef.current
+        ? containerRef.current.querySelector(".slide-image")
+        : null,
+      {
+        x: -30,
+        opacity: 0,
+        duration: 0.3,
+        ease: "power3.in",
+      },
+    );
   };
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.fromTo(".slide-content > *",
+      gsap.fromTo(
+        ".slide-content > *",
         { y: 30, opacity: 0 },
-        { y: 0, opacity: 1, stagger: 0.1, duration: 0.5, ease: "power3.out" }
+        { y: 0, opacity: 1, stagger: 0.1, duration: 0.5, ease: "power3.out" },
       );
-      gsap.fromTo(".slide-image",
+      gsap.fromTo(
+        ".slide-image",
         { x: 50, opacity: 0 },
-        { x: 0, opacity: 1, duration: 0.6, ease: "power3.out", onComplete: () => {
-          isAnimating.current = false;
-        }}
+        {
+          x: 0,
+          opacity: 1,
+          duration: 0.6,
+          ease: "power3.out",
+          onComplete: () => {
+            isAnimating.current = false;
+          },
+        },
       );
     }, containerRef);
 
@@ -85,7 +103,9 @@ export const BannerProduct: React.FC<BannerProductProps> = ({ slides }) => {
     changeSlide(nextIndex);
   };
 
-  const resolveDirection = (event: React.MouseEvent<HTMLDivElement>): "up" | "down" => {
+  const resolveDirection = (
+    event: React.MouseEvent<HTMLDivElement>,
+  ): "up" | "down" => {
     const rect = event.currentTarget.getBoundingClientRect();
     const midpointY = rect.top + rect.height / 2;
     return event.clientY < midpointY ? "up" : "down";
@@ -109,10 +129,10 @@ export const BannerProduct: React.FC<BannerProductProps> = ({ slides }) => {
   if (!slides || slides.length === 0) return null;
 
   return (
-    <div 
+    <div
       ref={containerRef}
       className="relative w-full overflow-hidden glass-effect rounded-[2.5rem] flex items-center shadow-2xl border border-white/40 product-banner-card"
-      style={{ aspectRatio: '778 / 352' }}
+      style={{ aspectRatio: "778 / 352" }}
     >
       {/* Content Side */}
       <div className="w-1/2 px-12 lg:px-12 z-10 slide-content">
@@ -120,13 +140,15 @@ export const BannerProduct: React.FC<BannerProductProps> = ({ slides }) => {
           {currentSlide.label}
         </span>
         <h2 className="font-serif text-3xl md:text-5xl lg:text-6xl text-black leading-[1.1] mb-6 max-w-[450px]">
-          {currentSlide.title}
+          {currentSlide.title.length > 32
+            ? `${currentSlide.title.slice(0, 32)}...`
+            : currentSlide.title}
         </h2>
         <div className="w-12 h-[1px] bg-gray-300 mb-6" />
         <p className="content text-sm md:text-sm text-gray-500 mb-10 max-w-[280px] leading-relaxed">
           {currentSlide.description}
         </p>
-        
+
         {currentSlide.ctaHref ? (
           <Link
             href={currentSlide.ctaHref}
@@ -172,9 +194,10 @@ export const BannerProduct: React.FC<BannerProductProps> = ({ slides }) => {
           }}
           className="absolute right-0 top-0 bottom-0 w-16 z-30"
           style={{
-            cursor: hoverDirection === "up" 
-              ? "url('/assets/icons/arrow-up-cursor.svg') 12 2, pointer" 
-              : "url('/assets/icons/arrow-down-cursor.svg') 12 22, pointer"
+            cursor:
+              hoverDirection === "up"
+                ? "url('/assets/icons/arrow-up-cursor.svg') 12 2, pointer"
+                : "url('/assets/icons/arrow-down-cursor.svg') 12 22, pointer",
           }}
         />
       )}
@@ -186,9 +209,9 @@ export const BannerProduct: React.FC<BannerProductProps> = ({ slides }) => {
             key={index}
             className={cn(
               "w-2 h-2 rounded-full transition-all duration-500",
-              currentIndex === index 
-                ? "bg-black h-6 shadow-md shadow-black/20" 
-                : "bg-gray-300 hover:bg-gray-400"
+              currentIndex === index
+                ? "bg-black h-6 shadow-md shadow-black/20"
+                : "bg-gray-300 hover:bg-gray-400",
             )}
           />
         ))}
@@ -196,5 +219,3 @@ export const BannerProduct: React.FC<BannerProductProps> = ({ slides }) => {
     </div>
   );
 };
-
-

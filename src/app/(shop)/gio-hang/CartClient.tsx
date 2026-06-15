@@ -89,7 +89,7 @@ export function CartClient() {
       <Header cartCount={cartCount} />
 
       <main id="main-content">
-        <section className="mt-12 mb-10 pt-10 pb-20 px-2 md:px-6 overflow-x-hidden">
+        <section className="mt-8 mb-10 pb-20 px-2 md:px-6 overflow-x-hidden">
           <div className="container-custom !px-1 md:!px-8">
             {/* Breadcrumb */}
             <Navpages
