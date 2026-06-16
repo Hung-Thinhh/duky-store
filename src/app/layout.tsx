@@ -6,15 +6,14 @@ import "./globals.css";
 
 const playfair = Playfair_Display({
   subsets: ["latin", "vietnamese"],
-  weight: ["400", "500", "600", "700", "800", "900"],
-  style: ["normal", "italic"],
+  weight: ["400", "600", "700"],
   variable: "--font-playfair",
   display: "swap",
 });
 
 const montserrat = Montserrat({
   subsets: ["latin", "vietnamese"],
-  weight: ["300", "400", "500", "600", "700", "800", "900"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-montserrat",
   display: "swap",
 });
@@ -24,11 +23,11 @@ export const metadata: Metadata = {
     process.env.NEXT_PUBLIC_SITE_URL || "https://dukystore.com",
   ),
   title: {
-    default: "Duky Store - Giay Boot Da Cao Cap",
+    default: "Duky Store - Giày Boot Da Cao Cấp",
     template: `%s | ${SITE_NAME}`,
   },
   description:
-    "Duky Store chuyen giay boot da, ao khoac da va phu kien thoi trang cao cap cho nam nu, tu van size va giao hang toan quoc.",
+    "Duky Store chuyên giày boot da, áo khoác da và phụ kiện thời trang cao cấp cho nam nữ, tư vấn size và giao hàng toàn quốc.",
   applicationName: SITE_NAME,
   keywords: [
     "Duky Store",
@@ -69,9 +68,9 @@ export const metadata: Metadata = {
     images: [DEFAULT_OG_IMAGE],
   },
   icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon.ico",
-    apple: "/favicon.ico",
+    icon: "/favicon.svg",
+    shortcut: "/favicon.svg",
+    apple: "/favicon.svg",
   },
 };
 

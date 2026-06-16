@@ -224,9 +224,10 @@ export function SlideLayer({
 
   if (layer.type === "button") {
     const buttonGradientCss = getGradientCss(layer);
+    const fontSize = layer.fontSize ?? viewportLayout.fontSize ?? 14;
     const btnStyle: CSSProperties = {
       display: "inline-block",
-      fontWeight: 600,
+      fontWeight: layer.fontWeight ?? 600,
       borderRadius: 9999,
       color: layer.textColor ?? "#ffffff",
       fontFamily:
@@ -234,7 +235,7 @@ export function SlideLayer({
           ? "var(--font-accent)"
           : "var(--font-main)",
       padding: "10px 28px",
-      fontSize: "14px",
+      fontSize: `${fontSize}px`,
       border:
         layer.variant === "secondary" ? "2px solid #101114" : "none",
     };

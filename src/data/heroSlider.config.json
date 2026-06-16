@@ -7,7 +7,7 @@
         {
           "file": "background.webp",
           "fileMobile": "background-mobile.webp",
-          "alt": "Nen slide boot mua he",
+          "alt": "Nền slide boot mùa hè",
           "zIndex": 0,
           "role": "background",
           "sizes": "100vw",
@@ -43,7 +43,7 @@
         },
         {
           "file": "model.webp",
-          "alt": "Nguoi mau mang boot mua he",
+          "alt": "Người mẫu mang boot mùa hè",
           "zIndex": 2,
           "role": "model",
           "layout": {
@@ -77,7 +77,7 @@
         },
         {
           "file": "boot.webp",
-          "alt": "Boot mua he noi bat",
+          "alt": "Boot mùa hè nổi bật",
           "zIndex": 4,
           "role": "boot",
           "layout": {
@@ -113,7 +113,7 @@
         },
         {
           "file": "buc-phat-sang.webp",
-          "alt": "Buc phat sang",
+          "alt": "Bục phát sáng",
           "zIndex": 3,
           "role": "pedestal",
           "layout": {
@@ -197,7 +197,7 @@
         {
           "file": "background.webp",
           "fileMobile": "background-mobile.webp",
-          "alt": "Nen slide boot nam cao cap",
+          "alt": "Nền slide boot nam cao cấp",
           "zIndex": 0,
           "role": "background",
           "sizes": "100vw",
@@ -224,7 +224,7 @@
         },
         {
           "file": "buc.webp",
-          "alt": "Buc trung bay",
+          "alt": "Bục trưng bày",
           "zIndex": 1,
           "role": "pedestal",
           "layout": {
@@ -259,7 +259,7 @@
         },
         {
           "file": "mau_nam.webp",
-          "alt": "Nguoi mau nam",
+          "alt": "Người mẫu nam",
           "zIndex": 2,
           "role": "model",
           "layout": {
@@ -293,7 +293,7 @@
         },
         {
           "file": "boot_nam.webp",
-          "alt": "San pham boot nam",
+          "alt": "Sản phẩm boot nam",
           "zIndex": 3,
           "role": "boot",
           "layout": {
@@ -384,7 +384,7 @@
         {
           "file": "background.webp",
           "fileMobile": "background-mobile.webp",
-          "alt": "Nen slide phu kien",
+          "alt": "Nền slide phụ kiện",
           "zIndex": 0,
           "role": "background",
           "sizes": "100vw",
@@ -411,7 +411,7 @@
         },
         {
           "file": "mau_nam.webp",
-          "alt": "Nguoi mau nam",
+          "alt": "Người mẫu nam",
           "zIndex": 2,
           "role": "model",
           "layout": {

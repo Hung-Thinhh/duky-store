@@ -27,6 +27,31 @@ interface ProductDetailPageClientProps {
   initialVariants: ProductVariant[];
 }
 
+const SIZE_ORDER = ["XXS", "XS", "S", "M", "L", "XL", "XXL", "2XL", "3XL", "4XL", "5XL"];
+
+function sortSizes(a: string, b: string): number {
+  const numA = Number(a);
+  const numB = Number(b);
+  const isANum = !isNaN(numA);
+  const isBNum = !isNaN(numB);
+  
+  if (isANum && isBNum) {
+    return numA - numB;
+  }
+  
+  if (isANum) return -1;
+  if (isBNum) return 1;
+  
+  const indexA = SIZE_ORDER.indexOf(a.toUpperCase());
+  const indexB = SIZE_ORDER.indexOf(b.toUpperCase());
+  
+  if (indexA !== -1 && indexB !== -1) {
+    return indexA - indexB;
+  }
+  
+  return a.localeCompare(b);
+}
+
 function formatCurrency(value: number): string {
   return `${value.toLocaleString("vi-VN")} VND`;
 }
@@ -139,10 +164,9 @@ export default function ProductDetailPageClient({
 
   const sizes = variants
     .filter((variant) => variant.sizeLabel)
-    .map((variant) => Number(variant.sizeLabel))
-    .filter((size) => !Number.isNaN(size))
+    .map((variant) => variant.sizeLabel as string)
     .filter((size, idx, arr) => arr.indexOf(size) === idx)
-    .sort((a, b) => a - b);
+    .sort(sortSizes);
 
   const colors = variants
     .filter((variant) => variant.colorName)
@@ -159,7 +183,7 @@ export default function ProductDetailPageClient({
     breadcrumb: ["Trang chủ", categoryInfo.name, product.name],
     rating: 4.9,
     reviewsCount: 0,
-    soldCount: 0,
+    soldCount: product.soldCount ?? 0,
     price: displayPrice,
     originalPrice,
     discountPercent,
@@ -169,6 +193,7 @@ export default function ProductDetailPageClient({
     specs: [],
     sizes,
     colors,
+    shortDescription: product.shortDescription,
   };
 
   const handleAddToCart = async (variantId: string, quantity: number) => {

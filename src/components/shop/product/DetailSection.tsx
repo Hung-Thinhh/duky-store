@@ -1,8 +1,14 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { Ruler, ShieldCheck, Truck, Headphones, CreditCard } from 'lucide-react';
-import CalcSize from '@/components/shop/CalcSize';
+import React, { useState } from "react";
+import {
+  Ruler,
+  ShieldCheck,
+  Truck,
+  Headphones,
+  CreditCard,
+} from "lucide-react";
+import CalcSize from "@/components/shop/CalcSize";
 
 // ─── Mock Data ──────────────────────────────────────────────────────────────
 
@@ -41,68 +47,68 @@ interface DetailData {
 }
 
 const MOCK_DETAIL: DetailData = {
-  title: 'Derby Mũi Tròn – Phong Cách Tối Giản, Lịch Lãm',
+  title: "Derby Mũi Tròn – Phong Cách Tối Giản, Lịch Lãm",
   description:
-    'Derby Mũi Tròn DKB082 là sự kết hợp hoàn hảo giữa thiết kế cổ điển và chất liệu cao cấp, mang đến vẻ đẹp lịch lãm, dễ phối đồ cho mọi quý ông.',
+    "Derby Mũi Tròn DKB082 là sự kết hợp hoàn hảo giữa thiết kế cổ điển và chất liệu cao cấp, mang đến vẻ đẹp lịch lãm, dễ phối đồ cho mọi quý ông.",
   features: [
     {
-      title: 'Thiết kế cổ điển',
-      description: 'Form dáng chuẩn, ôm chân, tôn lên phong thái nam tính.',
+      title: "Thiết kế cổ điển",
+      description: "Form dáng chuẩn, ôm chân, tôn lên phong thái nam tính.",
     },
     {
-      title: 'Chất liệu cao cấp',
-      description: 'Da PU mềm mại, bền đẹp, dễ dàng vệ sinh và bảo quản.',
+      title: "Chất liệu cao cấp",
+      description: "Da PU mềm mại, bền đẹp, dễ dàng vệ sinh và bảo quản.",
     },
     {
-      title: 'Đế cao su chống trượt',
-      description: 'Đế cao 4cm, chống trượt, tăng chiều cao tự nhiên.',
+      title: "Đế cao su chống trượt",
+      description: "Đế cao 4cm, chống trượt, tăng chiều cao tự nhiên.",
     },
     {
-      title: 'Dễ dàng phối đồ',
-      description: 'Phù hợp với quần tây, jeans, kaki trong nhiều dịp.',
+      title: "Dễ dàng phối đồ",
+      description: "Phù hợp với quần tây, jeans, kaki trong nhiều dịp.",
     },
   ],
   specs: [
-    { label: 'Chất da', value: 'Da PU cao cấp' },
-    { label: 'Chiều cao đế', value: '4cm' },
-    { label: 'Màu sắc', value: 'Đen' },
-    { label: 'Xuất xứ', value: 'Trung Quốc' },
-    { label: 'Bảo hành', value: 'Keo trọn đời' },
-    { label: 'Đổi trả', value: '7 ngày' },
+    { label: "Chất da", value: "Da PU cao cấp" },
+    { label: "Chiều cao đế", value: "4cm" },
+    { label: "Màu sắc", value: "Đen" },
+    { label: "Xuất xứ", value: "Trung Quốc" },
+    { label: "Bảo hành", value: "Keo trọn đời" },
+    { label: "Đổi trả", value: "7 ngày" },
   ],
   sizeGuide: [
-    { size: 34, length: 22, width: '8-8.5' },
-    { size: 35, length: 22.5, width: '8.5' },
-    { size: 36, length: 23, width: '8.5-9' },
-    { size: 37, length: 23.5, width: '9' },
-    { size: 38, length: 24, width: '9-9.5' },
-    { size: 39, length: 24.5, width: '9.5' },
-    { size: 40, length: 25, width: '9.5-10' },
-    { size: 41, length: 25.5, width: '10' },
-    { size: 42, length: 26, width: '10-10.5' },
-    { size: 43, length: 26.5, width: '10.5' },
+    { size: 34, length: 22, width: "8-8.5" },
+    { size: 35, length: 22.5, width: "8.5" },
+    { size: 36, length: 23, width: "8.5-9" },
+    { size: 37, length: 23.5, width: "9" },
+    { size: 38, length: 24, width: "9-9.5" },
+    { size: 39, length: 24.5, width: "9.5" },
+    { size: 40, length: 25, width: "9.5-10" },
+    { size: 41, length: 25.5, width: "10" },
+    { size: 42, length: 26, width: "10-10.5" },
+    { size: 43, length: 26.5, width: "10.5" },
   ],
   reviews: [
     {
-      id: 'r1',
-      author: 'Nguyễn Văn A',
+      id: "r1",
+      author: "Nguyễn Văn A",
       rating: 5,
-      date: '15/01/2025',
-      content: 'Giày đẹp, đúng size, giao hàng nhanh. Sẽ ủng hộ shop tiếp!',
+      date: "15/01/2025",
+      content: "Giày đẹp, đúng size, giao hàng nhanh. Sẽ ủng hộ shop tiếp!",
     },
     {
-      id: 'r2',
-      author: 'Trần Minh B',
+      id: "r2",
+      author: "Trần Minh B",
       rating: 4,
-      date: '10/01/2025',
-      content: 'Chất lượng tốt so với giá tiền, da mềm, đi êm chân.',
+      date: "10/01/2025",
+      content: "Chất lượng tốt so với giá tiền, da mềm, đi êm chân.",
     },
     {
-      id: 'r3',
-      author: 'Lê Hoàng C',
+      id: "r3",
+      author: "Lê Hoàng C",
       rating: 5,
-      date: '05/01/2025',
-      content: 'Mẫu này phối đồ công sở rất đẹp, đồng nghiệp khen nhiều.',
+      date: "05/01/2025",
+      content: "Mẫu này phối đồ công sở rất đẹp, đồng nghiệp khen nhiều.",
     },
   ],
   commitments: [],
@@ -111,33 +117,33 @@ const MOCK_DETAIL: DetailData = {
 const COMMITMENTS = [
   {
     icon: <ShieldCheck size={24} />,
-    title: '1. Sản phẩm chính hãng',
-    description: 'Cam kết 100% hàng chính hãng DUKY STORE.',
+    title: "1. Sản phẩm chính hãng",
+    description: "Cam kết 100% hàng chính hãng DUKY STORE.",
   },
   {
     icon: <Truck size={24} />,
-    title: '2. Giao hàng nhanh chóng',
-    description: 'Giao hàng toàn quốc, nhận hàng từ 1-3 ngày.',
+    title: "2. Giao hàng nhanh chóng",
+    description: "Giao hàng toàn quốc, nhận hàng nhanh chóng.",
   },
   {
     icon: <Headphones size={24} />,
-    title: '3. Hỗ trợ tận tình',
-    description: 'Đội ngũ tư vấn chuyên nghiệp, hỗ trợ 24/7.',
+    title: "3. Hỗ trợ tận tình",
+    description: "Đội ngũ tư vấn chuyên nghiệp, hỗ trợ 24/7.",
   },
   {
     icon: <CreditCard size={24} />,
-    title: '4. Thanh toán linh hoạt',
-    description: 'Nhiều hình thức thanh toán an toàn, tiện lợi.',
+    title: "4. Thanh toán linh hoạt",
+    description: "Nhiều hình thức thanh toán an toàn, tiện lợi.",
   },
 ];
 
 // ─── Tabs ───────────────────────────────────────────────────────────────────
 
-type TabKey = 'description' | 'additional';
+type TabKey = "description" | "additional";
 
 const TABS: { key: TabKey; label: string }[] = [
-  { key: 'description', label: 'MÔ TẢ SẢN PHẨM' },
-  { key: 'additional', label: 'THÔNG TIN BỔ SUNG' },
+  { key: "description", label: "MÔ TẢ SẢN PHẨM" },
+  // { key: 'additional', label: 'THÔNG TIN BỔ SUNG' },
 ];
 
 // ─── Component ──────────────────────────────────────────────────────────────
@@ -147,8 +153,11 @@ interface DetailSectionProps {
   description?: string;
 }
 
-const DetailSection: React.FC<DetailSectionProps> = ({ data = MOCK_DETAIL, description }) => {
-  const [activeTab, setActiveTab] = useState<TabKey>('description');
+const DetailSection: React.FC<DetailSectionProps> = ({
+  data = MOCK_DETAIL,
+  description,
+}) => {
+  const [activeTab, setActiveTab] = useState<TabKey>("description");
   const [showSizeCalc, setShowSizeCalc] = useState(false);
 
   const renderDescription = () => {
@@ -176,7 +185,7 @@ const DetailSection: React.FC<DetailSectionProps> = ({ data = MOCK_DETAIL, descr
         {TABS.map((tab) => (
           <button
             key={tab.key}
-            className={`detail-tab ${activeTab === tab.key ? 'detail-tab-active' : ''}`}
+            className={`detail-tab ${activeTab === tab.key ? "detail-tab-active" : ""}`}
             onClick={() => setActiveTab(tab.key)}
           >
             {tab.label}
@@ -186,52 +195,45 @@ const DetailSection: React.FC<DetailSectionProps> = ({ data = MOCK_DETAIL, descr
 
       {/* Tab Content */}
       <div className="detail-tab-content">
-        {activeTab === 'description' && (
+        {activeTab === "description" && (
           <div className="detail-description-layout">
             {/* Left: Description & Features */}
             <div className="detail-desc-left">
-              {!description && <h3 className="detail-desc-title">{data.title}</h3>}
+              {!description && (
+                <h3 className="detail-desc-title">{data.title}</h3>
+              )}
               {renderDescription()}
 
-              <div className="detail-features">
-                {data.features.map((feature, index) => (
-                  <div key={index} className="detail-feature-item">
-                    <div className="detail-feature-icon">
-                      <ShieldCheck size={18} />
-                    </div>
-                    <div className="detail-feature-content">
-                      <span className="detail-feature-title">{feature.title}</span>
-                      <span className="detail-feature-desc">{feature.description}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              {/* Features section removed as requested */}
             </div>
 
             {/* Right: Size Guide */}
             <div className="detail-desc-right">
               <h4 className="detail-size-title">HƯỚNG DẪN CHỌN SIZE</h4>
               <div className="detail-size-table-wrapper">
-              <table className="detail-size-table">
-                <thead>
-                  <tr>
-                    <th>Size</th>
-                    <th>Chiều dài (cm)</th>
-                    <th>Chiều ngang (cm)</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {data.sizeGuide.map((row, index) => (
-                    <tr key={index}>
-                      <td>{row.size}</td>
-                      <td>{row.length}</td>
-                      <td>{row.width}</td>
+                <table className="detail-size-table">
+                  <thead>
+                    <tr>
+                      <th>Size</th>
+                      <th>Chiều dài (cm)</th>
+                      <th>Chiều ngang (cm)</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {data.sizeGuide.map((row, index) => (
+                      <tr key={index}>
+                        <td>{row.size}</td>
+                        <td>{row.length}</td>
+                        <td>{row.width}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-              <button className="detail-size-guide-btn" onClick={() => setShowSizeCalc(!showSizeCalc)}>
+              <button
+                className="detail-size-guide-btn"
+                onClick={() => setShowSizeCalc(!showSizeCalc)}
+              >
                 <Ruler size={16} />
                 <span>ĐO SIZE CỦA BẠN</span>
               </button>
@@ -239,7 +241,7 @@ const DetailSection: React.FC<DetailSectionProps> = ({ data = MOCK_DETAIL, descr
           </div>
         )}
 
-        {activeTab === 'additional' && (
+        {activeTab === "additional" && (
           <div className="detail-additional">
             <table className="detail-specs-table detail-specs-table-full">
               <tbody>
@@ -483,8 +485,6 @@ const DetailSection: React.FC<DetailSectionProps> = ({ data = MOCK_DETAIL, descr
           color: var(--text-muted);
           line-height: 1.5;
         }
-
-
 
         .detail-specs-title {
           font-family: var(--font-main);

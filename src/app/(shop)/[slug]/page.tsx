@@ -35,7 +35,7 @@ const COLLECTION_META: Record<
     title: "Boot Nam",
     description:
       "Bộ sưu tập giày boot nam cao cấp - Da thật, thiết kế tinh tế.",
-    heroImage: "/assets/banner_boot_nam.webp",
+    heroImage: "/assets/boot_nam.webp",
     heroTitle: "GIÀY BOOT\nNAM CAO CẤP",
     heroDescription:
       "Thiết kế tinh tế - Da thật cao cấp - Bền bỉ theo thời gian",
@@ -50,7 +50,7 @@ const COLLECTION_META: Record<
   "boot-nu": {
     title: "Boot Nữ",
     description: "Bộ sưu tập giày boot nữ - Thanh lịch, quyến rũ.",
-    heroImage: "/assets/banner_boot_nu.webp",
+    heroImage: "/assets/boot_nu.webp",
     heroTitle: "GIÀY BOOT\nNỮ CAO CẤP",
     heroDescription:
       "Tôn dáng trong từng bước đi - Phong cách nữ tính hiện đại",
@@ -64,7 +64,7 @@ const COLLECTION_META: Record<
   "phu-kien": {
     title: "Phụ kiện",
     description: "Phụ kiện thời trang cao cấp.",
-    heroImage: "/assets/banner_phukien.webp",
+    heroImage: "/assets/phu_kien.webp",
     heroTitle: "PHỤ KIỆN\nCAO CẤP",
     heroDescription: "Hoàn thiện phong cách với phụ kiện đẳng cấp",
     banner: {
@@ -78,7 +78,7 @@ const COLLECTION_META: Record<
   unisex: {
     title: "Unisex",
     description: "Gợi ý phối đồ cùng boot.",
-    heroImage: "/assets/banner_outfit.webp",
+    heroImage: "/assets/out_fit.webp",
     heroTitle: "UNISEX\nPHỐI ĐỒ",
     heroDescription: "Gợi ý phong cách phối đồ cùng boot Duky",
     banner: {

@@ -79,6 +79,7 @@ export interface Product {
 
   desc?: string;
   description?: string | null;
+  shortDescription?: string | null;
   price?: number;
   formattedPrice?: string;
   img?: string;
@@ -86,6 +87,7 @@ export interface Product {
   badge?: string;
   rating?: number;
   reviewsCount?: number;
+  soldCount?: number;
   sizes?: number[];
   colors?: string[];
   gender?: string;

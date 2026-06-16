@@ -38,7 +38,7 @@ export const COLLECTIONS: Record<string, CollectionConfig> = {
       title: "GIÀY BOOT\nNAM CAO CẤP",
       description:
         "Thiết kế tinh tế - Da thật cao cấp - Bền bỉ theo thời gian\nKhẳng định phong cách quý ông hiện đại.",
-      image: "/assets/banner_boot_nam.webp",
+      image: "/assets/boot_nam.webp",
       ctaPrimary: "Mua ngay",
       ctaSecondary: "Xem bộ sưu tập",
     },
@@ -253,7 +253,7 @@ export const COLLECTIONS: Record<string, CollectionConfig> = {
       title: "GIÀY BOOT\nNỮ CAO CẤP",
       description:
         "Thanh lịch - Quyến rũ - Tôn dáng hoàn hảo\nĐẳng cấp phái đẹp trong từng bước chân.",
-      image: "/assets/banner_boot_nu.webp",
+      image: "/assets/boot_nu.webp",
       ctaPrimary: "Mua ngay",
       ctaSecondary: "Xem bộ sưu tập",
     },
@@ -427,7 +427,7 @@ export const COLLECTIONS: Record<string, CollectionConfig> = {
       title: "PHỤ KIỆN\nTHỜI TRANG",
       description:
         "Hoàn thiện phong cách với phụ kiện cao cấp\nThắt lưng da, ví, tất và xi đánh giày chính hãng.",
-      image: "/assets/banner_phukien.webp",
+      image: "/assets/phu_kien.webp",
       ctaPrimary: "Mua ngay",
       ctaSecondary: "Xem tất cả",
     },
@@ -565,7 +565,7 @@ export const COLLECTIONS: Record<string, CollectionConfig> = {
       title: "UNISEX\nPHỐI ĐỒ",
       description:
         "Gợi ý phối đồ hoàn hảo cùng boot\nÁo khoác da, quần jeans, váy và set unisex trendy.",
-      image: "/assets/banner_outfit.webp",
+      image: "/assets/out_fit.webp",
       ctaPrimary: "Mua ngay",
       ctaSecondary: "Xem lookbook",
     },

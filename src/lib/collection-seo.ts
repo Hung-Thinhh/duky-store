@@ -14,67 +14,67 @@ export interface CollectionSeo {
 export const COLLECTIONS: Record<string, CollectionSeo> = {
   "boot-nam": {
     slug: "boot-nam",
-    title: "Giay Boot Nam Cao Cap",
+    title: "Giày Boot Nam Cao Cấp",
     description:
-      "Bo suu tap giay boot nam cao cap, de phoi do va phu hop nhieu phong cach.",
-    heroImage: "/assets/banner_boot_nam.webp",
-    heroTitle: "GIAY BOOT\nNAM CAO CAP",
+      "Bộ sưu tập giày boot nam cao cấp, dễ phối đồ và phù hợp nhiều phong cách.",
+    heroImage: "/assets/boot_nam.webp",
+    heroTitle: "GIÀY BOOT\nNAM CAO CẤP",
     heroDescription:
-      "Thiet ke nam tinh, chat lieu ben dep va form dang de mang hang ngay.",
+      "Thiết kế nam tính, chất liệu bền đẹp và form dáng dễ mang hàng ngày.",
     kicker: "MEN'S COLLECTION",
-    metaTitle: "Giay Boot Nam Cao Cap",
+    metaTitle: "Giày Boot Nam Cao Cấp",
     metaDescription:
-      "Mua giay boot nam cao cap tai Duky Store: boot da, combat boot, chelsea boot va cac mau giay de phoi do cho nam.",
+      "Mua giày boot nam cao cấp tại Duky Store: boot da, combat boot, chelsea boot và các mẫu giày dễ phối đồ cho nam.",
     contentIntro:
-      "Bo suu tap giay boot nam Duky Store tap trung vao form dang de mang, chat lieu ben dep va kha nang phoi do linh hoat cho di lam, di choi va su kien.",
+      "Bộ sưu tập giày boot nam Duky Store tập trung vào form dáng dễ mang, chất liệu bền đẹp và khả năng phối đồ linh hoạt cho đi làm, đi chơi và sự kiện.",
   },
   "boot-nu": {
     slug: "boot-nu",
-    title: "Giay Boot Nu Cao Cap",
+    title: "Giày Boot Nữ Cao Cấp",
     description:
-      "Bo suu tap giay boot nu cao cap, ton dang va de phoi voi nhieu outfit.",
-    heroImage: "/assets/banner_boot_nu.webp",
-    heroTitle: "GIAY BOOT\nNU CAO CAP",
+      "Bộ sưu tập giày boot nữ cao cấp, tôn dáng và dễ phối với nhiều outfit.",
+    heroImage: "/assets/boot_nu.webp",
+    heroTitle: "GIÀY BOOT\nNỮ CAO CẤP",
     heroDescription:
-      "Ton dang trong tung buoc di voi cac mau boot nu thanh lich va ca tinh.",
+      "Tôn dáng trong từng bước đi với các mẫu boot nữ thanh lịch và cá tính.",
     kicker: "WOMEN'S COLLECTION",
-    metaTitle: "Giay Boot Nu Cao Cap",
+    metaTitle: "Giày Boot Nữ Cao Cấp",
     metaDescription:
-      "Kham pha giay boot nu cao cap tai Duky Store: boot co ngan, boot cao co, boot mui nhon va cac mau ton dang de phoi do.",
+      "Khám phá giày boot nữ cao cấp tại Duky Store: boot cổ ngắn, boot cao cổ, boot mũi nhọn và các mẫu tôn dáng dễ phối đồ.",
     contentIntro:
-      "Danh muc giay boot nu gom nhieu kieu dang tu thanh lich den ca tinh, phu hop di lam, di choi va tao diem nhan cho outfit hang ngay.",
+      "Danh mục giày boot nữ gồm nhiều kiểu dáng từ thanh lịch đến cá tính, phù hợp đi làm, đi chơi và tạo điểm nhấn cho outfit hàng ngày.",
   },
   "phu-kien": {
     slug: "phu-kien",
-    title: "Phu Kien Thoi Trang",
+    title: "Phụ Kiện Thời Trang",
     description:
-      "Phu kien thoi trang giup hoan thien outfit voi giay boot va ao khoac da.",
-    heroImage: "/assets/banner_phukien.webp",
-    heroTitle: "PHU KIEN\nCAO CAP",
+      "Phụ kiện thời trang giúp hoàn thiện outfit với giày boot và áo khoác da.",
+    heroImage: "/assets/phu_kien.webp",
+    heroTitle: "PHỤ KIỆN\nCAO CẤP",
     heroDescription:
-      "Hoan thien phong cach voi nhung chi tiet nho nhung co diem nhan.",
+      "Hoàn thiện phong cách với những chi tiết nhỏ nhưng có điểm nhấn.",
     kicker: "ACCESSORIES",
-    metaTitle: "Phu Kien Thoi Trang",
+    metaTitle: "Phụ Kiện Thời Trang",
     metaDescription:
-      "Mua phu kien thoi trang tai Duky Store: tat, that lung, ca vat, non va cac mon phu kien de phoi voi giay boot.",
+      "Mua phụ kiện thời trang tại Duky Store: tất, thắt lưng, cà vạt, nón và các món phụ kiện dễ phối với giày boot.",
     contentIntro:
-      "Phu kien Duky Store duoc chon de di cung giay boot, ao khoac da va cac outfit hang ngay, giup tong the gon gon va co diem nhan hon.",
+      "Phụ kiện Duky Store được chọn để đi cùng giày boot, áo khoác da và các outfit hàng ngày, giúp tổng thể gọn gàng và có điểm nhấn hơn.",
   },
   unisex: {
     slug: "unisex",
     title: "Unisex",
     description:
-      "Goi y outfit phoi do cung giay boot, ao khoac da va phu kien Duky Store.",
-    heroImage: "/assets/banner_outfit.webp",
-    heroTitle: "UNISEX\nPHOI DO",
+      "Gợi ý outfit phối đồ cùng giày boot, áo khoác da và phụ kiện Duky Store.",
+    heroImage: "/assets/out_fit.webp",
+    heroTitle: "UNISEX\nPHỐI ĐỒ",
     heroDescription:
-      "Goi y cach ket hop san pham Duky Store thanh nhung set do co phong cach rieng.",
+      "Gợi ý cách kết hợp sản phẩm Duky Store thành những set đồ có phong cách riêng.",
     kicker: "UNISEX",
-    metaTitle: "Outfit Phoi Do Voi Giay Boot",
+    metaTitle: "Outfit Phối Đồ Với Giày Boot",
     metaDescription:
-      "Tham khao outfit phoi do voi giay boot, ao khoac da va phu kien Duky Store cho nam nu.",
+      "Tham khảo outfit phối đồ với giày boot, áo khoác da và phụ kiện Duky Store cho nam nữ.",
     contentIntro:
-      "Trang outfit tap hop cac goi y phoi do voi giay boot, ao khoac da va phu kien, giup khach hang de hinh dung cach mac san pham trong thuc te.",
+      "Trang outfit tập hợp các gợi ý phối đồ với giày boot, áo khoác da và phụ kiện, giúp khách hàng dễ hình dung cách mặc sản phẩm trong thực tế.",
   },
 };
 

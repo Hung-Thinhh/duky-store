@@ -40,8 +40,9 @@ export interface ProductDetail {
   formattedOriginalPrice: string;
   images: string[];
   specs: { label: string; value: string; icon: React.ReactNode }[];
-  sizes: number[];
+  sizes: (number | string)[];
   colors: string[];
+  shortDescription?: string | null;
 }
 
 const MOCK_PRODUCT: ProductDetail = {
@@ -112,7 +113,7 @@ function formatVariantPrice(value: number): string {
 
 const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, variants = [], onAddToCart, onQuickBuy }) => {
   const [selectedImage, setSelectedImage] = useState(0);
-  const [selectedSize, setSelectedSize] = useState<number | null>(null);
+  const [selectedSize, setSelectedSize] = useState<number | string | null>(null);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [isHovered, setIsHovered] = useState(false);
@@ -181,7 +182,7 @@ const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, varia
   }, [isPreviewOpen]);
 
   // Helper to check if a size has stock
-  const isSizeAvailable = (size: number) => {
+  const isSizeAvailable = (size: number | string) => {
     if (!variants || variants.length === 0) return true;
     return variants.some((v) => {
       const sizeMatch = v.sizeLabel === String(size);
@@ -452,12 +453,6 @@ const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, varia
 
           {/* Rating & Sold */}
           <div className="info-meta">
-            <div className="info-rating">
-              <Star size={16} fill="#f4b400" color="#f4b400" />
-              <span className="rating-value">{product.rating}</span>
-              <span className="rating-count">({product.reviewsCount} đánh giá)</span>
-            </div>
-            <span className="info-meta-divider">|</span>
             <div className="info-sold">
               <Clock size={14} />
               <span>Đã bán {product.soldCount}</span>
@@ -475,16 +470,13 @@ const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, varia
             )}
           </div>
 
-          {/* Specs */}
-          <div className="info-specs">
-            {PRODUCT_SPECS.map((spec, index) => (
-              <div key={index} className="info-spec-row">
-                <ShieldCheck size={16} className="spec-icon" />
-                <span className="spec-label">{spec.label}:</span>
-                <span className="spec-value">{spec.value}</span>
-              </div>
-            ))}
-          </div>
+          {/* Short Description */}
+          {product.shortDescription && (
+            <div 
+              className="info-short-desc html-content"
+              dangerouslySetInnerHTML={{ __html: product.shortDescription }}
+            />
+          )}
 
           {/* Separator */}
           <div className="info-separator" />
@@ -949,31 +941,20 @@ const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, varia
           border-radius: 6px;
         }
 
-        /* ─── Specs ─── */
-        .info-specs {
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-          margin-top: 8px;
-        }
-        .info-spec-row {
-          display: flex;
-          align-items: center;
-          gap: 8px;
+        /* ─── Short Description ─── */
+        .info-short-desc {
           font-family: var(--font-main);
           font-size: 14px;
-        }
-        :global(.spec-icon) {
           color: var(--text-muted);
-          flex-shrink: 0;
+          line-height: 1.6;
+          margin-top: 4px;
         }
-        .spec-label {
-          color: var(--text-muted);
-          font-weight: 500;
+        .info-short-desc :global(p) {
+          margin-bottom: 8px;
+          line-height: 1.6;
         }
-        .spec-value {
-          color: var(--text-main);
-          font-weight: 600;
+        .info-short-desc :global(p:last-child) {
+          margin-bottom: 0;
         }
 
         /* ─── Separator ─── */

@@ -1,9 +1,9 @@
 import type { VariantData } from '@/components/shop/product/InfoSection';
 
 export interface ValidateAddToCartParams {
-  selectedSize: number | null;
+  selectedSize: number | string | null;
   selectedColor: string | null;
-  availableSizes: number[];
+  availableSizes: (number | string)[];
   availableColors: string[];
   matchedVariant: VariantData | null;
   quantity: number;

@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { MapPin, Phone, Mail, Clock } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, Map } from "lucide-react";
 import { Navpages } from "@/components/shop/Navpages";
 import { FAQOnly } from "@/components/shop/home/FAQOnly";
 
@@ -41,6 +41,14 @@ const STORE_SECTION_HEADER = {
 };
 
 export function ContactClient() {
+  const [isMapLoaded, setIsMapLoaded] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.innerWidth >= 1024) {
+      setIsMapLoaded(true);
+    }
+  }, []);
+
   const [form, setForm] = useState({
     fullName: "",
     email: "",
@@ -233,17 +241,45 @@ export function ContactClient() {
               </div>
 
               {/* Map */}
-              <div className="map-card">
-                <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3929.0!2d105.7558!3d10.0230!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a088487f863ae3%3A0x704afb4eb3949570!2s122%20%C4%90.%20Nguy%E1%BB%85n%20Hi%E1%BB%81n%2C%20KDC%2091B%2C%20T%C3%A2n%20An%2C%20C%E1%BA%A7n%20Th%C6%A1!5e0!3m2!1svi!2s!4v1700000000000!5m2!1svi!2s"
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0, borderRadius: 16, minHeight: 300 }}
-                  allowFullScreen
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  title="Duky Store Location"
-                />
+              <div className="map-card relative group flex items-center justify-center">
+                {isMapLoaded ? (
+                  <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3929.0!2d105.7558!3d10.0230!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a088487f863ae3%3A0x704afb4eb3949570!2s122%20%C4%90.%20Nguy%E1%BB%85n%20Hi%E1%BB%81n%2C%20KDC%2091B%2C%20T%C3%A2n%20An%2C%20C%E1%BA%A7n%20Th%C6%A1!5e0!3m2!1svi!2s!4v1700000000000!5m2!1svi!2s"
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0, borderRadius: 16 }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    title="Duky Store Location"
+                    className="absolute inset-0 w-full h-full"
+                  />
+                ) : (
+                  <div
+                    onClick={() => setIsMapLoaded(true)}
+                    className="absolute inset-0 cursor-pointer flex items-center justify-center w-full h-full"
+                  >
+                    {/* Map image background */}
+                    <img
+                      src="/assets/map-preview.webp"
+                      alt="Bản đồ vị trí cửa hàng Duky Store"
+                      className="absolute inset-0 w-full h-full object-cover filter brightness-[0.95] group-hover:brightness-[0.9] transition-all duration-700 ease-in-out scale-100 group-hover:scale-105"
+                    />
+
+                    {/* Glassmorphic Overlay CTA Card */}
+                    <div className="relative z-10 flex flex-col items-center gap-3 bg-white/85 backdrop-blur-md px-6 py-5 rounded-2xl shadow-2xl border border-white/40 group-hover:scale-105 group-hover:bg-white/95 transition-all duration-300">
+                      <div className="w-12 h-12 rounded-full bg-black text-white flex items-center justify-center shadow-lg shadow-black/20 group-hover:bg-neutral-800 transition-colors duration-300">
+                        <Map size={22} />
+                      </div>
+                      <div className="text-center">
+                        <span className="block text-sm font-semibold text-neutral-800">
+                          Click vào để <br />
+                          tương tác với bản đồ
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>

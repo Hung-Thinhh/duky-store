@@ -101,7 +101,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Scan app directory dynamically
   const appDirectory = path.join(process.cwd(), "src/app");
-  const scannedPaths = scanStaticRoutes(appDirectory);
+  
+  const EXCLUDED_ROUTES = [
+    "/dang-ky",
+    "/dang-nhap",
+    "/tai-khoan",
+    "/gio-hang",
+    "/thanh-toan",
+    "/tim-kiem",
+  ];
+
+  const scannedPaths = scanStaticRoutes(appDirectory).filter((route) => {
+    return !EXCLUDED_ROUTES.some((excluded) => route === excluded || route.startsWith(`${excluded}/`));
+  });
 
   // Map scanned static paths with custom SEO priorities
   const scannedStaticRoutes: MetadataRoute.Sitemap = scannedPaths.map((route) => {
