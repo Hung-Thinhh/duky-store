@@ -68,13 +68,14 @@ export const metadata: Metadata = {
     images: [DEFAULT_OG_IMAGE],
   },
   icons: {
-    icon: "/favicon.svg",
-    shortcut: "/favicon.svg",
-    apple: "/favicon.svg",
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/favicon.ico",
   },
 };
 
 import { ScrollToTop } from "@/components/ui/ScrollToTop";
+import { Chatbot } from "@/components/chatbot/Chatbot";
 import { Providers } from "@/components/Providers";
 import StyledJsxRegistry from "@/lib/registry";
 
@@ -99,6 +100,7 @@ export default function RootLayout({
           <Providers>
             {children}
             <ScrollToTop />
+            <Chatbot />
           </Providers>
         </StyledJsxRegistry>
       </body>

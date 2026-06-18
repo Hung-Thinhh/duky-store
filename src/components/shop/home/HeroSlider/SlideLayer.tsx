@@ -238,6 +238,7 @@ export function SlideLayer({
       fontSize: `${fontSize}px`,
       border:
         layer.variant === "secondary" ? "2px solid #101114" : "none",
+      whiteSpace: "nowrap",
     };
 
     if (buttonGradientCss) {
@@ -262,10 +263,8 @@ export function SlideLayer({
             justifyContent: "center",
           }}
         >
-          <Link href={layer.link || "/"}>
-            <span style={btnStyle}>
-              {layer.label || "Xem thêm"}
-            </span>
+          <Link href={layer.link || "/"} style={btnStyle}>
+            {layer.label || "Xem thêm"}
           </Link>
         </div>
       </div>
