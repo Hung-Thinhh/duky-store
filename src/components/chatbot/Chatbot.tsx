@@ -307,6 +307,7 @@ export const Chatbot = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const abortRef = useRef<AbortController | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const quickRepliesRef = useRef<HTMLDivElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -340,6 +341,23 @@ export const Chatbot = () => {
       fileInputRef.current.value = "";
     }
   };
+
+  useEffect(() => {
+    const el = quickRepliesRef.current;
+    if (!el) return;
+
+    const handleWheelEvent = (e: WheelEvent) => {
+      if (e.deltaY !== 0) {
+        e.preventDefault();
+        el.scrollLeft += e.deltaY;
+      }
+    };
+
+    el.addEventListener("wheel", handleWheelEvent, { passive: false });
+    return () => {
+      el.removeEventListener("wheel", handleWheelEvent);
+    };
+  }, [isOpen]);
 
   // Welcome message on mount
   useEffect(() => {
@@ -501,12 +519,24 @@ export const Chatbot = () => {
         const updated = [...prev];
         updated[idx] = {
           ...updated[idx],
-          text: "Xin lỗi, đã có lỗi xảy ra khi xử lý phản hồi. Bạn vui lòng thử lại hoặc liên hệ hotline nhé! 🙏",
+          text: "Hiện tại Trợ lý Duky đang bận một chút, bạn vui lòng đợi vài giây và gửi lại tin nhắn giúp mình nhé! 🙏",
         };
         return updated;
       });
     } finally {
       setIsStreaming(false);
+      setMessages((prev) => {
+        const idx = prev.findIndex((m) => m.id === botId);
+        if (idx !== -1 && !prev[idx].text) {
+          const updated = [...prev];
+          updated[idx] = {
+            ...updated[idx],
+            text: "Hiện tại Trợ lý Duky đang bận một chút, bạn vui lòng đợi vài giây và gửi lại tin nhắn giúp mình nhé! 🙏",
+          };
+          return updated;
+        }
+        return prev;
+      });
     }
   }, [messages, isStreaming, imageFile]);
 
@@ -657,7 +687,10 @@ export const Chatbot = () => {
               </div>
 
               {/* Quick replies */}
-              <div className="px-4 py-2 bg-white border-t border-zinc-100 flex gap-2 overflow-x-auto scrollbar-none shrink-0 select-none">
+              <div 
+                ref={quickRepliesRef}
+                className="px-4 py-2 bg-white border-t border-zinc-100 flex gap-2 overflow-x-auto scrollbar-none shrink-0 select-none"
+              >
                 {quickReplies.map((qr) => (
                   <button
                     key={qr.val}
