@@ -284,3 +284,45 @@ export async function getCustomerOrderByCode(code: string): Promise<CheckoutOrde
     method: "GET",
   });
 }
+
+/**
+ * Request a password reset OTP.
+ * POST /api/v1/customer/auth/forgot-password
+ */
+export async function forgotPassword(email: string): Promise<{ success: boolean }> {
+  return authApiFetch<{ success: boolean }>("/customer/auth/forgot-password", {
+    method: "POST",
+    body: JSON.stringify({ email }),
+  });
+}
+
+/**
+ * Verify the password reset OTP.
+ * POST /api/v1/customer/auth/verify-otp
+ */
+export async function verifyOtp(
+  email: string,
+  otpCode: string
+): Promise<{ success: boolean }> {
+  return authApiFetch<{ success: boolean }>("/customer/auth/verify-otp", {
+    method: "POST",
+    body: JSON.stringify({ email, otpCode }),
+  });
+}
+
+/**
+ * Reset customer password using verified OTP.
+ * POST /api/v1/customer/auth/reset-password
+ */
+export async function resetPasswordWithOtp(
+  email: string,
+  otpCode: string,
+  newPassword: string,
+  confirmPassword: string
+): Promise<{ success: boolean }> {
+  return authApiFetch<{ success: boolean }>("/customer/auth/reset-password", {
+    method: "POST",
+    body: JSON.stringify({ email, otpCode, newPassword, confirmPassword }),
+  });
+}
+

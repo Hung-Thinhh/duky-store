@@ -7,12 +7,18 @@ import { cn } from "@/lib/utils";
 
 interface BackButtonProps {
   className?: string;
+  onClick?: () => void;
+  text?: string;
 }
 
-export function BackButton({ className }: BackButtonProps) {
+export function BackButton({ className, onClick, text = "Quay lại" }: BackButtonProps) {
   const router = useRouter();
 
   const handleBack = () => {
+    if (onClick) {
+      onClick();
+      return;
+    }
     if (typeof window !== "undefined" && window.history.length > 1) {
       router.back();
     } else {
@@ -32,7 +38,7 @@ export function BackButton({ className }: BackButtonProps) {
         size={16}
         className="transition-transform duration-200 group-hover:-translate-x-1 shrink-0"
       />
-      <span>Quay lại</span>
+      <span>{text}</span>
     </button>
   );
 }
