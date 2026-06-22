@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SQL Dump Parser</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: #0f172a; color: #e2e8f0; }
+        .card { background: #1e293b; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #334155; }
+        input, button { padding: 10px; margin: 10px 0; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        input[type="file"] { background: #334155; }
+        pre { background: #0f172a; padding: 15px; border-radius: 4px; overflow-x: auto; max-height: 400px; border: 1px solid #1e293b; white-space: pre-wrap; word-break: break-all; }
+        .revision-item { border-bottom: 1px solid #334155; padding: 15px 0; }
+        .revision-item:last-child { border-bottom: none; }
+        .meta { color: #94a3b8; font-size: 0.9em; margin-bottom: 8px; }
+        .tag { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 0.8em; font-weight: bold; margin-right: 5px; }
+        .tag-parent { background: #1e3a8a; color: #93c5fd; }
+        .tag-revision { background: #3f6212; color: #bef264; }
+        .tag-date { background: #701a75; color: #f5d0fe; }
+    </style>
+</head>
+<body>
+    <h1>SQL Backup Parser for Custom CSS</h1>
+    <div class="card">
+        <h3>1. Select the SQL Backup File</h3>
+        <input type="file" id="fileInput" />
+        <div id="status">Ready.</div>
+    </div>
+
+    <div class="card" id="resultsCard" style="display:none;">
+        <h3>2. Revisions Found</h3>
+        <div id="resultsList"></div>
+    </div>
+
+    <script>
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const status = document.getElementById('status');
+            status.innerText = "Reading file " + file.name + " (" + (file.size / (1024*1024)).toFixed(2) + " MB)...";
+
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                status.innerText = "Parsing SQL dump...";
+                const content = evt.target.result;
+                
+                // Let's find matches.
+                // We'll split the content into lines.
+                const lines = content.split(/\r?\n/);
+                status.innerText = "Searching " + lines.length + " lines...";
+                
+                let matches = [];
+                
+                // Regex to find row values in INSERT statements.
+                // Each row is like: (21,1,'2026-05-07 15:41:46',...)
+                // We want to find rows starting with (ID, where ID is 21 or parent ID is 21.
+                // Since parsing raw SQL with regex is tricky, let's scan each line.
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i];
+                    
+                    // We only care about lines containing posts insert
+                    if (line.includes('_posts` VALUES') || line.includes('INSERT INTO') && line.includes('custom_css')) {
+                        // Let's do a simple substring scan for ID 21 or parent 21
+                        // Let's find '(21, ' (ID 21) or other revision values
+                        // Actually, let's search for instances of '21-revision-v1' or 'flatsome-child'
+                        // and extract the surrounding row block.
+                        // In MySQL dumps, rows are separated by ),(
+                        let pos = 0;
+                        while (true) {
+                            let nextMatch = -1;
+                            const idx1 = line.indexOf("'21-revision-v1'", pos);
+                            const idx2 = line.indexOf("'flatsome-child'", pos);
+                            
+                            if (idx1 !== -1 && (idx2 === -1 || idx1 < idx2)) {
+                                nextMatch = idx1;
+                            } else {
+                                nextMatch = idx2;
+                            }
+                            
+                            if (nextMatch === -1) break;
+                            
+                            // Let's find the start of the row block containing this match
+                            // A row block starts with '(' and ends with ')' (approximate check)
+                            // Let's trace backwards to find the matching open parenthesis '(' that is not inside a string.
+                            // To be simple, let's grab a chunk of 20,000 characters before and after the match.
+                            let start = Math.max(0, nextMatch - 5000);
+                            let end = Math.min(line.length, nextMatch + 15000);
+                            let chunk = line.substring(start, end);
+                            
+                            matches.push({
+                                type: line.indexOf("'21-revision-v1'", nextMatch) !== -1 ? 'revision' : 'parent',
+                                index: i,
+                                position: nextMatch,
+                                chunk: chunk
+                            });
+                            
+                            pos = nextMatch + 20; // move past this match
+                        }
+                    }
+                }
+                
+                status.innerText = "Found " + matches.length + " potential matches. Processing...";
+                displayResults(matches);
+            };
+            
+            reader.readAsText(file);
+        });
+
+        function displayResults(matches) {
+            const list = document.getElementById('resultsList');
+            list.innerHTML = "";
+            document.getElementById('resultsCard').style.display = "block";
+            
+            if (matches.length === 0) {
+                list.innerHTML = "<p>No revisions found. Try checking if the database table prefix is correct or if the ID is different.</p>";
+                return;
+            }
+            
+            matches.forEach((m, idx) => {
+                const item = document.createElement('div');
+                item.className = "revision-item";
+                
+                // Let's try to extract key metadata from the chunk.
+                // We'll show the whole chunk or try to isolate the row.
+                // A row looks like: (ID, author, date, date_gmt, content, title, excerpt, status, comment_status, ping_status, password, name, ...)
+                
+                item.innerHTML = `
+                    <div class="meta">
+                        <span class="tag tag-${m.type}">${m.type.toUpperCase()}</span>
+                        <span>Line ${m.index}, Position ${m.position}</span>
+                    </div>
+                    <div><strong>Context Chunk:</strong></div>
+                    <pre>${escapeHtml(m.chunk.substring(0, 10000))}</pre>
+                `;
+                list.appendChild(item);
+            });
+            
+            document.getElementById('status').innerText = "Done parsing. Found " + matches.length + " matches.";
+        }
+
+        function escapeHtml(text) {
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>
