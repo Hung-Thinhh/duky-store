@@ -71,11 +71,21 @@ export const ProductCard = ({
   const isSoldOut =
     product.status === "SOLD_OUT" ||
     product.inventory?.soldOut ||
+    product.inventory?.quantity === 0 ||
     product.stockSummary?.soldOut ||
+    product.stockSummary?.availableQuantity === 0 ||
+    product.stockSummary?.quantity === 0 ||
     product.allVariantsSoldOut ||
+    (product.type === "VARIABLE" && (!product.variants || product.variants.length === 0)) ||
     (product.variants &&
       product.variants.length > 0 &&
-      product.variants.every((v: any) => !v.inventory || v.inventory.soldOut));
+      product.variants.every(
+        (v: any) =>
+          !v.inventory ||
+          v.inventory.soldOut ||
+          v.inventory.availableQuantity === 0 ||
+          v.inventory.quantity === 0
+      ));
 
   const Media = (
     <div className="relative w-full aspect-square rounded-xl overflow-hidden mb-3 bg-gray-50/50 cursor-pointer">

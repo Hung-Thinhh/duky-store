@@ -76,7 +76,8 @@ function getFlattenedLayers(
       const objectFit = layout.objectFit ?? l.objectFit ?? "contain";
       const objectPosition =
         layout.objectPosition ?? l.objectPosition ?? "center";
-      const fontSize = layout.fontSize ?? l.fontSize ?? 24;
+      const defaultFontSize = type === "button" ? 14 : 24;
+      const fontSize = layout.fontSize ?? l.fontSize ?? defaultFontSize;
 
       return {
         type,

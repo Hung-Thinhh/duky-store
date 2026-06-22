@@ -44,7 +44,7 @@ export const ScrollToTop = () => {
           whileTap={{ scale: 0.9 }}
           onClick={scrollToTop}
           className={cn(
-            "fixed bottom-8 right-8 z-50 p-4 rounded-full shadow-2xl",
+            "fixed bottom-28 right-8 z-50 p-4 rounded-full shadow-2xl",
             "bg-linear-to-br from-black via-zinc-900 to-zinc-700 text-white hover:shadow-premium-black transition-all duration-300",
             "flex items-center justify-center group cursor-pointer border border-white/10",
           )}

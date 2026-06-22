@@ -99,7 +99,7 @@ const LoginTemplate: React.FC<LoginTemplateProps> = ({ onSwitchToSignup }) => {
             />
             <span>Ghi nhớ đăng nhập</span>
           </label>
-          <a href="#" className="forgot-password">Quên mật khẩu?</a>
+          <Link href="/quen-mat-khau" className="forgot-password">Quên mật khẩu?</Link>
         </div>
 
         {/* Error Message */}

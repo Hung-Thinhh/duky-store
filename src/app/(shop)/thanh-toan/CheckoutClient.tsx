@@ -188,11 +188,9 @@ export function CheckoutClient() {
     try {
       // If quick buy, add product to cart then checkout immediately
       if (isQuickBuy && quickBuyProductId) {
-        // Need a session for the cart
-        const qbSessionId = sessionId || crypto.randomUUID();
-        if (!sessionId) {
-          localStorage.setItem("duky_cart_session", qbSessionId);
-        }
+        // Generate an isolated temporary session ID specifically for this Quick Buy transaction.
+        // This ensures we do not alter or checkout the customer's main cart.
+        const qbSessionId = `quick-${crypto.randomUUID()}`;
 
         await addToCartAPI({
           sessionId: qbSessionId,
