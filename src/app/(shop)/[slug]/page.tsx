@@ -34,7 +34,7 @@ const COLLECTION_META: Record<
   "boot-nam": {
     title: "Boot Nam",
     description:
-      "Bộ sưu tập giày boot nam cao cấp - Da thật, thiết kế tinh tế.",
+      "Mua sắm giày boot nam da thật cao cấp tại Duky Store với kiểu dáng tinh tế, mạnh mẽ và nam tính. Bảo hành chính hãng 12 tháng và miễn phí đổi size.",
     heroImage: "/assets/boot_nam.webp",
     heroTitle: "GIÀY BOOT\nNAM CAO CẤP",
     heroDescription:
@@ -49,7 +49,7 @@ const COLLECTION_META: Record<
   },
   "boot-nu": {
     title: "Boot Nữ",
-    description: "Bộ sưu tập giày boot nữ - Thanh lịch, quyến rũ.",
+    description: "Bộ sưu tập giày boot nữ da thật cao cấp tại Duky Store với thiết kế thanh lịch, tôn dáng. Cam kết chất lượng da bền bỉ và hỗ trợ đổi size linh hoạt.",
     heroImage: "/assets/boot_nu.webp",
     heroTitle: "GIÀY BOOT\nNỮ CAO CẤP",
     heroDescription:
@@ -63,7 +63,7 @@ const COLLECTION_META: Record<
   },
   "phu-kien": {
     title: "Phụ kiện",
-    description: "Phụ kiện thời trang cao cấp.",
+    description: "Khám phá bộ sưu tập phụ kiện thời trang cao cấp tại Duky Store gồm thắt lưng, ví da, tất và bộ chăm sóc giày chuyên nghiệp giúp nâng tầm phong cách.",
     heroImage: "/assets/phu_kien.webp",
     heroTitle: "PHỤ KIỆN\nCAO CẤP",
     heroDescription: "Hoàn thiện phong cách với phụ kiện đẳng cấp",
@@ -77,7 +77,7 @@ const COLLECTION_META: Record<
   },
   unisex: {
     title: "Unisex",
-    description: "Gợi ý phối đồ cùng boot.",
+    description: "Bộ sưu tập thời trang unisex tại Duky Store mang đến phong cách cá tính, năng động và phóng khoáng. Xem ngay các sản phẩm phù hợp cho cả nam và nữ.",
     heroImage: "/assets/out_fit.webp",
     heroTitle: "UNISEX\nPHỐI ĐỒ",
     heroDescription: "Gợi ý phong cách phối đồ cùng boot Duky",

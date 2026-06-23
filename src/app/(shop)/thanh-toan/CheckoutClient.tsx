@@ -29,6 +29,7 @@ import {
   ValidationErrors,
 } from "@/lib/checkout-validation";
 import { saveOrderToHistory } from "@/lib/order-storage";
+import { fbqEvent } from "@/components/analytics/FacebookPixel";
 
 export function CheckoutClient() {
   const { cart, cartCount, clearCart, getSessionId } = useCart();
@@ -83,6 +84,18 @@ export function CheckoutClient() {
       : cart.reduce((acc, item) => acc + item.unitPrice * item.quantity, 0);
   const shippingFee = 0;
   const total = subtotal + shippingFee;
+
+  const hasTrackedCheckoutRef = React.useRef(false);
+  useEffect(() => {
+    if (subtotal > 0 && !hasTrackedCheckoutRef.current) {
+      hasTrackedCheckoutRef.current = true;
+      fbqEvent("InitiateCheckout", {
+        value: total,
+        currency: "VND",
+        num_items: isQuickBuy ? quickBuyQuantity : cartCount,
+      });
+    }
+  }, [subtotal, total, isQuickBuy, quickBuyQuantity, cartCount]);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -199,6 +212,15 @@ export function CheckoutClient() {
           quantity: quickBuyQuantity,
         });
 
+        // FB Pixel AddToCart tracking for Quick Buy
+        fbqEvent("AddToCart", {
+          content_ids: [quickBuyProductId],
+          content_name: quickBuyName,
+          content_type: "product",
+          value: quickBuyPrice * quickBuyQuantity,
+          currency: "VND",
+        });
+
         const order = await checkoutAPI({
           sessionId: qbSessionId,
           customerId: customer?.id || undefined,
@@ -212,6 +234,17 @@ export function CheckoutClient() {
           province: provinceName,
           country: "VN",
           customerNote: form.note.trim() || undefined,
+        });
+
+        // FB Pixel Purchase Event for Quick Buy
+        fbqEvent("Purchase", {
+          value: order.grandTotal,
+          currency: "VND",
+          content_ids: order.items.map((item) => item.sku || item.productName),
+          content_type: "product",
+          num_items: order.items.reduce((sum, item) => sum + item.quantity, 0),
+        }, {
+          eventID: order.code,
         });
 
         // Quick buy: do NOT clear cart, just save order and redirect
@@ -253,6 +286,17 @@ export function CheckoutClient() {
         province: provinceName,
         country: "VN",
         customerNote: form.note.trim() || undefined,
+      });
+
+      // FB Pixel Purchase Event for Standard Checkout
+      fbqEvent("Purchase", {
+        value: order.grandTotal,
+        currency: "VND",
+        content_ids: order.items.map((item) => item.sku || item.productName),
+        content_type: "product",
+        num_items: order.items.reduce((sum, item) => sum + item.quantity, 0),
+      }, {
+        eventID: order.code,
       });
 
       // Standard flow: clear cart and save order to history

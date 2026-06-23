@@ -6,7 +6,7 @@ import { PolicyClient } from "@/app/(shop)/chinh-sach/PolicyClient";
 export async function generateMetadata(): Promise<Metadata> {
   return buildMetadata({
     title: "Chính sách đổi trả hàng",
-    description: "Chính sách đổi trả hàng và hỗ trợ đổi size miễn phí trong vòng 7 ngày kể từ lúc nhận sản phẩm tại Duky Store.",
+    description: "Chính sách đổi trả hàng và hỗ trợ đổi size linh hoạt trong vòng 7 ngày tại Duky Store. Xem chi tiết điều kiện hoàn tiền và đổi sản phẩm nhanh chóng.",
     path: "/chinh-sach-doi-tra-hang",
   });
 }

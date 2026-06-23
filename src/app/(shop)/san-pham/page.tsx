@@ -14,7 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return buildMetadata({
     title: "Tất cả sản phẩm",
     description:
-      "Khám phá bộ sưu tập giày boot nam nữ cao cấp, phụ kiện thời trang và phong cách độc đáo tại Duky Store.",
+      "Mua sắm ngay các mẫu giày boot nam nữ da thật cao cấp và phụ kiện thời trang chính hãng tại Duky Store. Cam kết sản phẩm đạt chất lượng tốt nhất.",
     path: "/san-pham",
   });
 }

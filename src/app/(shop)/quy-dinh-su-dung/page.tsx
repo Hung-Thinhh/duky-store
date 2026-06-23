@@ -6,7 +6,7 @@ import { PolicyClient } from "@/app/(shop)/chinh-sach/PolicyClient";
 export async function generateMetadata(): Promise<Metadata> {
   return buildMetadata({
     title: "Quy định sử dụng",
-    description: "Quy định sử dụng website Duky Store. Vui lòng đọc kỹ các điều khoản trước khi sử dụng dịch vụ mua sắm tại cửa hàng.",
+    description: "Chi tiết quy định sử dụng website và các điều khoản dịch vụ tại Duky Store. Quý khách vui lòng đọc kỹ trước khi mua sắm để đảm bảo quyền lợi tốt nhất.",
     path: "/quy-dinh-su-dung",
   });
 }
@@ -19,7 +19,7 @@ const POLICY_DATA = {
     {
       title: "1. Định Nghĩa",
       items: [
-        "Duky Store: Do Công ty TNHH Duky Group, chủ sở hữu và vận hành website.",
+        "Duky Store: Do Công ty TNHH THƯƠNG MẠI DỊCH VỤ DUKY GROUP, chủ sở hữu và vận hành website.",
         "Website: Là trang điện tử https://dukystore.com/.",
         "Người dùng/Khách hàng: Là cá nhân, tổ chức, truy cập mua sắm trên Website.",
       ],

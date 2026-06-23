@@ -9,7 +9,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return buildMetadata({
     title: "Liên hệ",
     description:
-      "Liên hệ với cửa hàng giày boot Duky Store tại Cần Thơ. Địa chỉ, số điện thoại, bản đồ và form liên hệ hỗ trợ trực tiếp.",
+      "Thông tin liên hệ chi tiết của Duky Store tại Cần Thơ. Bản đồ đường đi, số điện thoại hotline, email và biểu mẫu gửi yêu cầu hỗ trợ nhanh chóng nhất.",
     path: "/lien-he",
   });
 }

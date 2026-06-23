@@ -17,6 +17,7 @@ import {
   removeCartItemAPI,
 } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
+import { fbqEvent } from "@/components/analytics/FacebookPixel";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 interface ToastState {
@@ -199,6 +200,26 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         });
         setCart(response.items);
         showToast("Đã thêm vào giỏ hàng", "success");
+
+        // FB Pixel AddToCart tracking
+        const addedItem = response.items.find(
+          (item) => item.productId === productId && (!variantId || item.variantId === variantId)
+        );
+        if (addedItem) {
+          fbqEvent("AddToCart", {
+            content_ids: [productId],
+            content_name: addedItem.productName,
+            content_type: "product",
+            value: addedItem.unitPrice * quantity,
+            currency: "VND",
+          });
+        } else {
+          fbqEvent("AddToCart", {
+            content_ids: [productId],
+            content_type: "product",
+            currency: "VND",
+          });
+        }
       } catch (error: unknown) {
         const message =
           error instanceof Error
