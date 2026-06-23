@@ -6,6 +6,7 @@ import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import GoogleLoginButton from '@/components/shop/GoogleLoginButton';
+import { fbqEvent } from '@/components/analytics/FacebookPixel';
 
 const SignUpTemplate: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -59,6 +60,7 @@ const SignUpTemplate: React.FC = () => {
     setIsLoading(true);
     try {
       await auth.register(email, password, confirmPassword);
+      fbqEvent('CompleteRegistration');
       router.push('/');
     } catch (err: unknown) {
       const authErr = err as { EM?: string };

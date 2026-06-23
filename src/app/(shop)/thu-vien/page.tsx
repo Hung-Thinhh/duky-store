@@ -9,7 +9,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return buildMetadata({
     title: "Phối đồ",
     description:
-      "Thư viện hình ảnh khách hàng, lookbook và các sản phẩm nổi bật của Duky Store.",
+      "Khám phá thư viện ảnh phối đồ, lookbook thời trang độc đáo và hình ảnh thực tế từ khách hàng của Duky Store để tìm kiếm cảm hứng mặc đẹp mỗi ngày.",
     path: "/thu-vien",
   });
 }

@@ -11,6 +11,7 @@ import { Navpages } from "@/components/shop/Navpages";
 import Filter, { FilterState } from "@/components/shop/Fillter";
 import { useProducts } from "@/hooks/useProducts";
 import { CatalogBannerSlots } from "@/lib/api";
+import { fbqEvent } from "@/components/analytics/FacebookPixel";
 
 const PRODUCTS_PER_PAGE = 12;
 
@@ -53,6 +54,15 @@ export function SearchClient({ bannerSlot }: SearchClientProps) {
   useEffect(() => {
     setCurrentPage(1);
     setAccumulatedProducts([]);
+  }, [query]);
+
+  // Trigger FB Pixel Search event when query changes
+  useEffect(() => {
+    if (query) {
+      fbqEvent("Search", {
+        search_string: query,
+      });
+    }
   }, [query]);
 
   // Reset accumulated products when filter state changes

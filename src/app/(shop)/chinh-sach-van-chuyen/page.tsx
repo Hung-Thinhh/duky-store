@@ -6,7 +6,7 @@ import { PolicyClient } from "@/app/(shop)/chinh-sach/PolicyClient";
 export async function generateMetadata(): Promise<Metadata> {
   return buildMetadata({
     title: "Chính sách vận chuyển",
-    description: "Chính sách vận chuyển, giao nhận và kiểm hàng khi mua sắm giày da cao cấp tại Duky Store.",
+    description: "Thông tin chi tiết về chính sách vận chuyển, phí giao hàng toàn quốc và quy trình đồng kiểm sản phẩm trước khi thanh toán tại cửa hàng Duky Store.",
     path: "/chinh-sach-van-chuyen",
   });
 }

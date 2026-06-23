@@ -11,7 +11,7 @@ export function generateMetadata(): Metadata {
   return buildMetadata({
     title: "Kinh nghiệm",
     description:
-      "Kinh nghiệm phối đồ, bảo quản giày boot, áo khoác da và xu hướng thời trang từ Duky Store.",
+      "Chuyên mục chia sẻ kinh nghiệm phối đồ thời trang, mẹo bảo quản giày boot da và cập nhật các xu hướng phong cách mới nhất từ đội ngũ Duky Store.",
     path: "/blog",
     type: "website",
   });

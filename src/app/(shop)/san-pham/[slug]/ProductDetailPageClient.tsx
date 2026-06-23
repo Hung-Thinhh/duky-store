@@ -20,6 +20,7 @@ import {
   getDisplayPrice,
   getAllProductImageUrls,
 } from "@/types/product";
+import { fbqEvent } from "@/components/analytics/FacebookPixel";
 
 interface ProductDetailPageClientProps {
   slug: string;
@@ -116,6 +117,19 @@ export default function ProductDetailPageClient({
 
     loadProduct();
   }, [initialProduct, initialVariants, slug]);
+
+  useEffect(() => {
+    if (product) {
+      const price = getDisplayPrice(product);
+      fbqEvent("ViewContent", {
+        content_ids: [product.id],
+        content_name: product.name,
+        content_type: "product",
+        value: price,
+        currency: "VND",
+      });
+    }
+  }, [product]);
 
   if (loading) {
     return (

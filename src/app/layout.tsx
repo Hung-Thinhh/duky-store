@@ -31,12 +31,12 @@ export const metadata: Metadata = {
   applicationName: SITE_NAME,
   keywords: [
     "Duky Store",
-    "giay boot",
-    "giay boot da",
+    "giày boot",
+    "giày boot da",
     "boot nam",
-    "boot nu",
-    "ao khoac da",
-    "phu kien thoi trang",
+    "boot nữ",
+    "áo khoác da",
+    "phụ kiện thời trang",
   ],
   authors: [{ name: SITE_NAME }],
   creator: SITE_NAME,
@@ -46,9 +46,9 @@ export const metadata: Metadata = {
     follow: true,
   },
   openGraph: {
-    title: "Duky Store - Giay Boot Da Cao Cap",
+    title: "Duky Store - Giày Boot Da Cao Cấp",
     description:
-      "Mua giay boot da, ao khoac da va phu kien thoi trang cao cap tai Duky Store.",
+      "Mua giày boot da, áo khoác da và phụ kiện thời trang cao cấp tại Duky Store.",
     url: "/",
     siteName: SITE_NAME,
     images: [
@@ -62,9 +62,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Duky Store - Giay Boot Da Cao Cap",
+    title: "Duky Store - Giày Boot Da Cao Cấp",
     description:
-      "Mua giay boot da, ao khoac da va phu kien thoi trang cao cap tai Duky Store.",
+      "Mua giày boot da, áo khoác da và phụ kiện thời trang cao cấp tại Duky Store.",
     images: [DEFAULT_OG_IMAGE],
   },
   icons: {
@@ -78,6 +78,7 @@ import { ScrollToTop } from "@/components/ui/ScrollToTop";
 import { Chatbot } from "@/components/chatbot/Chatbot";
 import { Providers } from "@/components/Providers";
 import StyledJsxRegistry from "@/lib/registry";
+import FacebookPixel from "@/components/analytics/FacebookPixel";
 
 export default function RootLayout({
   children,
@@ -96,6 +97,7 @@ export default function RootLayout({
         )}
       </head>
       <body className="font-sans antialiased" suppressHydrationWarning>
+        <FacebookPixel pixelId={process.env.FB_PIXEL_ID} />
         <StyledJsxRegistry>
           <Providers>
             {children}
@@ -107,3 +109,4 @@ export default function RootLayout({
     </html>
   );
 }
+

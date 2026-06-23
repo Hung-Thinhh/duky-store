@@ -6,7 +6,7 @@ import { PolicyClient } from "@/app/(shop)/chinh-sach/PolicyClient";
 export async function generateMetadata(): Promise<Metadata> {
   return buildMetadata({
     title: "Chính sách bảo hành",
-    description: "Chính sách bảo hành sản phẩm giày da cao cấp trong vòng 12 tháng tại Duky Store.",
+    description: "Chính sách bảo hành chính hãng lên đến 12 tháng đối với các sản phẩm giày da cao cấp tại Duky Store. Hỗ trợ may chỉ, dán keo và bảo dưỡng miễn phí.",
     path: "/chinh-sach-bao-hanh",
   });
 }

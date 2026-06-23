@@ -109,7 +109,6 @@ export function GalleryClient() {
   return (
     <>
       <section className="gallery-page mt-8">
-        <h2 className="sr-only">Thư viện hình ảnh và Lookbook</h2>
         <Navpages
           items={[{ label: "Trang chủ", href: "/" }, { label: "Phối đồ" }]}
         />
