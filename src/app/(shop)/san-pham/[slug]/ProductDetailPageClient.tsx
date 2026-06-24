@@ -21,6 +21,7 @@ import {
   getAllProductImageUrls,
 } from "@/types/product";
 import { fbqEvent } from "@/components/analytics/FacebookPixel";
+import { gaEvent } from "@/components/analytics/GoogleAnalytics";
 
 interface ProductDetailPageClientProps {
   slug: string;
@@ -127,6 +128,17 @@ export default function ProductDetailPageClient({
         content_type: "product",
         value: price,
         currency: "VND",
+      });
+      gaEvent("view_item", {
+        currency: "VND",
+        value: price,
+        items: [
+          {
+            item_id: product.id,
+            item_name: product.name,
+            price: price,
+          },
+        ],
       });
     }
   }, [product]);

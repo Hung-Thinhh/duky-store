@@ -7,6 +7,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import GoogleLoginButton from '@/components/shop/GoogleLoginButton';
 import { fbqEvent } from '@/components/analytics/FacebookPixel';
+import { gaEvent } from '@/components/analytics/GoogleAnalytics';
 
 const SignUpTemplate: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -61,6 +62,7 @@ const SignUpTemplate: React.FC = () => {
     try {
       await auth.register(email, password, confirmPassword);
       fbqEvent('CompleteRegistration');
+      gaEvent('sign_up', { method: 'email' });
       router.push('/');
     } catch (err: unknown) {
       const authErr = err as { EM?: string };

@@ -9,7 +9,7 @@ export const FAQ_DATA = [
     id: 2,
     question: "Có giao hàng toàn quốc không?",
     answer:
-      "Duky Store hỗ trợ giao hàng COD toàn quốc. Thời gian nhận hàng từ 2-4 ngày tùy khu vực. Miễn phí vận chuyển cho đơn hàng trên 1 triệu đồng.",
+      "Duky Store hỗ trợ giao hàng COD toàn quốc. Thời gian nhận hàng từ 2-4 ngày tùy khu vực.",
   },
   {
     id: 3,

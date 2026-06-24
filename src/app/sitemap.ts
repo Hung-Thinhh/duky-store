@@ -109,6 +109,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/gio-hang",
     "/thanh-toan",
     "/tim-kiem",
+    "/quen-mat-khau",
+    "/dat-lai-mat-khau",
   ];
 
   const scannedPaths = scanStaticRoutes(appDirectory).filter((route) => {
@@ -129,9 +131,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     } else if (route.includes("chinh-sach") || route.includes("quy-dinh")) {
       priority = 0.3;
       changeFrequency = "yearly";
-    } else if (route === "/gio-hang" || route === "/thanh-toan") {
-      priority = 0.1;
-      changeFrequency = "monthly";
     }
 
     return {
@@ -154,6 +153,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     fetchAllProducts(),
     fetchAllBlogPosts(),
   ]);
+
+  if (productsResult.status === "rejected") {
+    console.error("Failed to fetch products for sitemap:", productsResult.reason);
+  }
+
+  if (blogPostsResult.status === "rejected") {
+    console.error("Failed to fetch blog posts for sitemap:", blogPostsResult.reason);
+  }
 
   const productRoutes: MetadataRoute.Sitemap =
     productsResult.status === "fulfilled"

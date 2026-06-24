@@ -30,6 +30,7 @@ import {
 } from "@/lib/checkout-validation";
 import { saveOrderToHistory } from "@/lib/order-storage";
 import { fbqEvent } from "@/components/analytics/FacebookPixel";
+import { gaEvent } from "@/components/analytics/GoogleAnalytics";
 
 export function CheckoutClient() {
   const { cart, cartCount, clearCart, getSessionId } = useCart();
@@ -94,8 +95,27 @@ export function CheckoutClient() {
         currency: "VND",
         num_items: isQuickBuy ? quickBuyQuantity : cartCount,
       });
+      gaEvent("begin_checkout", {
+        value: total,
+        currency: "VND",
+        items: isQuickBuy
+          ? [
+              {
+                item_id: quickBuyProductId || "",
+                item_name: quickBuyName,
+                price: quickBuyPrice,
+                quantity: quickBuyQuantity,
+              },
+            ]
+          : cart.map((item) => ({
+              item_id: item.productId,
+              item_name: item.productName,
+              price: item.unitPrice,
+              quantity: item.quantity,
+            })),
+      });
     }
-  }, [subtotal, total, isQuickBuy, quickBuyQuantity, cartCount]);
+  }, [subtotal, total, isQuickBuy, quickBuyQuantity, cartCount, quickBuyProductId, quickBuyName, quickBuyPrice, cart]);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -212,13 +232,25 @@ export function CheckoutClient() {
           quantity: quickBuyQuantity,
         });
 
-        // FB Pixel AddToCart tracking for Quick Buy
+        // FB Pixel & GA AddToCart tracking for Quick Buy
         fbqEvent("AddToCart", {
           content_ids: [quickBuyProductId],
           content_name: quickBuyName,
           content_type: "product",
           value: quickBuyPrice * quickBuyQuantity,
           currency: "VND",
+        });
+        gaEvent("add_to_cart", {
+          currency: "VND",
+          value: quickBuyPrice * quickBuyQuantity,
+          items: [
+            {
+              item_id: quickBuyProductId || "",
+              item_name: quickBuyName,
+              price: quickBuyPrice,
+              quantity: quickBuyQuantity,
+            },
+          ],
         });
 
         const order = await checkoutAPI({
@@ -236,7 +268,7 @@ export function CheckoutClient() {
           customerNote: form.note.trim() || undefined,
         });
 
-        // FB Pixel Purchase Event for Quick Buy
+        // FB Pixel & GA Purchase Event for Quick Buy
         fbqEvent("Purchase", {
           value: order.grandTotal,
           currency: "VND",
@@ -245,6 +277,17 @@ export function CheckoutClient() {
           num_items: order.items.reduce((sum, item) => sum + item.quantity, 0),
         }, {
           eventID: order.code,
+        });
+        gaEvent("purchase", {
+          transaction_id: order.code,
+          value: order.grandTotal,
+          currency: "VND",
+          items: order.items.map((item) => ({
+            item_id: item.sku || item.productName,
+            item_name: item.productName,
+            price: item.unitPrice,
+            quantity: item.quantity,
+          })),
         });
 
         // Quick buy: do NOT clear cart, just save order and redirect
@@ -288,7 +331,7 @@ export function CheckoutClient() {
         customerNote: form.note.trim() || undefined,
       });
 
-      // FB Pixel Purchase Event for Standard Checkout
+      // FB Pixel & GA Purchase Event for Standard Checkout
       fbqEvent("Purchase", {
         value: order.grandTotal,
         currency: "VND",
@@ -297,6 +340,17 @@ export function CheckoutClient() {
         num_items: order.items.reduce((sum, item) => sum + item.quantity, 0),
       }, {
         eventID: order.code,
+      });
+      gaEvent("purchase", {
+        transaction_id: order.code,
+        value: order.grandTotal,
+        currency: "VND",
+        items: order.items.map((item) => ({
+          item_id: item.sku || item.productName,
+          item_name: item.productName,
+          price: item.unitPrice,
+          quantity: item.quantity,
+        })),
       });
 
       // Standard flow: clear cart and save order to history

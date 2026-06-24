@@ -12,6 +12,7 @@ import Filter, { FilterState } from "@/components/shop/Fillter";
 import { useProducts } from "@/hooks/useProducts";
 import { CatalogBannerSlots } from "@/lib/api";
 import { fbqEvent } from "@/components/analytics/FacebookPixel";
+import { gaEvent } from "@/components/analytics/GoogleAnalytics";
 
 const PRODUCTS_PER_PAGE = 12;
 
@@ -56,11 +57,14 @@ export function SearchClient({ bannerSlot }: SearchClientProps) {
     setAccumulatedProducts([]);
   }, [query]);
 
-  // Trigger FB Pixel Search event when query changes
+  // Trigger FB Pixel & GA Search event when query changes
   useEffect(() => {
     if (query) {
       fbqEvent("Search", {
         search_string: query,
+      });
+      gaEvent("search", {
+        search_term: query,
       });
     }
   }, [query]);

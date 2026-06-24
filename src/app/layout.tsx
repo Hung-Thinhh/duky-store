@@ -79,6 +79,7 @@ import { Chatbot } from "@/components/chatbot/Chatbot";
 import { Providers } from "@/components/Providers";
 import StyledJsxRegistry from "@/lib/registry";
 import FacebookPixel from "@/components/analytics/FacebookPixel";
+import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 
 export default function RootLayout({
   children,
@@ -98,7 +99,9 @@ export default function RootLayout({
       </head>
       <body className="font-sans antialiased" suppressHydrationWarning>
         <FacebookPixel pixelId={process.env.FB_PIXEL_ID} />
+        <GoogleAnalytics gaId={process.env.GA_MEASUREMENT_ID} />
         <StyledJsxRegistry>
+
           <Providers>
             {children}
             <ScrollToTop />
