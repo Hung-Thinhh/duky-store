@@ -30,13 +30,14 @@ export async function middleware(request: NextRequest) {
 
     if (response.ok) {
       const data = await response.json();
+      const redirectData = data?.DT || data;
 
       // If redirect is active and targetPath exists
-      if (data && data.targetPath && data.status === "ACTIVE") {
-        const statusCode = data.statusCode || 301;
+      if (redirectData && redirectData.targetPath && redirectData.status === "ACTIVE") {
+        const statusCode = redirectData.statusCode || 301;
         
         // Ensure absolute URL destination
-        const targetUrl = new URL(data.targetPath, request.url);
+        const targetUrl = new URL(redirectData.targetPath, request.url);
 
         // Preserve original query string if any
         if (search) {

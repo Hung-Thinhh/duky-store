@@ -96,6 +96,22 @@ async function fetchAllBlogPosts() {
   return posts;
 }
 
+async function fetchAllCategories() {
+  try {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api/v1";
+    const res = await fetch(`${apiUrl}/categories`, {
+      next: { revalidate: 60 },
+    });
+    if (res.ok) {
+      const json = await res.json();
+      return json?.DT?.data || json?.DT || [];
+    }
+  } catch (error) {
+    console.error("Failed to fetch categories for sitemap:", error);
+  }
+  return [];
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
 
@@ -141,7 +157,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     };
   });
 
-  // Map collection slugs
+  // Map collection slugs (hardcoded fallbacks)
   const collectionRoutes: MetadataRoute.Sitemap = COLLECTION_SLUGS.map((slug) => ({
     url: absoluteUrl(`/${slug}`),
     lastModified: now,
@@ -149,9 +165,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-  const [productsResult, blogPostsResult] = await Promise.allSettled([
+  const [productsResult, blogPostsResult, categoriesResult] = await Promise.allSettled([
     fetchAllProducts(),
     fetchAllBlogPosts(),
+    fetchAllCategories(),
   ]);
 
   if (productsResult.status === "rejected") {
@@ -187,11 +204,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           }))
       : [];
 
-  // Combine dynamic scanned routes, collections, products, and blogs
+  const dbCategoryRoutes: MetadataRoute.Sitemap =
+    categoriesResult.status === "fulfilled"
+      ? categoriesResult.value
+          .filter((cat: any) => Boolean(cat.slug) && cat.status === "ACTIVE")
+          .map((cat: any) => ({
+            url: absoluteUrl(`/${cat.slug}`),
+            lastModified: toDate(cat.updatedAt),
+            changeFrequency: "weekly" as const,
+            priority: 0.8,
+          }))
+      : [];
+
+  // Combine dynamic scanned routes, collections, dynamic db categories, products, and blogs
   // Use a map to filter out any potential duplicate URLs
   const allRoutes = [
     ...scannedStaticRoutes,
     ...collectionRoutes,
+    ...dbCategoryRoutes,
     ...productRoutes,
     ...blogRoutes,
   ];
