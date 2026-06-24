@@ -150,7 +150,7 @@ const SignUpTemplate: React.FC = () => {
               onChange={(e) => setAgreeToTerms(e.target.checked)}
             />
             <span className="terms-text">
-              Tôi đồng ý với <a href="#">Điều khoản sử dụng</a> và <a href="#">Chính sách bảo mật</a>
+              Tôi đồng ý với <Link href="/quy-dinh-su-dung" target="_blank" rel="noopener noreferrer">Điều khoản sử dụng</Link> và <Link href="/chinh-sach-bao-mat" target="_blank" rel="noopener noreferrer">Chính sách bảo mật</Link>
             </span>
           </label>
         </div>
