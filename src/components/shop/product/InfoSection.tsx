@@ -435,7 +435,7 @@ const InfoSection: React.FC<InfoSectionProps> = ({ product = MOCK_PRODUCT, varia
                   onClick={() => setSelectedImage(index)}
                   aria-label={`Xem ảnh ${index + 1}`}
                 >
-                  <Image src={img} alt={`Thumbnail ${index + 1}`} width={80} height={80} className="thumbnail-img" />
+                  <Image src={img} alt={`Thumbnail ${index + 1}`} width={80} height={80} className="thumbnail-img" unoptimized />
                 </button>
               ))}
             </div>
