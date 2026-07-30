@@ -62,8 +62,18 @@ export function PolicyClient({ children }: PolicyClientProps) {
           font-size: 20px;
           font-weight: 700;
           color: #000000ff;
+          margin-top: 24px;
           margin-bottom: 12px;
           letter-spacing: -0.01em;
+        }
+
+        :global(.policy-subsection-title) {
+          font-family: var(--font-main);
+          font-size: 16px;
+          font-weight: 700;
+          color: var(--text-main);
+          margin-top: 18px;
+          margin-bottom: 8px;
         }
 
         :global(.policy-section-content) {
@@ -71,6 +81,7 @@ export function PolicyClient({ children }: PolicyClientProps) {
           font-size: 14px;
           color: var(--text-main);
           line-height: 1.8;
+          margin-bottom: 12px;
         }
 
         :global(.policy-list) {
@@ -79,6 +90,7 @@ export function PolicyClient({ children }: PolicyClientProps) {
           display: flex;
           flex-direction: column;
           gap: 10px;
+          margin-bottom: 16px;
         }
 
         :global(.policy-list-item) {
@@ -86,6 +98,49 @@ export function PolicyClient({ children }: PolicyClientProps) {
           font-size: 14px;
           color: var(--text-main);
           line-height: 1.7;
+        }
+
+        :global(.policy-link) {
+          color: #2563eb;
+          text-decoration: underline;
+          font-weight: 500;
+        }
+
+        :global(.policy-link:hover) {
+          color: #1d4ed8;
+        }
+
+        :global(.policy-table-wrapper) {
+          overflow-x: auto;
+          margin: 20px 0;
+          border: 1px solid var(--border-card);
+          border-radius: 8px;
+        }
+
+        :global(.policy-table) {
+          width: 100%;
+          border-collapse: collapse;
+          font-family: var(--font-main);
+          font-size: 14px;
+        }
+
+        :global(.policy-table th) {
+          background-color: var(--bg-primary);
+          color: var(--text-main);
+          font-weight: 600;
+          text-align: left;
+          padding: 12px 16px;
+          border-bottom: 2px solid var(--border-card);
+        }
+
+        :global(.policy-table td) {
+          padding: 12px 16px;
+          border-bottom: 1px solid var(--border-card);
+          color: var(--text-main);
+        }
+
+        :global(.policy-table tr:last-child td) {
+          border-bottom: none;
         }
 
         @media (max-width: 768px) {

@@ -281,12 +281,12 @@ export const Footer = () => {
                         href: "/chinh-sach-van-chuyen",
                       },
                       {
-                        name: "Chính sách bảo hành",
-                        href: "/chinh-sach-bao-hanh",
+                        name: "Chính sách thanh toán",
+                        href: "/chinh-sach-thanh-toan",
                       },
                       {
-                        name: "Chính sách đổi trả hàng",
-                        href: "/chinh-sach-doi-tra-hang",
+                        name: "Chính sách giá",
+                        href: "/chinh-sach-gia",
                       },
                     ].map((item) => (
                       <li key={item.name}>

@@ -6,14 +6,14 @@ import { getPolicyContent } from "@/utils/markdown";
 
 export async function generateMetadata(): Promise<Metadata> {
   return buildMetadata({
-    title: "Chính sách vận chuyển",
-    description: "Thông tin chi tiết về chính sách vận chuyển, phí giao hàng toàn quốc và quy trình đổi trả hàng, hoàn tiền tại cửa hàng Duky Store.",
-    path: "/chinh-sach-van-chuyen",
+    title: "Chính sách thanh toán",
+    description: "Các hình thức thanh toán được chấp nhận tại Duky Store bao gồm COD (thanh toán khi nhận hàng) và chuyển khoản ngân hàng.",
+    path: "/chinh-sach-thanh-toan",
   });
 }
 
-export default function ShippingPolicyPage() {
-  const content = getPolicyContent("Chinh_sach_giao_hang_doi_tra_hoan_tien.md");
+export default function PaymentPolicyPage() {
+  const content = getPolicyContent("Chinh_sach_thanh_toan.md");
   return (
     <PolicyClient>
       <main className="policy-page">
