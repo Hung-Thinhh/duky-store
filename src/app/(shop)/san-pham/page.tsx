@@ -14,7 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return buildMetadata({
     title: "Tất cả sản phẩm",
     description:
-      "Mua sắm ngay các mẫu giày boot nam nữ da thật cao cấp và phụ kiện thời trang chính hãng tại Duky Store. Cam kết sản phẩm đạt chất lượng tốt nhất.",
+      "Mua sắm ngay các mẫu giày boot nam nữ và giày da chất lượng cao cấp tại Duky Store Cần Thơ. Đa dạng kiểu dáng boot, cam kết da thật 100%, bảo hành uy tín.",
     path: "/san-pham",
   });
 }

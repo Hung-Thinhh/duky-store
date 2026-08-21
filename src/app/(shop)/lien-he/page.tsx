@@ -9,7 +9,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return buildMetadata({
     title: "Liên hệ",
     description:
-      "Thông tin liên hệ chi tiết của Duky Store tại Cần Thơ. Bản đồ đường đi, số điện thoại hotline, email và biểu mẫu gửi yêu cầu hỗ trợ nhanh chóng nhất.",
+      "Liên hệ ngay với Duky Store - Shop giày boot Cần Thơ chuyên cung cấp các mẫu giày da chất lượng cao. Địa chỉ 122 Nguyễn Hiền, An Khánh, Ninh Kiều, Cần Thơ.",
     path: "/lien-he",
   });
 }

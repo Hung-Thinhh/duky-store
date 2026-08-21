@@ -28,9 +28,9 @@ export const COLLECTIONS: Record<string, CollectionConfig> = {
   "boot-nam": {
     slug: "boot-nam",
     meta: {
-      title: "Giày Boot Nam Cao Cấp | Duky Store",
+      title: "Giày Boot Nam Cần Thơ - Giày Da Chất Lượng Cao | Duky Store",
       description:
-        "Bộ sưu tập giày boot nam cao cấp - Da thật, thiết kế tinh tế, bền bỉ theo thời gian.",
+        "Bộ sưu tập giày boot nam Cần Thơ da thật chất lượng cao tại Duky Store - Da thật, thiết kế tinh tế, bền bỉ theo thời gian.",
       gender: "male",
     },
     hero: {
@@ -243,9 +243,9 @@ export const COLLECTIONS: Record<string, CollectionConfig> = {
   "boot-nu": {
     slug: "boot-nu",
     meta: {
-      title: "Giày Boot Nữ Cao Cấp | Duky Store",
+      title: "Giày Boot Nữ Cần Thơ - Giày Da Chất Lượng Cao | Duky Store",
       description:
-        "Bộ sưu tập giày boot nữ cao cấp - Thanh lịch, quyến rũ, tôn dáng hoàn hảo.",
+        "Bộ sưu tập giày boot nữ Cần Thơ da thật chất lượng cao tại Duky Store - Thanh lịch, quyến rũ, tôn dáng hoàn hảo.",
       gender: "female",
     },
     hero: {
@@ -417,9 +417,9 @@ export const COLLECTIONS: Record<string, CollectionConfig> = {
   "phu-kien": {
     slug: "phu-kien",
     meta: {
-      title: "Phụ Kiện Thời Trang | Duky Store",
+      title: "Phụ Kiện Giày Boot & Giày Da Cần Thơ - Duky Store",
       description:
-        "Phụ kiện thời trang cao cấp - Thắt lưng, ví da, tất, xi đánh giày và nhiều hơn nữa.",
+        "Phụ kiện giày boot và giày da chất lượng cao tại Duky Store Cần Thơ - Thắt lưng, ví da, tất, bộ chăm sóc giày da chuyên nghiệp.",
       gender: "unisex",
     },
     hero: {
@@ -555,9 +555,9 @@ export const COLLECTIONS: Record<string, CollectionConfig> = {
   unisex: {
     slug: "unisex",
     meta: {
-      title: "Unisex & Mix Match | Duky Store",
+      title: "Thời Trang Unisex & Phối Đồ Giày Boot Cần Thơ | Duky Store",
       description:
-        "Gợi ý phối đồ cùng boot - Áo khoác da, quần jeans, váy và set unisex hoàn chỉnh.",
+        "Gợi ý phối đồ unisex thời thượng cùng giày boot và áo khoác da chất lượng cao tại Duky Store Cần Thơ.",
       gender: "unisex",
     },
     hero: {

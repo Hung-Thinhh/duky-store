@@ -32,9 +32,9 @@ const COLLECTION_META: Record<
   }
 > = {
   "boot-nam": {
-    title: "Boot Nam",
+    title: "Giày Boot Nam Cần Thơ - Giày Da Chất Lượng Cao",
     description:
-      "Mua sắm giày boot nam da thật cao cấp tại Duky Store với kiểu dáng tinh tế, mạnh mẽ và nam tính. Bảo hành chính hãng 12 tháng và miễn phí đổi size.",
+      "Mua sắm giày boot nam Cần Thơ da thật chất lượng cao tại Duky Store. Đa dạng mẫu giày boot, combat boot nam tính, bảo hành 12 tháng và miễn phí đổi size.",
     heroImage: "/assets/boot_nam.webp",
     heroTitle: "GIÀY BOOT\nNAM CAO CẤP",
     heroDescription:
@@ -48,8 +48,9 @@ const COLLECTION_META: Record<
     },
   },
   "boot-nu": {
-    title: "Boot Nữ",
-    description: "Bộ sưu tập giày boot nữ da thật cao cấp tại Duky Store với thiết kế thanh lịch, tôn dáng. Cam kết chất lượng da bền bỉ và hỗ trợ đổi size linh hoạt.",
+    title: "Giày Boot Nữ Cần Thơ - Giày Da Chất Lượng Cao",
+    description:
+      "Bộ sưu tập giày boot nữ Cần Thơ da thật chất lượng cao tại Duky Store. Các mẫu giày boot nữ gót cao tôn dáng ôm chân, cam kết chất lượng da thật bền bỉ.",
     heroImage: "/assets/boot_nu.webp",
     heroTitle: "GIÀY BOOT\nNỮ CAO CẤP",
     heroDescription:
@@ -62,8 +63,9 @@ const COLLECTION_META: Record<
     },
   },
   "phu-kien": {
-    title: "Phụ kiện",
-    description: "Khám phá bộ sưu tập phụ kiện thời trang cao cấp tại Duky Store gồm thắt lưng, ví da, tất và bộ chăm sóc giày chuyên nghiệp giúp nâng tầm phong cách.",
+    title: "Phụ Kiện Giày Boot & Giày Da Cần Thơ - Duky Store",
+    description:
+      "Mua phụ kiện giày boot và giày da chất lượng cao tại Duky Store Cần Thơ: thắt lưng da bò, ví da, tất cotton và bộ chăm sóc giày da chuyên nghiệp.",
     heroImage: "/assets/phu_kien.webp",
     heroTitle: "PHỤ KIỆN\nCAO CẤP",
     heroDescription: "Hoàn thiện phong cách với phụ kiện đẳng cấp",
@@ -72,12 +74,13 @@ const COLLECTION_META: Record<
       titleLine1: "PHỤ KIỆN",
       titleLine2: "ĐẲNG CẤP",
       description:
-        "Hoàn thiện phong cách với những phụ kiện được chọn lọc kỹ lưỡng.",
+        "Hoàn thiện phong cách với những phụ kiện được chọn lọc kỹ lưuỡng.",
     },
   },
   unisex: {
-    title: "Unisex",
-    description: "Bộ sưu tập thời trang unisex tại Duky Store mang đến phong cách cá tính, năng động và phóng khoáng. Xem ngay các sản phẩm phù hợp cho cả nam và nữ.",
+    title: "Thời Trang Unisex & Phối Đồ Giày Boot Cần Thơ",
+    description:
+      "Gợi ý phối đồ unisex thời thượng cùng giày boot và áo khoác da chất lượng cao tại Duky Store Cần Thơ. Phong cách cá tính, tự tin mỗi ngày.",
     heroImage: "/assets/out_fit.webp",
     heroTitle: "UNISEX\nPHỐI ĐỒ",
     heroDescription: "Gợi ý phong cách phối đồ cùng boot Duky",
